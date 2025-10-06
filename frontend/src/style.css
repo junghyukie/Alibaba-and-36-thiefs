@@ -1,0 +1,28 @@
+
+@import url(https://fonts.googleapis.com/css2?family=Lato&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Open+Sans&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined);
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Test CSS để kiểm tra */
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* Fix cho line-clamp */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Test Tailwind */
+.test-tailwind {
+  background-color: red;
+  color: white;
+  padding: 1rem;
+}
