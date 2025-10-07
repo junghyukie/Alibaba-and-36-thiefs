@@ -1,289 +1,179 @@
+"use client";
+
 import { useState } from "react";
 
+// 1. Import tất cả component cần thiết từ shadcn/ui và lucide-react
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Bell, Heart, Search, BookOpen } from "lucide-react";
+import BookDetailDialog from "./BookDetailDialog";
+
+// Dữ liệu mẫu cho các cuốn sách
+const books = [
+  { id: "BK001", title: "The Midnight Library", author: "Matt Haig", publisher: "Penguin Random House", status: "New", statusVariant: "default" as const, tags: ["Fiction", "Fantasy"], copies: 12, availableCopies: 8, gradient: "from-purple-400 to-indigo-600", emoji: "📖", rating: 4.5, reviews: 234, description: "A dazzling novel about all the choices that go into a life well lived." },
+  { id: "BK002", title: "Project Hail Mary", author: "Andy Weir", publisher: "Ballantine Books", status: "Popular", statusVariant: "secondary" as const, tags: ["Sci-Fi", "Adventure"], copies: 8, availableCopies: 2, gradient: "from-blue-400 to-cyan-600", emoji: "🚀", rating: 4.8, reviews: 456, description: "A lone astronaut must save the earth from disaster." },
+  { id: "BK003", title: "Atomic Habits", author: "James Clear", publisher: "Avery Publishing", status: null, tags: ["Self-Help", "Productivity"], copies: 5, availableCopies: 5, gradient: "from-green-400 to-emerald-600", emoji: "💡", rating: 4.7, reviews: 892, description: "An easy way to build good habits and break bad ones." },
+];
+
+// Danh sách các thể loại
+const categories = ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Biography", "Horror", "Historical"];
+
 export default function Component() {
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   return (
-    <div id="webcrumbs"> 
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-        
-        {/* Main Page - Book List */}
-        <div>
-          <header className="bg-white shadow-md sticky top-0 z-10">
-            <div className="mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex items-center justify-between h-16">
-                <div className="flex items-center">
-                  <span className="text-3xl">📚</span>
-                  <h1 className="ml-2 text-xl font-bold text-purple-700">Alibaba and 36 Thiefs</h1>
-                </div>
-                
-                <div className="md:flex hidden">
-                  <div className="relative rounded-lg shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-400">🔍</span>
-                    </div>
-                    <input
-                      type="search"
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
-                      placeholder="Search books, authors..."
-                    />
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-4">
-                  <button className="text-gray-500 hover:text-purple-600 transition-colors">
-                    <span>🔔</span>
-                  </button>
-                  
-                  <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-medium">
-                    GU
-                  </div>
-                </div>
-              </div>
+    <div id="webcrumbs" className="bg-muted/40 min-h-screen">
+      <header className="bg-background shadow-sm sticky top-0 z-10 border-b">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-primary" />
+              <h1 className="text-xl font-bold text-primary">
+                Alibaba and 36 Thiefs
+              </h1>
             </div>
-          </header>
-          
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800">Library Collection</h2>
-                <p className="text-gray-600 mt-1">Browse our extensive collection of books</p>
-              </div>
-              
-              <div className="mt-4 md:mt-0 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                <select className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                  <option>Filter by Category</option>
-                  <option>All Categories</option>
-                  <option>Fiction</option>
-                  <option>Non-Fiction</option>
-                  <option>Sci-Fi</option>
-                  <option>Fantasy</option>
-                  <option>Romance</option>
-                  <option>Mystery</option>
-                  <option>Horror</option>
-                </select>
-                
-                <select className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                  <option>Sort by</option>
-                  <option>Newest First</option>
-                  <option>Oldest First</option>
-                  <option>Title (A-Z)</option>
-                  <option>Title (Z-A)</option>
-                  <option>Author (A-Z)</option>
-                </select>
-              </div>
+
+            <div className="relative flex-1 max-w-sm hidden md:block">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search books, authors..."
+                className="pl-8 w-full"
+              />
             </div>
-            
-            <div className="flex flex-wrap gap-3 mb-6">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="category" 
-                  value="all" 
-                  checked={selectedCategory === "all"}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-4 h-4 text-purple-600 cursor-pointer"
-                />
-                <span className="text-sm font-medium text-gray-700">All Books</span>
-              </label>
-              
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="category" 
-                  value="fantasy"
-                  checked={selectedCategory === "fantasy"}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-4 h-4 text-purple-600 cursor-pointer"
-                />
-                <span className="text-sm font-medium text-gray-700">Fantasy</span>
-              </label>
-              
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="category" 
-                  value="scifi"
-                  checked={selectedCategory === "scifi"}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-4 h-4 text-purple-600 cursor-pointer"
-                />
-                <span className="text-sm font-medium text-gray-700">Sci-Fi</span>
-              </label>
-              
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="category" 
-                  value="mystery"
-                  checked={selectedCategory === "mystery"}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-4 h-4 text-purple-600 cursor-pointer"
-                />
-                <span className="text-sm font-medium text-gray-700">Mystery</span>
-              </label>
-              
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="category" 
-                  value="romance"
-                  checked={selectedCategory === "romance"}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-4 h-4 text-purple-600 cursor-pointer"
-                />
-                <span className="text-sm font-medium text-gray-700">Romance</span>
-              </label>
-              
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="category" 
-                  value="biography"
-                  checked={selectedCategory === "biography"}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-4 h-4 text-purple-600 cursor-pointer"
-                />
-                <span className="text-sm font-medium text-gray-700">Biography</span>
-              </label>
-              
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="category" 
-                  value="horror"
-                  checked={selectedCategory === "horror"}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-4 h-4 text-purple-600 cursor-pointer"
-                />
-                <span className="text-sm font-medium text-gray-700">Horror</span>
-              </label>
-              
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="category" 
-                  value="historical"
-                  checked={selectedCategory === "historical"}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-4 h-4 text-purple-600 cursor-pointer"
-                />
-                <span className="text-sm font-medium text-gray-700">Historical</span>
-              </label>
+
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="icon">
+                <Bell className="h-5 w-5" />
+              </Button>
+              <Avatar>
+                <AvatarFallback>GU</AvatarFallback>
+              </Avatar>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative h-48 bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center">
-                  <span className="text-6xl">📖</span>
-                  <div className="absolute top-2 right-2">
-                    <button className="h-8 w-8 rounded-full bg-white text-gray-500 hover:text-rose-500 flex items-center justify-center shadow-sm transition-colors">
-                      ❤️
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="p-5">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-lg font-semibold text-gray-800">The Midnight Library</h3>
-                    <span className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full">
-                      New
-                    </span>
-                  </div>
-                  
-                  <p className="text-gray-600 text-sm mb-3">by Matt Haig</p>
-                  
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-700">Fiction</span>
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-purple-100 text-purple-700">Fantasy</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm text-gray-600">
-                      <span className="font-medium">12</span> copies available
-                    </div>
-                    
-                    <button className="px-3 py-1.5 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors">
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative h-48 bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
-                  <span className="text-6xl">🚀</span>
-                  <div className="absolute top-2 right-2">
-                    <button className="h-8 w-8 rounded-full bg-white text-gray-500 hover:text-rose-500 flex items-center justify-center shadow-sm transition-colors">
-                      ❤️
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="p-5">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-lg font-semibold text-gray-800">Project Hail Mary</h3>
-                    <span className="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-full">
-                      Popular
-                    </span>
-                  </div>
-                  
-                  <p className="text-gray-600 text-sm mb-3">by Andy Weir</p>
-                  
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-purple-100 text-purple-700">Sci-Fi</span>
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Adventure</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm text-gray-600">
-                      <span className="font-medium">8</span> copies available
-                    </div>
-                    
-                    <button className="px-3 py-1.5 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors">
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative h-48 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
-                  <span className="text-6xl">💡</span>
-                  <div className="absolute top-2 right-2">
-                    <button className="h-8 w-8 rounded-full bg-white text-gray-500 hover:text-rose-500 flex items-center justify-center shadow-sm transition-colors">
-                      ❤️
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="p-5">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-lg font-semibold text-gray-800">Atomic Habits</h3>
-                  </div>
-                  
-                  <p className="text-gray-600 text-sm mb-3">by James Clear</p>
-                  
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Self-Help</span>
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-700">Productivity</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm text-gray-600">
-                      <span className="font-medium">5</span> copies available
-                    </div>
-                    
-                    <button className="px-3 py-1.5 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors">
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </main>
+          </div>
         </div>
-      </div> 
+      </header>
+
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground">
+              Library Collection
+            </h2>
+            <p className="text-muted-foreground mt-1">
+              Browse our extensive collection of books
+            </p>
+          </div>
+
+            <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
+            <Select>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Filter by Category" />
+              </SelectTrigger>
+              <SelectContent 
+                className="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-md"
+                position="popper"
+              >
+                <SelectItem value="all" className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100">
+                  All Categories
+                </SelectItem>
+                <SelectItem value="fiction" className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100">
+                  Fiction
+                </SelectItem>
+                <SelectItem value="fantasy" className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100">
+                  Fantasy
+                </SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent 
+                className="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-md"
+                position="popper"
+              >
+                <SelectItem value="newest" className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100">
+                  Newest First
+                </SelectItem>
+                <SelectItem value="oldest" className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100">
+                  Oldest First
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <RadioGroup
+          value={selectedCategory}
+          onValueChange={setSelectedCategory}
+          className="flex flex-wrap gap-x-4 gap-y-2 mb-6"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="all" id="r-all" />
+            <Label htmlFor="r-all">All Books</Label>
+          </div>
+          {categories.map((category) => (
+            <div key={category} className="flex items-center space-x-2">
+              <RadioGroupItem value={category.toLowerCase()} id={`r-${category.toLowerCase()}`} />
+              <Label htmlFor={`r-${category.toLowerCase()}`}>{category}</Label>
+            </div>
+          ))}
+        </RadioGroup>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {books.map((book) => (
+            <Card key={book.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className={`relative h-48 bg-gradient-to-br ${book.gradient} flex items-center justify-center`}>
+                <span className="text-6xl">{book.emoji}</span>
+                <Button variant="secondary" size="icon" className="absolute top-2 right-2 h-8 w-8 rounded-full">
+                  <Heart className="h-4 w-4" />
+                </Button>
+              </div>
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <CardTitle>{book.title}</CardTitle>
+                  {book.status && <Badge variant={book.statusVariant}>{book.status}</Badge>}
+                </div>
+                <p className="text-sm text-muted-foreground pt-1 !mt-0">by {book.author}</p>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {book.tags.map(tag => <Badge key={tag} variant="outline">{tag}</Badge>)}
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-between items-center">
+                <div className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">{book.copies}</span> copies available
+                </div>
+                <Button size="sm" onClick={() => { setSelectedBook(book); setIsDialogOpen(true); }}>
+                  View Details
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </main>
+      <BookDetailDialog 
+        book={selectedBook} 
+        open={isDialogOpen} 
+        onOpenChange={setIsDialogOpen} 
+      />
     </div>
   );
 }
