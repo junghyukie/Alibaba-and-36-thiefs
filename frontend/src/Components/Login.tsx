@@ -1,166 +1,233 @@
 import React, { useState } from 'react';
-import 'ionicons';
-import "./style.css";
+
+const IoniconsScripts = () => (
+  <>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script noModule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  </>
+);
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Email:', email, 'Password:', password);
-    // Thêm logic xử lý đăng nhập (gọi API, validate, v.v.) ở đây
-  };
-
-  const [isLogin, setIsLogin] = useState(true);
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gray-100">
-      {
-        isLogin ? (
-          <div className="login-box bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
-          <div className="input-box relative">
-            <span className="icon absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <ion-icon name="mail"></ion-icon>
-            </span>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-            <label className="absolute left-10 top-0 text-sm text-gray-500 pointer-events-none transition-all duration-200 transform -translate-y-1/2 scale-75 origin-left bg-white px-1">
-              Email
-            </label>
-          </div>
-          <div className="input-box relative">
-            <span className="icon absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <ion-icon name="lock-closed"></ion-icon>
-            </span>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-            <label className="absolute left-10 top-0 text-sm text-gray-500 pointer-events-none transition-all duration-200 transform -translate-y-1/2 scale-75 origin-left bg-white px-1">
-              Password
-            </label>
-          </div>
-          <div className="remember-forgot flex justify-between items-center text-sm">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Remember me
-            </label>
-            <a href="#" className="text-indigo-600 hover:underline">
-              Forgot password?
-            </a>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Login
-          </button>
-          <button
-            onClick={() => setIsLogin(false)}
-            className="mt-4 text-blue-500 hover:underline"
-          >
-            <div className="register-link text-center text-sm">
-            <p>
-              Don&apos;t have an account?{' '}
-              <a href="#" className="text-indigo-600 hover:underline">
-                Register
-              </a>
-            </p>
-          </div>
-          </button>         
-        </form>
-      </div>
-        ) : (
-          <div className="login-box bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
-          <div className="input-box relative">
-  <span className="icon absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-    <ion-icon name="person"></ion-icon>
-  </span>
-  <input
-    type="text"
-    value={username}
-    onChange={(e) => setUsername(e.target.value)}
-    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-    required
-  />
-  <label className="absolute left-10 top-0 text-sm text-gray-500 pointer-events-none transition-all duration-200 transform -translate-y-1/2 scale-75 origin-left bg-white px-1">
-    Username
-  </label>
-</div>
-          <div className="input-box relative">
-            <span className="icon absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <ion-icon name="mail"></ion-icon>
-            </span>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-            <label className="absolute left-10 top-0 text-sm text-gray-500 pointer-events-none transition-all duration-200 transform -translate-y-1/2 scale-75 origin-left bg-white px-1">
-              Email
-            </label>
-          </div>
-          <div className="input-box relative">
-            <span className="icon absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <ion-icon name="lock-closed"></ion-icon>
-            </span>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-            <label className="absolute left-10 top-0 text-sm text-gray-500 pointer-events-none transition-all duration-200 transform -translate-y-1/2 scale-75 origin-left bg-white px-1">
-              Password
-            </label>
-          </div>
-          <div className="remember-forgot flex justify-between items-center text-sm">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> I agree with the following:
-            </label>
-            <a href="#" className="text-indigo-600 hover:underline">
-              Terms & conditions
-            </a>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Register
-          </button>
-          <button
-            onClick={() => setIsLogin(true)}
-            className="mt-4 text-blue-500 hover:underline"
-          >
-            <div className="register-link text-center text-sm">
-            <p>
-              Already have an account?{' '}
-              <a href="#" className="text-indigo-600 hover:underline">
-                Login
-              </a>
-            </p>
-          </div>
-          </button>         
-        </form>
-      </div>
-        )
-      }
-    </section>
+    <>
+      <style>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Poppins', sans-serif;
+        }
+
+        section {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          height: 100vh;
+          background: url('https://www.thinkupthemes.com/blog/wp-content/uploads/2021/10/best-library-wordpress-themes.jpg') no-repeat;
+          background-size: cover;
+          background-position: center;
+        }
+
+        .box {
+          position: relative;
+          width: 400px;
+          height: 450px;
+          background: transparent;
+          border-radius: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          backdrop-filter: blur(15px);
+        }
+
+        .register-box {
+          height: 520px;
+        }
+
+        h2 {
+          font-size: 2em;
+          color: #fff;
+          text-align: center;
+          font-weight: bold;
+        }
+
+        .input-box {
+          position: relative;
+          width: 310px;
+          margin: 30px 0;
+          border-bottom: 2px solid #fff;
+        }
+
+        .input-box .icon {
+          position: absolute;
+          right: 8px;
+          color: #fff;
+          font-size: 1.2em;
+          line-height: 57px;
+        }
+
+        .input-box label {
+          position: absolute;
+          top: 50%;
+          left: 5px;
+          transform: translateY(-50%);
+          font-size: 1em;
+          color: #fff;
+          pointer-events: none;
+          transition: .5s;
+        }
+
+        .input-box input:focus ~ label,
+        .input-box input:valid ~ label {
+          top: -5px;
+        }
+
+        .input-box input {
+          width: 100%;
+          height: 50px;
+          background: transparent;
+          border: none;
+          outline: none;
+          font-size: 1em;
+          color: #fff;
+          padding: 0 35px 0 5px;
+        }
+
+        .remember-forgot {
+          margin: -15px 0 15px;
+          font-size: .9em;
+          color: #fff;
+          display: flex;
+          justify-content: space-between;
+        }
+
+        .remember-forgot label input {
+          margin-right: 3px;
+        }
+
+        .remember-forgot a {
+          color: #fff;
+          text-decoration: none;
+        }
+
+        .remember-forgot a:hover {
+          text-decoration: underline;
+        }
+
+        button {
+          width: 100%;
+          height: 40px;
+          background: #fff;
+          border: none;
+          outline: none;
+          border-radius: 40px;
+          cursor: pointer;
+          font-size: 1em;
+          color: #000;
+          font-weight: 500;
+        }
+
+        .register-link {
+          font-size: .9em;
+          color: #fff;
+          text-align: center;
+          margin: 25px 0 10px;
+        }
+
+        .register-link p a {
+          color: #fff;
+          text-decoration: none;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        .register-link p a:hover {
+          text-decoration: underline;
+        }
+
+        @media (max-width: 360px) {
+          .box {
+            width: 100%;
+            height: 100vh;
+            border: none;
+            border-radius: 0;
+          }
+
+          .input-box {
+            width: 290px;
+          }
+
+          .terms-link {
+            color: #fff;
+            text-decoration: none;
+          }
+
+          .terms-link:hover {
+            text-decoration: underline;
+          }
+        }
+      `}</style>
+
+      <section>
+        <div className={`box ${isRegistering ? 'register-box' : 'login-box'}`}>
+          <form>
+            <h2>{isRegistering ? 'Register' : 'Login'}</h2>
+
+            {isRegistering && (
+              <div className="input-box">
+                <span className="icon"><ion-icon name="person"></ion-icon></span>
+                <input type="text" required />
+                <label>Username</label>
+              </div>
+            )}
+
+            <div className="input-box">
+              <span className="icon"><ion-icon name="mail"></ion-icon></span>
+              <input type="email" required />
+              <label>Email</label>
+            </div>
+
+            <div className="input-box">
+              <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
+              <input type="password" required />
+              <label>Password</label>
+            </div>
+
+                        {!isRegistering ? (
+              <div className="remember-forgot">
+                <label><input type="checkbox" />Remember me</label>
+                <a href="#">Forgot password?</a>
+              </div>
+            ) : (
+              <div className="remember-forgot">
+                <label>
+                  <input type="checkbox" required />
+                  I agree to the <a href="#" className="terms-link">terms and conditions</a>
+                </label>
+              </div>
+            )}
+
+            <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
+
+            <div className="register-link">
+              <p>
+                {isRegistering
+                  ? 'Already have an account? '
+                  : "Don't have an account? "}
+                <a onClick={() => setIsRegistering(!isRegistering)}>
+                  {isRegistering ? 'Login' : 'Register'}
+                </a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <IoniconsScripts />
+    </>
   );
 };
 
