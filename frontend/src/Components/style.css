@@ -30,7 +30,8 @@ section {
 }
 
 h2{
-    font-size: 2em;
+    font-size: 2em !important;
+    font-weight: 600 !important;
     color: #fff;
     text-align: center;
 }
@@ -115,7 +116,6 @@ button{
     border-radius: 40px;
     cursor: pointer;
     font-size: 1em;
-    color: #000;
     font-weight: 500;
 }
 
