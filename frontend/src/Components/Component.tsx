@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 // 1. Import tất cả component cần thiết từ shadcn/ui và lucide-react
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -17,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Bell, Heart, Search, BookOpen } from "lucide-react";
+import { Bell, Heart, Search, BookOpen, LogOut, User } from "lucide-react";
 import BookDetailDialog from "./BookDetailDialog";
 
 // Dữ liệu mẫu cho các cuốn sách
@@ -34,6 +35,20 @@ export default function Component() {
   const [selectedBook, setSelectedBook] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setIsDropdownOpen(false);
+  };
+
+  const handleLogin = () => {
+    // This would navigate to Login.tsx file
+    navigate('/login');
+  };
+
 
   return (
     <div id="webcrumbs" className="bg-muted/40 min-h-screen">
@@ -60,9 +75,45 @@ export default function Component() {
               <Button variant="ghost" size="icon">
                 <Bell className="h-5 w-5" />
               </Button>
-              <Avatar>
-                <AvatarFallback>GU</AvatarFallback>
-              </Avatar>
+              {isLoggedIn ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="hover:opacity-75 transition-opacity"
+                  >
+                    <Avatar>
+                      <AvatarFallback>GU</AvatarFallback>
+                    </Avatar>
+                  </button>
+                  
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-background border border-gray-200 rounded-md shadow-lg z-20">
+                      <button
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          // Navigate to account page
+                          alert("Navigate to Account page");
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 rounded-t-md"
+                      >
+                        <User className="h-4 w-4" />
+                        Account
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600 rounded-b-md"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Button onClick={handleLogin} size="sm">
+                  Login
+                </Button>
+              )}
             </div>
           </div>
         </div>
