@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'ionicons';
 import "./style.css";
+import * as auth from '../services/auth';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -8,8 +9,22 @@ const Login: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Email:', email, 'Password:', password);
+    if (!email || !password) {
+      console.log('You must fill in email and password');
+    }
     // Thêm logic xử lý đăng nhập (gọi API, validate, v.v.) ở đây
+    try {
+      const token = auth.login({email, password});
+      console.log(token);
+      try {
+        const profile = auth.getProfile();
+        console.log(profile);
+      } catch (error) {
+        console.log(error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -58,6 +73,7 @@ const Login: React.FC = () => {
           <button
             type="submit"
             className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={Login}
           >
             Login
           </button>
