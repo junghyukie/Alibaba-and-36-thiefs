@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const IoniconsScripts = () => (
   <>
@@ -9,6 +10,17 @@ const IoniconsScripts = () => (
 
 const Login: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
+
+const navigate = useNavigate();
+
+const handleLogin = () => {
+    // This would navigate to Component.tsx file
+    navigate('/');
+};
+
+const hanldeRegister = () => {
+    
+};
 
   return (
     <>
@@ -210,7 +222,7 @@ const Login: React.FC = () => {
               </div>
             )}
 
-            <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
+            <button onClick={isRegistering? hanldeRegister : handleLogin} type="submit">{isRegistering ? 'Register' : 'Login'}</button>
 
             <div className="register-link">
               <p>

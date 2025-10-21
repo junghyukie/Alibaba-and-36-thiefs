@@ -27,9 +27,10 @@ interface BookDetailDialogProps {
   book: any;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onAddToCart: (book: any) => void;
 }
 
-export default function BookDetailDialog({ book, open, onOpenChange }: BookDetailDialogProps) {
+export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart }: BookDetailDialogProps) {
   if (!book || !open) return null;
 
   return (
@@ -186,17 +187,26 @@ export default function BookDetailDialog({ book, open, onOpenChange }: BookDetai
 
         {/* Footer */}
         <div className="sticky bottom-0 bg-white border-t p-6 flex justify-end gap-3 rounded-b-lg">
-          <Button 
-            variant="outline" 
-            onClick={() => onOpenChange(false)}
-            className="px-6 border-gray-300 text-gray-700 hover:bg-gray-50"
-          >
-            Đóng
-          </Button>
-          <Button className="px-6 bg-blue-600 hover:bg-blue-700 text-white">
-            Mượn sách
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          onClick={() => onOpenChange(false)}
+          className="px-6 border-gray-300 text-gray-700 hover:bg-gray-50"
+        >
+          Đóng
+        </Button>
+        <Button
+          className="px-6 bg-green-600 hover:bg-green-700 text-white"
+          onClick={() => {
+            onAddToCart(book);
+            onOpenChange(false); // Optional: close dialog after adding
+          }}
+        >
+          Thêm vào giỏ hàng
+        </Button>
+        <Button className="px-6 bg-blue-600 hover:bg-blue-700 text-white">
+          Mượn sách
+        </Button>
+      </div>
       </div>
     </div>
   );
