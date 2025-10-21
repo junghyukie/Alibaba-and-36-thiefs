@@ -1,5 +1,3 @@
-
-
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -16,16 +14,9 @@ app.get("/", (req, res) => {
 
 // Import routes
 const authRoute = require("./routes/authRoute");
-app.use("/api/auth", authRoute); // => /api/auth/login
-
-const regis_Route = require("./routes/registerRoute");
-app.use("/api/auth", regis_Route); // => /api/auth/
-
-const forget_reset = require("./routes/forgetRoute");
-app.use("/api/auth", forget_reset); // => /api/auth/
+app.use("/api/auth", authRoute); // => /api/auth/login, /api/auth/register, /api/auth/forgot-password, /api/auth/reset-password
 
 // Start server
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`✅ Server running on http://localhost:${port}`);
 });
-

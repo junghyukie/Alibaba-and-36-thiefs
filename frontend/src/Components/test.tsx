@@ -116,7 +116,7 @@ export default function ForgetPassword() {
 
   const handleSendOTP = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/auth/forget", {
+      const res = await fetch("http://localhost:3001/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -131,7 +131,7 @@ export default function ForgetPassword() {
 
   const handleReset = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/auth/resetPassword", {
+      const res = await fetch("http://localhost:3001/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

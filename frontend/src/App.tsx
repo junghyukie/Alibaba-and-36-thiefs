@@ -6,8 +6,8 @@ function App() {
   return (
     <div className="p-4">
       {/* <Dashboard /> */}
-      <Login />
-      {/* <ForgetPassword /> */}
+      {/* <Login /> */}
+      <ForgetPassword />
     </div>
   );
 }
