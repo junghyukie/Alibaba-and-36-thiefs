@@ -1,6 +1,6 @@
 export interface AccountData {
-  username: string;
-  password_hash: string;
+  email: string;
+  mat_khau_hash: string;
   id_role: number;
   failed_attempts: number;
   locked_until: Date | null;

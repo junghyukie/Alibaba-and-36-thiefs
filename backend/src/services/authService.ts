@@ -20,7 +20,7 @@ export const loginService = async (email: string, password: string): Promise<Log
     return { status: 403, message: "Tài khoản đang bị khóa, vui lòng thử lại sau." };
   }
 
-  if (acc.password_hash !== password) {
+  if (acc.mat_khau_hash !== password) {
     const fail = acc.failed_attempts + 1;
 
     if (fail >= 5) {
@@ -38,9 +38,9 @@ export const loginService = async (email: string, password: string): Promise<Log
 };
 
 export const registerService = async (data: RegisterData): Promise<string> => {
-  const { email, username, password, ho_ten, SDT, ngay_sinh, dia_chi } = data;
+  const { email, password, ho_ten, SDT, ngay_sinh, dia_chi } = data;
 
-  if (!email || !username || !password || !ho_ten || !SDT || !ngay_sinh || !dia_chi) {
+  if (!email || !password || !ho_ten || !SDT || !ngay_sinh || !dia_chi) {
     throw new Error("Thiếu thông tin");
   }
 
@@ -49,8 +49,8 @@ export const registerService = async (data: RegisterData): Promise<string> => {
     throw new Error("Email đã tồn tại");
   }
 
-  const id_acc = await Register(username, password, email);
-  await UpdateDoc_gia(id_acc, ho_ten, SDT, ngay_sinh, dia_chi);
+  const id_acc = await Register(email, password);
+  //await UpdateDoc_gia(id_acc, ho_ten, SDT, ngay_sinh, dia_chi);
   return "Đăng ký thành công";
 };
 

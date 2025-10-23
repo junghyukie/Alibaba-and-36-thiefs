@@ -1,20 +1,25 @@
-import { connection } from "../config/db";
+import pool from "../config/db";
 import { RegisterData } from "../types/account";
 
 export const Check_email = async (email: string): Promise<{ email: string }[]> => {
-  const sql = "SELECT email FROM account WHERE email = ?";
-  const [rows] = await connection.promise().query(sql, [email]);
-  return rows as { email: string }[];
+  const sql = "SELECT email FROM account WHERE email = $1";
+  const results = await pool.query(sql, [email]);
+  return results.rows as { email: string }[];
 };
 
-export const Register = async (username: string, password: string, email: string): Promise<number> => {
+export const Register = async (
+  email: string,
+  password: string,
+): Promise<number> => {
   const sql = `
-    INSERT INTO account (username, password_hash, email, trang_thai, id_role)
-    VALUES (?, ?, ?, 'ACTIVE', 1)
+    INSERT INTO account (email, mat_khau_hash )
+    VALUES ($1, $2)
+    RETURNING id_account
   `;
-  const [result]: any = await connection.promise().query(sql, [username, password, email]);
-  return result.insertId as number;
+  const result = await pool.query(sql, [email, password]);
+  return result.rows[0].id_account as number;
 };
+
 
 export const UpdateDoc_gia = async (
   id_acc: number,
@@ -25,7 +30,7 @@ export const UpdateDoc_gia = async (
 ): Promise<void> => {
   const sql = `
     INSERT INTO doc_gia (id_account, ho_ten, SDT, ngay_sinh, dia_chi)
-    VALUES (?, ?, ?, ?, ?)
+    VALUES ($1, $2, $3, $4, $5)
   `;
-  await connection.promise().query(sql, [id_acc, ho_ten, SDT, ngay_sinh, dia_chi]);
+  await pool.query(sql, [id_acc, ho_ten, SDT, ngay_sinh, dia_chi]);
 };
