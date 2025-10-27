@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const IoniconsScripts = () => (
@@ -8,20 +8,14 @@ const IoniconsScripts = () => (
   </>
 );
 
-const Login: React.FC = () => {
-  const [isRegistering, setIsRegistering] = useState(false);
+const PersonInfoInsert: React.FC = () => {
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const handleLogin = () => {
-    // This would navigate to Component.tsx file
+  const handleSubmit = () => {
+    // Handle form submission logic here
     navigate('/');
-};
-
-const hanldeRegister = () => {
-    // This would navigate to PersonInfoInsert.tsx file
-    navigate('/pinfo');
-};
+  };
 
   return (
     <>
@@ -56,8 +50,8 @@ const hanldeRegister = () => {
           backdrop-filter: blur(15px);
         }
 
-        .register-box {
-          height: 520px;
+        .person-box {
+          height: 580px; /* Tăng chiều cao nếu cần */
         }
 
         h2 {
@@ -109,25 +103,45 @@ const hanldeRegister = () => {
           padding: 0 35px 0 5px;
         }
 
-        .remember-forgot {
-          margin: -15px 0 15px;
+        /* Đặc biệt: Tắt hiệu ứng label trôi nổi cho input date */
+        .input-box.date-input label {
+          position: static;
+          transform: none;
+          color: #fff;
+          font-size: 1em;
+          margin-bottom: 8px;
+          display: block;
+          pointer-events: auto;
+        }
+
+        .input-box.date-input input {
+          padding-left: 5px;
+        }
+
+        .input-box.date-input {
+          border-bottom: 2px solid #fff;
+          padding-top: 20px;
+        }
+
+        .gender-selection {
+          margin: 10px 0 20px;
           font-size: .9em;
           color: #fff;
           display: flex;
-          justify-content: space-between;
+          justify-content: flex-start;
+          align-items: center;
+          gap: 20px;
+          width: 310px;
         }
 
-        .remember-forgot label input {
-          margin-right: 3px;
+        .gender-selection label {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
         }
 
-        .remember-forgot a {
-          color: #fff;
-          text-decoration: none;
-        }
-
-        .remember-forgot a:hover {
-          text-decoration: underline;
+        .gender-selection label input {
+          margin-right: 5px;
         }
 
         button {
@@ -143,24 +157,6 @@ const hanldeRegister = () => {
           font-weight: 500;
         }
 
-        .register-link {
-          font-size: .9em;
-          color: #fff;
-          text-align: center;
-          margin: 25px 0 10px;
-        }
-
-        .register-link p a {
-          color: #fff;
-          text-decoration: none;
-          font-weight: 600;
-          cursor: pointer;
-        }
-
-        .register-link p a:hover {
-          text-decoration: underline;
-        }
-
         @media (max-width: 360px) {
           .box {
             width: 100%;
@@ -169,72 +165,63 @@ const hanldeRegister = () => {
             border-radius: 0;
           }
 
-          .input-box {
+          .input-box, .gender-selection {
             width: 290px;
-          }
-
-          .terms-link {
-            color: #fff;
-            text-decoration: none;
-          }
-
-          .terms-link:hover {
-            text-decoration: underline;
           }
         }
       `}</style>
 
       <section>
-        <div className={`box ${isRegistering ? 'register-box' : 'login-box'}`}>
+        <div className="box person-box">
           <form>
-            <h2>{isRegistering ? 'Register' : 'Login'}</h2>
+            <h2>Thông tin cá nhân</h2>
 
-            {isRegistering && (
-              <div className="input-box">
-                <span className="icon"><ion-icon name="person"></ion-icon></span>
-                <input type="text" required />
-                <label>Username</label>
-              </div>
-            )}
-
+            {/* Họ và tên */}
             <div className="input-box">
-              <span className="icon"><ion-icon name="mail"></ion-icon></span>
-              <input type="email" required />
-              <label>Email</label>
+              <span className="icon"><ion-icon name="person"></ion-icon></span>
+              <input type="text" required />
+              <label>Họ và tên</label>
             </div>
 
+            {/* Ngày sinh - ĐÃ SỬA: label không trôi nổi */}
+            <div className="input-box date-input">
+              <span className="icon"><ion-icon name="calendar"></ion-icon></span>
+              <label>Ngày sinh</label>
+              <input type="date" required style={{ color: '#fff' }} />
+            </div>
+
+            {/* Số điện thoại */}
             <div className="input-box">
-              <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
-              <input type="password" required />
-              <label>Password</label>
+              <span className="icon"><ion-icon name="call"></ion-icon></span>
+              <input 
+                type="text" 
+                required 
+                pattern="[0-9]*"
+                inputMode="numeric"
+                onKeyPress={(e) => {
+                  if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }} 
+              />
+              <label>Số điện thoại</label>
             </div>
 
-                        {!isRegistering ? (
-              <div className="remember-forgot">
-                <label><input type="checkbox" />Remember me</label>
-                <a href="#">Forgot password?</a>
-              </div>
-            ) : (
-              <div className="remember-forgot">
-                <label>
-                  <input type="checkbox" required />
-                  I agree to the <a href="#" className="terms-link">terms and conditions</a>
-                </label>
-              </div>
-            )}
-
-            <button onClick={isRegistering? hanldeRegister : handleLogin} type="submit">{isRegistering ? 'Register' : 'Login'}</button>
-
-            <div className="register-link">
-              <p>
-                {isRegistering
-                  ? 'Already have an account? '
-                  : "Don't have an account? "}
-                <a onClick={() => setIsRegistering(!isRegistering)}>
-                  {isRegistering ? 'Login' : 'Register'}
-                </a>
-              </p>
+            {/* Địa chỉ */}
+            <div className="input-box">
+              <span className="icon"><ion-icon name="location"></ion-icon></span>
+              <input type="text" required />
+              <label>Địa chỉ</label>
             </div>
+
+            {/* Giới tính */}
+            <div className="gender-selection">
+              <span style={{ marginRight: '10px' }}>Giới tính:</span>
+              <label><input type="radio" name="gender" value="male" /> Nam</label>
+              <label><input type="radio" name="gender" value="female" /> Nữ</label>
+            </div>
+
+            <button type="button" onClick={handleSubmit}>Đăng ký</button>
           </form>
         </div>
       </section>
@@ -244,4 +231,4 @@ const hanldeRegister = () => {
   );
 };
 
-export default Login;
+export default PersonInfoInsert;
