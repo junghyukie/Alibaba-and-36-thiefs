@@ -1,9 +1,10 @@
 import  Dashboard  from "./Components/Dashboard";
 import Component from "./Components/Component";
 import Login from "./Components/Login";
- import ForgetPassword from "./Components/test"
- import Test from "./Components/test"
+import ForgetPassword from "./Components/test"
+import Test from "./Components/test"
 import Register from "./Components/Register"
+import Pinfo from "./Components/PersonInfoInsert"
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/test" element={<Test />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/pinfo" element={<Pinfo />} />
       </Routes>
     </BrowserRouter>
   );

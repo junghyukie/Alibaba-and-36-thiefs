@@ -29,7 +29,7 @@ const Register: React.FC = () => {
       // alert(data.message); // thông báo từ server
       if (data.success) {
         alert("Đăng ký thành công!");
-        navigate('/login');
+        navigate('/pinfo');
       } else {
         alert(data.message);
       }
