@@ -1,5 +1,5 @@
 import pool from "../config/db";
-import { RegisterData } from "../types/account";
+import { RegisterData } from "../types/auth";
 
 export const Check_email = async (email: string): Promise<{ email: string }[]> => {
   const sql = "SELECT email FROM account WHERE email = $1";
