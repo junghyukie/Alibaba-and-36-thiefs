@@ -8,20 +8,46 @@ const IoniconsScripts = () => (
   </>
 );
 
+ 
 const Login: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
 
-const navigate = useNavigate();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Email:', email, 'Password:', password);
+    // Thêm logic xử lý đăng nhập (gọi API, validate, v.v.) ở đây
+   try {
+    const res = await fetch("http://localhost:3001/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-const handleLogin = () => {
-    // This would navigate to Component.tsx file
-    navigate('/');
-};
-
-const hanldeRegister = () => {
-    // This would navigate to PersonInfoInsert.tsx file
-    navigate('/pinfo');
-};
+    const data = await res.json();
+   // alert(data.message); // thông báo từ server
+   if(data.success){
+    if(data.id_role === 1){
+      alert("Chao mung Users")
+    //  navigate("/user")
+    }
+    else if(data.id_role === 2){
+      alert("Chao mung Staff")
+      //navigate("/staff")
+    }
+    else if(data.id_role === 3){
+      alert("Chao mung admin")
+      //navigate("/admin")
+    }
+   }
+   else{
+    alert(data.message)
+   }
+    
+  } catch (err) {
+    alert("Lỗi kết nối server");
+    console.error(err);
+  }
+  };
 
   return (
     <>

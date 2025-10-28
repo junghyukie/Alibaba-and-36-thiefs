@@ -1,18 +1,16 @@
-// import  Dashboard  from "./components/Dashboard";
-import Component from "./components/Component";
-import Login from "./components/Login";
-import Pinfo from "./Components/PersonInfoInsert";
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
+import  Dashboard  from "./Components/Dashboard";
+import Component from "./Components/Component";
+import Login from "./Components/Login";
+ import ForgetPassword from "./Components/test"
+ import Register from "./Components/test"
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Component />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/pinfo" element={<Pinfo />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="p-4">
+      {/* <Dashboard /> */}
+      {/* <Login /> */}
+      <Register />
+      {/* <ForgetPassword /> */}
+    </div>
   );
 }
 

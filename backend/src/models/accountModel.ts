@@ -1,0 +1,22 @@
+import pool from "../config/db";
+import { AccountData } from "../types/account";
+
+export const Account = async (email: string): Promise<AccountData[]> => {
+  const sql = `
+    SELECT email, mat_khau_hash, id_role, failed_attempts, locked_until
+    FROM account
+    WHERE email = $1
+  `;
+  const results = await pool.query(sql, [email]);
+  return results.rows as AccountData[];
+};
+
+export const Lock = async (fail: number, lock_until: Date | null, email: string): Promise<any> => {
+  const sql = `
+    UPDATE account
+    SET failed_attempts = $1, locked_until = $2
+    WHERE email = $3
+  `;
+  const results = await pool.query(sql, [fail, lock_until, email]);
+  return results.rows;
+};
