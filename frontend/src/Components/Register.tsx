@@ -8,35 +8,28 @@ const IoniconsScripts = () => (
   </>
 );
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Email:', email, 'Password:', password);
-    // Thêm logic xử lý đăng nhập (gọi API, validate, v.v.) ở đây
+    console.log('Username:', username, 'Email:', email, 'Password:', password);
+    // Thêm logic xử lý đăng ký (gọi API, validate, v.v.) ở đây
     try {
-      const res = await fetch("http://localhost:3001/api/auth/login", {
+      const res = await fetch("http://localhost:3001/api/auth/register", {  // Giả sử endpoint đăng ký là /register
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await res.json();
       // alert(data.message); // thông báo từ server
       if (data.success) {
-        if (data.id_role === 1) {
-          alert("Chao mung Users");
-          // navigate("/user");
-        } else if (data.id_role === 2) {
-          alert("Chao mung Staff");
-          // navigate("/staff");
-        } else if (data.id_role === 3) {
-          alert("Chao mung admin");
-          // navigate("/admin");
-        }
+        alert("Đăng ký thành công!");
+        navigate('/login');
       } else {
         alert(data.message);
       }
@@ -70,7 +63,7 @@ const Login: React.FC = () => {
         .box {
           position: relative;
           width: 400px;
-          height: 450px;
+          height: 520px;
           background: transparent;
           border-radius: 20px;
           display: flex;
@@ -180,6 +173,15 @@ const Login: React.FC = () => {
           text-decoration: underline;
         }
 
+        .terms-link {
+          color: #fff;
+          text-decoration: none;
+        }
+
+        .terms-link:hover {
+          text-decoration: underline;
+        }
+
         @media (max-width: 360px) {
           .box {
             width: 100%;
@@ -197,7 +199,18 @@ const Login: React.FC = () => {
       <section>
         <div className="box">
           <form onSubmit={handleSubmit}>
-            <h2>Login</h2>
+            <h2>Register</h2>
+
+            <div className="input-box">
+              <span className="icon"><ion-icon name="person"></ion-icon></span>
+              <input 
+                type="text" 
+                required 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <label>Username</label>
+            </div>
 
             <div className="input-box">
               <span className="icon"><ion-icon name="mail"></ion-icon></span>
@@ -222,16 +235,18 @@ const Login: React.FC = () => {
             </div>
 
             <div className="remember-forgot">
-              <label><input type="checkbox" />Remember me</label>
-              <a href="#">Forgot password?</a>
+              <label>
+                <input type="checkbox" required />
+                I agree to the <a href="#" className="terms-link">terms and conditions</a>
+              </label>
             </div>
 
-            <button type="submit">Login</button>
+            <button type="submit">Register</button>
 
             <div className="register-link">
               <p>
-                Don't have an account? 
-                <a onClick={() => navigate('/register')}>Register</a>
+                Already have an account? 
+                <a onClick={() => navigate('/login')}>Login</a>
               </p>
             </div>
           </form>
@@ -243,4 +258,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Register;
