@@ -1,9 +1,4 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
-import 'ionicons';
-import "./style.css";
-import * as auth from '../services/auth';
-=======
 import { useNavigate } from 'react-router-dom';
 
 const IoniconsScripts = () => (
@@ -12,124 +7,39 @@ const IoniconsScripts = () => (
     <script noModule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
   </>
 );
->>>>>>> origin/HoangEm
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      console.log('You must fill in email and password');
-    }
-    // Thêm logic xử lý đăng nhập (gọi API, validate, v.v.) ở đây
+    console.log('Username:', username, 'Email:', email, 'Password:', password);
+    // Thêm logic xử lý đăng ký (gọi API, validate, v.v.) ở đây
     try {
-<<<<<<< HEAD
-      const token = auth.login({email, password});
-      console.log(token);
-      try {
-        const profile = auth.getProfile();
-        console.log(profile);
-      } catch (error) {
-        console.log(error);
-      }
-    } catch (error) {
-      console.log(error);
-=======
-      const res = await fetch("http://localhost:3001/api/auth/login", {
+      const res = await fetch("http://localhost:3001/api/auth/register", {  // Giả sử endpoint đăng ký là /register
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await res.json();
       // alert(data.message); // thông báo từ server
       if (data.success) {
-        if (data.id_role === 1) {
-          alert("Chao mung Users");
-          // navigate("/user");
-        } else if (data.id_role === 2) {
-          alert("Chao mung Staff");
-          // navigate("/staff");
-        } else if (data.id_role === 3) {
-          alert("Chao mung admin");
-          // navigate("/admin");
-        }
+        alert("Đăng ký thành công!");
+        navigate('/pinfo');
       } else {
         alert(data.message);
       }
     } catch (err) {
       alert("Lỗi kết nối server");
       console.error(err);
->>>>>>> origin/HoangEm
     }
   };
 
   return (
-<<<<<<< HEAD
-    <section className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="login-box bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
-          <div className="input-box relative">
-            <span className="icon absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <ion-icon name="mail"></ion-icon>
-            </span>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-            <label className="absolute left-10 top-0 text-sm text-gray-500 pointer-events-none transition-all duration-200 transform -translate-y-1/2 scale-75 origin-left bg-white px-1">
-              Email
-            </label>
-          </div>
-          <div className="input-box relative">
-            <span className="icon absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <ion-icon name="lock-closed"></ion-icon>
-            </span>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-            <label className="absolute left-10 top-0 text-sm text-gray-500 pointer-events-none transition-all duration-200 transform -translate-y-1/2 scale-75 origin-left bg-white px-1">
-              Password
-            </label>
-          </div>
-          <div className="remember-forgot flex justify-between items-center text-sm">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" /> Remember me
-            </label>
-            <a href="#" className="text-indigo-600 hover:underline">
-              Forgot password?
-            </a>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            onClick={Login}
-          >
-            Login
-          </button>
-          <div className="register-link text-center text-sm">
-            <p>
-              Don&apos;t have an account?{' '}
-              <a href="#" className="text-indigo-600 hover:underline">
-                Register
-              </a>
-            </p>
-          </div>
-        </form>
-      </div>
-    </section>
-=======
     <>
       <style>{`
         * {
@@ -153,7 +63,7 @@ const Login: React.FC = () => {
         .box {
           position: relative;
           width: 400px;
-          height: 450px;
+          height: 520px;
           background: transparent;
           border-radius: 20px;
           display: flex;
@@ -263,6 +173,15 @@ const Login: React.FC = () => {
           text-decoration: underline;
         }
 
+        .terms-link {
+          color: #fff;
+          text-decoration: none;
+        }
+
+        .terms-link:hover {
+          text-decoration: underline;
+        }
+
         @media (max-width: 360px) {
           .box {
             width: 100%;
@@ -280,7 +199,18 @@ const Login: React.FC = () => {
       <section>
         <div className="box">
           <form onSubmit={handleSubmit}>
-            <h2>Login</h2>
+            <h2>Register</h2>
+
+            <div className="input-box">
+              <span className="icon"><ion-icon name="person"></ion-icon></span>
+              <input 
+                type="text" 
+                required 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <label>Username</label>
+            </div>
 
             <div className="input-box">
               <span className="icon"><ion-icon name="mail"></ion-icon></span>
@@ -305,16 +235,18 @@ const Login: React.FC = () => {
             </div>
 
             <div className="remember-forgot">
-              <label><input type="checkbox" />Remember me</label>
-              <a href="#">Forgot password?</a>
+              <label>
+                <input type="checkbox" required />
+                I agree to the <a href="#" className="terms-link">terms and conditions</a>
+              </label>
             </div>
 
-            <button type="submit">Login</button>
+            <button type="submit">Register</button>
 
             <div className="register-link">
               <p>
-                Don't have an account? 
-                <a onClick={() => navigate('/register')}>Register</a>
+                Already have an account? 
+                <a onClick={() => navigate('/login')}>Login</a>
               </p>
             </div>
           </form>
@@ -323,8 +255,7 @@ const Login: React.FC = () => {
 
       <IoniconsScripts />
     </>
->>>>>>> origin/HoangEm
   );
 };
 
-export default Login;
+export default Register;
