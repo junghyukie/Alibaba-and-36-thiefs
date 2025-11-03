@@ -27,9 +27,10 @@ const Login: React.FC = () => {
       const data = await res.json();
       // alert(data.message); // thông báo từ server
       if (data.success) {
+        localStorage.setItem("token", data.token);
         if (data.id_role === 1) {
           alert("Chao mung Users");
-          // navigate("/user");
+          navigate("/pinfo");
         } else if (data.id_role === 2) {
           alert("Chao mung Staff");
           // navigate("/staff");

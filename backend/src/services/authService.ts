@@ -1,8 +1,10 @@
 import nodemailer from "nodemailer";
 import { Account, Lock } from "../models/accountModel";
 import { existing_email, updateOTP, checkOTP, resetPass } from "../models/forgetPasswdModel";
-import { Check_email, Register, UpdateDoc_gia } from "../models/registerAccModel";
+import { Check_email, Register } from "../models/registerAccModel";
 import { LoginResult, RegisterData } from "../types/auth";
+
+import jwt from "jsonwebtoken";
 
 export const loginService = async (email: string, password: string): Promise<LoginResult> => {
   if (!email || !password) {
@@ -34,7 +36,19 @@ export const loginService = async (email: string, password: string): Promise<Log
   }
 
   await Lock(0, null, email);
-  return { status: 200, message: "Đăng nhập thành công", success: true, id_role: acc.id_role };
+  
+  const secret = process.env.JWT_SECRET || "super_secret_key";
+  const payload = { id_acc: acc.id_account};
+  const token = jwt.sign(payload, secret, { expiresIn: "1h" });
+
+  return {
+    status: 200,
+    message: "Đăng nhập thành công",
+    success: true,
+    id_role: acc.id_role,
+    token, // trả token về cho frontend
+  };
+  //return { status: 200, message: "Đăng nhập thành công", success: true, id_role: acc.id_role };
 };
 
 export const registerService = async (data: RegisterData): Promise<string> => {
@@ -50,7 +64,7 @@ export const registerService = async (data: RegisterData): Promise<string> => {
   }
 
   const id_acc = await Register(username,email, password);
-  //await UpdateDoc_gia(id_acc, ho_ten, SDT, ngay_sinh, dia_chi);
+  
   return "Đăng ký thành công";
 };
 
@@ -91,4 +105,26 @@ export const resetPasswordService = async (email: string, ma_xac_thuc: string, n
     throw new Error("OTP không chính xác hoặc đã hết hạn");
   }
   await resetPass(new_password, email);
+};
+
+
+import { updateUser } from "../models/updateUserModel";
+import { UserInformation } from "../types/auth";
+
+export const updateUserService = async (
+  id_acc: number,
+  data_user: UserInformation
+): Promise<{ success: boolean; message: string }> => {
+  try {
+    const update = await updateUser(id_acc, data_user);
+
+    if (!update || update.length === 0) {
+      return { success: false, message: "Cập nhật không thành công" };
+    }
+
+    return { success: true, message: "Cập nhật thành công" };
+  } catch (err) {
+    console.error("Lỗi khi cập nhật:", err);
+    return { success: false, message: "Lỗi server khi cập nhật" };
+  }
 };

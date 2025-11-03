@@ -1,106 +1,141 @@
 import React, { useState } from "react";
-import "./style.css";
+import { useNavigate } from "react-router-dom";
 
-const Register: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const UpdateUserForm: React.FC = () => {
   const [hoTen, setHoTen] = useState("");
-  const [SDT, setSdt] = useState("");
   const [ngaySinh, setNgaySinh] = useState("");
+  const [dienThoai, setDienThoai] = useState("");
   const [diaChi, setDiaChi] = useState("");
+  const [gioiTinh, setGioiTinh] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Dữ liệu gửi đi:", {
-      email,
-      password,
-      hoTen,
-      SDT,
-      ngaySinh,
-      diaChi,
-    });
+
+    if (!hoTen || !ngaySinh || !dienThoai || !diaChi || !gioiTinh) {
+      alert("Vui lòng điền đầy đủ thông tin!");
+      return;
+    }
+
+    const formData = {
+  ho_ten: hoTen,
+  ngay_sinh: ngaySinh,
+  dien_thoai: dienThoai,
+  dia_chi: diaChi,
+  gioi_tinh: gioiTinh,
+};
 
     try {
-      const res = await fetch("http://localhost:3001/api/auth/register", {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Vui lòng đăng nhập trước khi cập nhật thông tin!");
+        return;
+      }
+
+      console.log("📤 Gửi dữ liệu lên server:", formData);
+
+      const res = await fetch("http://localhost:3001/api/auth/update-user", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          password,
-          ho_ten: hoTen,
-          SDT,
-          ngay_sinh: ngaySinh,
-          dia_chi: diaChi,
-        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
-      alert(data.message || "Đăng ký thành công!");
-    } catch (err) {
-      console.error("Lỗi đăng ký:", err);
-      alert("Không thể kết nối tới server!");
+
+      if (!res.ok) {
+        throw new Error(data.message || "Không gửi được dữ liệu lên server");
+      }
+
+      alert("Cập nhật thông tin thành công!");
+      navigate("/");
+    } catch (err: any) {
+      console.error("❌ Lỗi khi gửi dữ liệu:", err);
+      alert("Có lỗi xảy ra: " + (err.message || "Lỗi không xác định"));
     }
+
+
   };
 
-  return (
-    <div className="register-container">
-      <h2>Đăng ký tài khoản</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Tên đăng nhập"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Mật khẩu"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Họ tên"
-          value={hoTen}
-          onChange={(e) => setHoTen(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Số điện thoại"
-          value={SDT}
-          onChange={(e) => setSdt(e.target.value)}
-        />``
-        <input
-          type="date"
-          placeholder="Ngày sinh"
-          value={ngaySinh}
-          onChange={(e) => setNgaySinh(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Địa chỉ"
-          value={diaChi}
-          onChange={(e) => setDiaChi(e.target.value)}
-        />
-        <button type="submit">Đăng ký</button>
-      </form>
-    </div>
+  return (<div className="update-container" style={styles.container}> <h2>Cập nhật thông tin cá nhân</h2> <form onSubmit={handleSubmit} style={styles.form}>
+    <input
+      type="text"
+      placeholder="Họ tên"
+      value={hoTen}
+      onChange={(e) => setHoTen(e.target.value)}
+      required
+      style={styles.input}
+    />
+    <input
+      type="date"
+      placeholder="Ngày sinh"
+      value={ngaySinh}
+      onChange={(e) => setNgaySinh(e.target.value)}
+      required
+      style={styles.input}
+    />
+    <input
+      type="text"
+      placeholder="Số điện thoại"
+      value={dienThoai}
+      onChange={(e) => setDienThoai(e.target.value)}
+      required
+      style={styles.input}
+    />
+    <input
+      type="text"
+      placeholder="Địa chỉ"
+      value={diaChi}
+      onChange={(e) => setDiaChi(e.target.value)}
+      required
+      style={styles.input}
+    />
+    <select
+      value={gioiTinh}
+      onChange={(e) => setGioiTinh(e.target.value)}
+      required
+      style={styles.input}
+    > <option value="">-- Chọn giới tính --</option> <option value="Nam">Nam</option> <option value="Nữ">Nữ</option> <option value="Khác">Khác</option> </select> <button type="submit" style={styles.button}>
+      Cập nhật </button> </form> </div>
   );
 };
 
-export default Register;
+const styles = {
+  container: {
+    maxWidth: "400px",
+    margin: "50px auto",
+    padding: "20px",
+    background: "#fff",
+    borderRadius: "10px",
+    boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+    textAlign: "center",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column" as const,
+  },
+  input: {
+    margin: "10px 0",
+    padding: "10px",
+    borderRadius: "5px",
+    border: "1px solid #ccc",
+  },
+  button: {
+    marginTop: "15px",
+    padding: "10px",
+    background: "#4CAF50",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+  },
+};
+
+export default UpdateUserForm;
+
 
 
 // import React, { useState } from "react";

@@ -1,9 +1,9 @@
 import pool from "../config/db";
-import { AccountData } from "../types/account";
+import { AccountData } from "../types/auth";
 
 export const Account = async (email: string): Promise<AccountData[]> => {
   const sql = `
-    SELECT email, mat_khau_hash, id_role, failed_attempts, locked_until
+    SELECT id_account, email, mat_khau_hash, id_role, failed_attempts, locked_until
     FROM account
     WHERE email = $1
   `;
