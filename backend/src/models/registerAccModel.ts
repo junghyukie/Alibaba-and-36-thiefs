@@ -1,5 +1,5 @@
 import pool from "../config/db";
-import { RegisterData } from "../types/account";
+import { RegisterData } from "../types/auth";
 
 export const Check_email = async (email: string): Promise<{ email: string }[]> => {
   const sql = "SELECT email FROM account WHERE email = $1";
@@ -8,15 +8,16 @@ export const Check_email = async (email: string): Promise<{ email: string }[]> =
 };
 
 export const Register = async (
+  username: string,
   email: string,
   password: string,
 ): Promise<number> => {
   const sql = `
-    INSERT INTO account (email, mat_khau_hash )
-    VALUES ($1, $2)
+    INSERT INTO account (ho_ten,email, mat_khau_hash)
+    VALUES ($1, $2 , $3)
     RETURNING id_account
   `;
-  const result = await pool.query(sql, [email, password]);
+  const result = await pool.query(sql, [username,email, password]);
   return result.rows[0].id_account as number;
 };
 

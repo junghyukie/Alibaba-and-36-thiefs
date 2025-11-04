@@ -6,11 +6,11 @@ export interface LoginResult {
 }
 
 export interface RegisterData {
+  username: string;
   email: string;
   // username: string;
   password: string;
-  ho_ten: string;
-  SDT: string;
-  ngay_sinh: string;
-  dia_chi: string;
+//  SDT: string;
+ // ngay_sinh: string;
+  //dia_chi: string;
 }

@@ -38,9 +38,9 @@ export const loginService = async (email: string, password: string): Promise<Log
 };
 
 export const registerService = async (data: RegisterData): Promise<string> => {
-  const { email, password, ho_ten, SDT, ngay_sinh, dia_chi } = data;
+  const {username, email, password  } = data;
 
-  if (!email || !password || !ho_ten || !SDT || !ngay_sinh || !dia_chi) {
+  if (!email || !password || !username) {
     throw new Error("Thiếu thông tin");
   }
 
@@ -49,7 +49,7 @@ export const registerService = async (data: RegisterData): Promise<string> => {
     throw new Error("Email đã tồn tại");
   }
 
-  const id_acc = await Register(email, password);
+  const id_acc = await Register(username,email, password);
   //await UpdateDoc_gia(id_acc, ho_ten, SDT, ngay_sinh, dia_chi);
   return "Đăng ký thành công";
 };

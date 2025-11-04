@@ -12,10 +12,10 @@ export interface OTPRecord {
   email: string;
 }
 
-export interface RegisterData {
-  id_account: number;
-  ho_ten: string;
-  SDT: string;
-  ngay_sinh: string;
-  dia_chi: string;
-}
+// export interface RegisterData {
+//   id_account: number;
+//   ho_ten: string;
+//   SDT: string;
+//   ngay_sinh: string;
+//   dia_chi: string;
+// }
