@@ -1,7 +1,9 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import authRoute from "./routes/authRoute"; // import đúng cú pháp ESModule
+import authRoute from "./routes/authRoute";
+import bookRoute from "./routes/bookRoute";
+import { errorHandler } from "./middleware/errorHandler";
 
 dotenv.config();
 
@@ -19,6 +21,9 @@ app.get("/", (req: Request, res: Response) => {
 
 // Routes
 app.use("/api/auth", authRoute);
+app.use("/api/book", bookRoute);
+
+app.use(errorHandler); // must come last
 
 // Start server
 app.listen(port, () => {

@@ -15,7 +15,9 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Email:', email, 'Password:', password);
+    if (!email || !password) {
+      console.log('You must fill in email and password');
+    }
     // Thêm logic xử lý đăng nhập (gọi API, validate, v.v.) ở đây
     try {
       const res = await fetch("http://localhost:3001/api/auth/login", {
