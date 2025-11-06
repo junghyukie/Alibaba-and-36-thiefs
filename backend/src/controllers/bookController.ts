@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { BookService } from "../services/bookService";
 
-// TODO
 export class BookController {
-  static async getBooks(req: Request, res: Response, next: NextFunction) {
+  static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const { search, ngon_ngu, the_loai, page = "1", limit = "10" } = req.query;
       const theloai_id =
