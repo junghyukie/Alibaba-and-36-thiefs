@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Home } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -79,12 +80,26 @@ const openBookFromCart = (book: any) => {
     navigate('/login');
   };
 
+  const handleAccount = () => {
+    // This would navigate to AccountInfo.tsx file
+    navigate('/accinfo');
+  }
+
+  const handleHome = () => {
+    navigate('/');
+  }
+
 
   return (
     <div id="webcrumbs" className="bg-muted/40 min-h-screen">
       <header className="bg-background shadow-sm sticky top-0 z-10 border-b">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
+
+            <button onClick={handleHome} className="p-2 hover:bg-gray-100 rounded">
+              <Home className="h-6 w-6 text-primary" />
+            </button>
+
             <div className="flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-primary" />
               <h1 className="text-xl font-bold text-primary">
@@ -117,21 +132,30 @@ const openBookFromCart = (book: any) => {
                   </button>
                   
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-background border border-gray-200 rounded-md shadow-lg z-20">
+                    <div
+                      className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20"
+                      // close when clicking outside
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {/* Account button */}
                       <button
                         onClick={() => {
                           setIsDropdownOpen(false);
-                          // Navigate to account page
-                          alert("Navigate to Account page");
+                          handleAccount();               // calls your function
                         }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 rounded-t-md"
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 rounded-t-md transition"
                       >
                         <User className="h-4 w-4" />
                         Account
                       </button>
+
+                      {/* Logout button */}
                       <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600 rounded-b-md"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600 rounded-b-md transition"
                       >
                         <LogOut className="h-4 w-4" />
                         Logout
@@ -267,44 +291,77 @@ const openBookFromCart = (book: any) => {
       </button>
 
       {isCartOpen && (
-        <div className="fixed bottom-20 left-4 bg-white rounded-lg shadow-xl p-4 w-80 max-h-96 overflow-y-auto">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="font-bold text-lg">Cart</h3>
-            <button onClick={() => setIsCartOpen(false)} className="text-gray-500 hover:text-gray-700">
-              ✕
-            </button>
-          </div>
-          
+  <>
+    {/* Backdrop mờ */}
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-40 z-40"
+      onClick={() => setIsCartOpen(false)}
+    />
+
+    {/* Cửa sổ giỏ hàng - căn giữa */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div 
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col"
+        onClick={(e) => e.stopPropagation()} // Ngăn đóng khi click vào giỏ hàng
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center p-6 border-b">
+          <h3 className="text-2xl font-bold">Giỏ hàng của bạn</h3>
+          <button 
+            onClick={() => setIsCartOpen(false)} 
+            className="text-2xl text-gray-500 hover:text-gray-800 transition"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Nội dung giỏ hàng - có thể cuộn */}
+        <div className="flex-1 overflow-y-auto p-6">
           {cartItems.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">Cart is empty</p>
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">Giỏ hàng trống</p>
+              <p className="text-sm text-gray-400 mt-2">Hãy thêm sách bạn thích nhé!</p>
+            </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-4">
               {cartItems.map((item) => (
                 <div
                   key={item.id}
-                  className="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer transition-colors relative group"
+                  className="border rounded-xl p-4 hover:bg-gray-50 cursor-pointer transition-all group relative"
                   onClick={() => {
                     openBookFromCart(item);
-                    setIsCartOpen(false); // Optional: close cart when opening dialog
+                    setIsCartOpen(false);
                   }}
                 >
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent opening dialog
+                      e.stopPropagation();
                       removeFromCart(item.id);
                     }}
-                    className="absolute top-2 right-2 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-3 right-3 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity text-xl"
                   >
                     ✕
                   </button>
-                  <h4 className="font-semibold text-sm pr-6">{item.title}</h4>
-                  <p className="text-gray-600 text-xs">{item.author}</p>
+                  <h4 className="font-semibold text-lg pr-8">{item.title}</h4>
+                  <p className="text-gray-600">{item.author}</p>
                 </div>
               ))}
             </div>
           )}
         </div>
-      )}
+
+        {/* Footer (tùy chọn thêm nút thanh toán sau) */}
+        {cartItems.length > 0 && (
+          <div className="p-6 border-t bg-gray-50">
+            <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+              Mượn sách ({cartItems.length} sách)
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  </>
+)}
         
     </div>
   );
