@@ -19,3 +19,12 @@ export interface OTPRecord {
 //   ngay_sinh: string;
 //   dia_chi: string;
 // }
+export interface BorrowedCard{
+  id_muon:string
+   doc_gia_id: number;
+   ngay_muon: string;
+   ngay_het_han: string;
+   ngay_tra_thuc_te: string;
+   tinh_trang:string;
+   ban_sao_id: string;
+}
