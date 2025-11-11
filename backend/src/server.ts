@@ -6,6 +6,7 @@ import bookRoute from "./routes/bookRoute";
 import categoryRoute from "./routes/categoryRoute";
 import authorRoute from "./routes/authorRoute";
 import publisherRoute from "./routes/publisherRoute";
+import borrowRoute from "./routes/borrowRoute"
 import { errorHandler } from "./middleware/errorHandler";
 
 dotenv.config();
@@ -28,6 +29,7 @@ app.use("/api/book", bookRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/author", authorRoute);
 app.use("/api/publisher", publisherRoute);
+app.use("/api/borrow", borrowRoute)
 
 app.use(errorHandler); // must come last
 
