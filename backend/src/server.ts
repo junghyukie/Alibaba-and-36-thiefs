@@ -3,6 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRoute from "./routes/authRoute";
 import bookRoute from "./routes/bookRoute";
+import categoryRoute from "./routes/categoryRoute";
+import authorRoute from "./routes/authorRoute";
+import publisherRoute from "./routes/publisherRoute";
 import { errorHandler } from "./middleware/errorHandler";
 
 dotenv.config();
@@ -22,6 +25,9 @@ app.get("/", (req: Request, res: Response) => {
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/api/book", bookRoute);
+app.use("/api/category", categoryRoute);
+app.use("/api/author", authorRoute);
+app.use("/api/publisher", publisherRoute);
 
 app.use(errorHandler); // must come last
 

@@ -1,7 +1,7 @@
 export interface Book {
   id: number;
-  tacgia_id?: number;
-  nxb_id?: number;
+  tacgia_id: number;
+  nxb_id: number;
   tieu_de: string;
   tom_tat?: string;
   isbn13: string;

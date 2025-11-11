@@ -2,7 +2,6 @@ import { Book, BookQuery } from "../types/book";
 import * as BookModel from "../models/bookModel";
 import { AppError } from "../utils/appError";
 
-// TODO
 export class BookService {
   static async getAll(query: BookQuery) {
     return BookModel.getBooks(query);

@@ -1,7 +1,6 @@
 import pool from "../config/db";
 import { Book, BookQuery } from "../types/book.d";
 
-// TODO
 export const getBooks = async (query: BookQuery): Promise<Book[]> => {
   const {page = 1, limit = 10 , search, filters} = query;
   const offset = (page - 1) * limit;
