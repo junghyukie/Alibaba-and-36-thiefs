@@ -1,5 +1,6 @@
 import { Book, BookQuery } from "../types/book";
 import * as BookModel from "../models/bookModel";
+import * as CopyModel from "../models/copyModel";
 import { AppError } from "../utils/appError";
 
 export class BookService {
@@ -29,5 +30,11 @@ export class BookService {
     const deleted = await BookModel.deleteBook(id);
     if (!deleted) throw new AppError("Book not found", 404);
     return { message: "Book deleted successfully" };
+  }
+
+  static async getAllCopies(bookId: number) {
+    const copies = await CopyModel.getCopyByBookId(bookId);
+    if (!copies) throw new AppError("No copy found", 404);
+    return copies;
   }
 }
