@@ -59,4 +59,14 @@ export class BookController {
       next(err);
     }
   }
+
+  static async getAllCopies(req: Request, res: Response, next: NextFunction) {
+    try {
+      const bookId = Number(req.params.id);
+      const copies = await BookService.getAllCopies(bookId);
+      res.json(copies);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

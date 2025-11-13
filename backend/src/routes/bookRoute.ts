@@ -9,4 +9,6 @@ router.post("/", BookController.create);
 router.put("/:id", BookController.update);
 router.delete("/:id", BookController.delete);
 
+router.get("/:id/copies", BookController.getAllCopies);
+
 export default router;
