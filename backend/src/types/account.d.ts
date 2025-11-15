@@ -22,9 +22,15 @@ export interface OTPRecord {
 export interface BorrowedCard{
   id_muon:string
    id_doc_gia: number;
+<<<<<<< Updated upstream
    ngay_muon: string;
    ngay_het_han: string;
    han_tra:string;
+=======
+   ngay_muon: Date;
+   ngay_het_han: Date;
+   han_tra:Date;
+>>>>>>> Stashed changes
    ngay_tra_thuc_te: string;
    trang_thai:string;
    id_sach: string;
