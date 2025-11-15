@@ -30,7 +30,7 @@ const Login: React.FC = () => {
         localStorage.setItem("token", data.token);
         if (data.id_role === 1) {
           alert("Chao mung Users");
-          navigate("/pinfo");
+          navigate("/");
         } else if (data.id_role === 2) {
           alert("Chao mung Staff");
           // navigate("/staff");

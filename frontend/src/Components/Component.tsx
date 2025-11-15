@@ -31,9 +31,9 @@ import BookDetailDialog from "./BookDetailDialog";
 
 // Dữ liệu mẫu cho các cuốn sách
 const books = [
-  { id: "BK001", title: "The Midnight Library", author: "Matt Haig", publisher: "Penguin Random House", status: "New", statusVariant: "default" as const, tags: ["Fiction", "Fantasy"], copies: 12, availableCopies: 8, gradient: "from-purple-400 to-indigo-600", emoji: "📖", rating: 4.5, reviews: 234, description: "A dazzling novel about all the choices that go into a life well lived." },
-  { id: "BK002", title: "Project Hail Mary", author: "Andy Weir", publisher: "Ballantine Books", status: "Popular", statusVariant: "secondary" as const, tags: ["Sci-Fi", "Adventure"], copies: 8, availableCopies: 2, gradient: "from-blue-400 to-cyan-600", emoji: "🚀", rating: 4.8, reviews: 456, description: "A lone astronaut must save the earth from disaster." },
-  { id: "BK003", title: "Atomic Habits", author: "James Clear", publisher: "Avery Publishing", status: null, tags: ["Self-Help", "Productivity"], copies: 5, availableCopies: 5, gradient: "from-green-400 to-emerald-600", emoji: "💡", rating: 4.7, reviews: 892, description: "An easy way to build good habits and break bad ones." },
+  { id: 5, title: "The Midnight Library", author: "Matt Haig", publisher: "Penguin Random House", status: "New", statusVariant: "default" as const, tags: ["Fiction", "Fantasy"], copies: 12, availableCopies: 8, gradient: "from-purple-400 to-indigo-600", emoji: "📖", rating: 4.5, reviews: 234, description: "A dazzling novel about all the choices that go into a life well lived." },
+  { id: 6, title: "Project Hail Mary", author: "Andy Weir", publisher: "Ballantine Books", status: "Popular", statusVariant: "secondary" as const, tags: ["Sci-Fi", "Adventure"], copies: 8, availableCopies: 2, gradient: "from-blue-400 to-cyan-600", emoji: "🚀", rating: 4.8, reviews: 456, description: "A lone astronaut must save the earth from disaster." },
+  { id: 7, title: "Atomic Habits", author: "James Clear", publisher: "Avery Publishing", status: null, tags: ["Self-Help", "Productivity"], copies: 5, availableCopies: 5, gradient: "from-green-400 to-emerald-600", emoji: "💡", rating: 4.7, reviews: 892, description: "An easy way to build good habits and break bad ones." },
 ];
 
 // Danh sách các thể loại
@@ -50,13 +50,61 @@ export default function Component() {
   const navigate = useNavigate();
 
   // Function to add book to cart
-const addToCart = (book: any) => {
-  // Check if book already exists in cart
-  const exists = cartItems.find(item => item.id === book.id);
-  if (!exists) {
-    setCartItems([...cartItems, book]);
+// const addToCart = (book: any) => {
+//   // Check if book already exists in cart
+//   const exists = cartItems.find(item => item.id === book.id);
+//   if (!exists) {
+//     setCartItems([...cartItems, book]);
+//   }
+// };
+
+// Function to add book to cart
+const addToCart = async (book: any) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Vui lòng đăng nhập trước khi thêm vào giỏ hàng!");
+    navigate("/login");
+    return;
+  }
+
+  // Dữ liệu gửi lên server
+  const formData = {
+    id_sach: book.id,
+    so_luong: 1
+  };
+
+  try {
+    console.log("📦 GỬI YÊU CẦU THÊM VÀO GIỎ HÀNG:", formData);
+
+    const res = await fetch("http://localhost:3001/user/service/insert-book", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert("❌ Lỗi: " + (data.message || "Không thể thêm vào giỏ hàng"));
+      return;
+    }
+
+    alert("✅ " + (data.message || "Đã thêm vào giỏ hàng!"));
+
+    // Thêm vào giỏ hàng local (frontend)
+    const exists = cartItems.find(item => item.id === book.id);
+    if (!exists) {
+      setCartItems([...cartItems, book]);
+    }
+  } catch (error) {
+    console.error("🚨 Lỗi khi gửi yêu cầu thêm vào giỏ hàng:", error);
+    alert("Có lỗi xảy ra khi thêm vào giỏ hàng!");
   }
 };
+
 
 // Function to remove from cart
 const removeFromCart = (bookId: string) => {
