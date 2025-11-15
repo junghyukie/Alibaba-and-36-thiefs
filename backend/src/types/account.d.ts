@@ -21,10 +21,11 @@ export interface OTPRecord {
 // }
 export interface BorrowedCard{
   id_muon:string
-   doc_gia_id: number;
+   id_doc_gia: number;
    ngay_muon: string;
    ngay_het_han: string;
+   han_tra:string;
    ngay_tra_thuc_te: string;
-   tinh_trang:string;
-   ban_sao_id: string;
+   trang_thai:string;
+   id_sach: string;
 }
