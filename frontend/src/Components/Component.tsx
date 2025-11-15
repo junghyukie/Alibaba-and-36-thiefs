@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
 
 // Define cart item type
 type CartItem = {
@@ -12,13 +11,10 @@ type CartItem = {
 };
 
 // 1. Import tất cả component cần thiết từ shadcn/ui và lucide-react
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Home } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -27,8 +23,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Bell, Heart, Search, BookOpen, LogOut, User, ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import BookDetailDialog from "./BookDetailDialog";
+import Header from "./Header";
 
 // Dữ liệu mẫu cho các cuốn sách
 const books = [
@@ -44,11 +41,8 @@ export default function Component() {
   const [selectedBook, setSelectedBook] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const navigate = useNavigate();
 
   // Function to add book to cart
 const addToCart = (book: any) => {
@@ -70,108 +64,10 @@ const openBookFromCart = (book: any) => {
   setIsDialogOpen(true);
 };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setIsDropdownOpen(false);
-  };
-
-  const handleLogin = () => {
-    // This would navigate to Login.tsx file
-    navigate('/login');
-  };
-
-  const handleAccount = () => {
-    // This would navigate to AccountInfo.tsx file
-    navigate('/accinfo');
-  }
-
-  const handleHome = () => {
-    navigate('/');
-  }
-
 
   return (
     <div id="webcrumbs" className="bg-muted/40 min-h-screen">
-      <header className="bg-background shadow-sm sticky top-0 z-10 border-b">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-
-            <button onClick={handleHome} className="p-2 hover:bg-gray-100 rounded">
-              <Home className="h-6 w-6 text-primary" />
-            </button>
-
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-6 w-6 text-primary" />
-              <h1 className="text-xl font-bold text-primary">
-                Alibaba and 36 Thiefs
-              </h1>
-            </div>
-
-            <div className="relative flex-1 max-w-sm hidden md:block">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search books, authors..."
-                className="pl-8 w-full"
-              />
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-              </Button>
-              {isLoggedIn ? (
-                <div className="relative">
-                  <button
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="hover:opacity-75 transition-opacity"
-                  >
-                    <Avatar>
-                      <AvatarFallback>GU</AvatarFallback>
-                    </Avatar>
-                  </button>
-                  
-                  {isDropdownOpen && (
-                    <div
-                      className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20"
-                      // close when clicking outside
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {/* Account button */}
-                      <button
-                        onClick={() => {
-                          setIsDropdownOpen(false);
-                          handleAccount();               // calls your function
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 rounded-t-md transition"
-                      >
-                        <User className="h-4 w-4" />
-                        Account
-                      </button>
-
-                      {/* Logout button */}
-                      <button
-                        onClick={() => {
-                          setIsDropdownOpen(false);
-                          handleLogout();
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600 rounded-b-md transition"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Button onClick={handleLogin} size="sm">
-                  Login
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">

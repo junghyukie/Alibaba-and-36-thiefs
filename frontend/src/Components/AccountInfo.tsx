@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from './Header';
 
 const IoniconsScripts = () => (
   <>
@@ -19,7 +20,7 @@ const get_address = () => "số 10 Đan Phượng, Hà Nội";
 const AccountInfo: React.FC = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    email: "", username: "", password: "", confirm: "",
+    email: "", username: "", password: "",
     fullname: "", phone: "", dob: "", address: ""
   });
 
@@ -28,7 +29,6 @@ const AccountInfo: React.FC = () => {
       email: get_email(),
       username: get_username(),
       password: "",
-      confirm: "",
       fullname: get_fullname(),
       phone: get_phone(),
       dob: get_dob(),
@@ -36,26 +36,15 @@ const AccountInfo: React.FC = () => {
     });
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSave = () => {
-    if (form.password && form.password !== form.confirm) {
-      alert("Mật khẩu không khớp!");
-      return;
-    }
-    alert("Cập nhật thành công!");
-  };
-
   return (
     <>
-      {/* TOÀN BỘ CSS + SCROLL + HEADER + BUTTON CỐ ĐỊNH */}
+      <Header />
+      {/* ==================== CSS ==================== */}
       <style jsx>{`
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
         section {
           display:flex; justify-content:center; align-items:center;
-          min-height:100vh; width:100%; padding:20px;
+          min-height:calc(100vh - 64px); width:100%; padding:20px;
           background:url('https://images2.alphacoders.com/104/1042582.jpg') no-repeat center/cover;
         }
         .box {
@@ -65,58 +54,63 @@ const AccountInfo: React.FC = () => {
           box-shadow:0 20px 50px rgba(0,0,0,0.3);
           overflow:hidden; display:flex; flex-direction:column;
         }
-        /* HEADER CỐ ĐỊNH */
+
+        /* HEADER */
         .header {
           padding:24px 20px 16px; text-align:center; background:rgba(255,255,255,0.98);
-          position:sticky; top:0; z-index:10;
           box-shadow:0 2px 10px rgba(0,0,0,0.1);
         }
-        .header h2 {
-          font-size:2.1em; color:#1e3a8a; font-weight:700;
-        }
-        /* NỘI DUNG CUỘN */
+        .header h2 { font-size:2.1em; color:#1e3a8a; font-weight:700; }
+
+        /* SCROLL AREA */
         .scroll-area {
-          flex:1; overflow-y:auto; padding:10px 30px 20px;
+          flex:1; overflow-y:auto; padding:20px 30px 40px;
           scrollbar-width:thin;
         }
         .scroll-area::-webkit-scrollbar { width:6px; }
-        .scroll-area::-webkit-scrollbar-thumb {
-          background:#888; border-radius:3px;
-        }
-        /* INPUT BOX */
-        .input-box {
+        .scroll-area::-webkit-scrollbar-thumb { background:#888; border-radius:3px; }
+
+        /* ----------------- INFO BOX (chỉ hiển thị) ----------------- */
+        .info-box {
           position:relative; width:100%; margin:26px 0;
           border-bottom:2px solid #666;
         }
-        .input-box .icon {
+        .info-box .icon {
           position:absolute; right:8px; color:#333;
-          font-size:1.3em; line-height:57px;
+          font-size:1.3em; line-height:50px;   /* đồng bộ với height input */
         }
-        .input-box label {
+        .info-box label {
           position:absolute; top:50%; left:5px;
           transform:translateY(-50%); font-size:1em; color:#333;
           pointer-events:none; transition:.4s;
         }
-        .input-box input:focus ~ label,
-        .input-box input:valid ~ label {
+        /* Khi input có giá trị → label lên trên */
+        .info-box input:not(:placeholder-shown) ~ label,
+        .info-box input:focus ~ label {
           top:-5px; font-size:0.85em; color:#1e40af;
         }
-        .input-box input {
+        .info-box input {
           width:100%; height:50px; background:transparent;
           border:none; outline:none; font-size:1em; color:#333;
           padding:0 35px 0 5px;
+          cursor:default;   /* không cho cảm giác có thể chỉnh sửa */
         }
-        .input-box.date-input label {
+
+        /* Trường ngày sinh (type=date) */
+        .info-box.date-input label {
           position:static; transform:none; color:#333;
           font-size:1em; margin-bottom:8px; display:block;
         }
-        .input-box.date-input input {
+        .info-box.date-input input {
           padding-left:5px; color:#333;
         }
-        /* NÚT CỐ ĐỊNH DƯỚI */
+
+        /* ----------------- INPUT BOX (giữ lại cho các form khác) ----------------- */
+        .input-box { /* giữ nguyên nếu cần ở trang khác */ }
+
+        /* FOOTER */
         .footer {
           padding:20px; background:rgba(255,255,255,0.98);
-          position:sticky; bottom:0; z-index:10;
           box-shadow:0 -2px 10px rgba(0,0,0,0.1);
         }
         .footer button {
@@ -128,103 +122,84 @@ const AccountInfo: React.FC = () => {
           background:#1e3a8a; transform:translateY(-2px);
           box-shadow:0 8px 20px rgba(30,64,175,0.4);
         }
+
         @media (max-width:480px) {
           .box { border-radius:18px; }
           .header h2 { font-size:1.9em; }
         }
       `}</style>
 
-      {/* FONT POPPINS */}
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-      <section>
-        <div className="box">
-          {/* HEADER CỐ ĐỊNH */}
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <section>
+          <div className="box">
+          {/* HEADER */}
           <div className="header">
             <h2>Thông tin tài khoản</h2>
           </div>
 
-          {/* NỘI DUNG CUỘN */}
+          {/* SCROLL AREA */}
           <div className="scroll-area">
-            <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
+            <form onSubmit={e => e.preventDefault()}>
               {/* Email */}
-              <div className="input-box">
+              <div className="info-box">
                 <span className="icon"><ion-icon name="mail"></ion-icon></span>
-                <input type="email" name="email" value={form.email} onChange={handleChange} required />
+                <input type="email" value={form.email} readOnly placeholder=" " />
                 <label>Email</label>
               </div>
 
               {/* Tên đăng nhập */}
-              <div className="input-box">
+              <div className="info-box">
                 <span className="icon"><ion-icon name="person"></ion-icon></span>
-                <input type="text" name="username" value={form.username} onChange={handleChange} required />
+                <input type="text" value={form.username} readOnly placeholder=" " />
                 <label>Tên đăng nhập</label>
               </div>
 
-              {/* Mật khẩu mới */}
-              <div className="input-box">
+              {/* Mật khẩu */}
+              <div className="info-box">
                 <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
-                <input type="password" name="password" value={form.password} onChange={handleChange} />
-                <label>Mật khẩu mới</label>
-              </div>
-
-              {/* Xác nhận */}
-              <div className="input-box">
-                <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
-                <input type="password" name="confirm" value={form.confirm} onChange={handleChange} />
-                <label>Xác nhận mật khẩu</label>
+                <input type="password" value="********" readOnly placeholder=" " />
+                <label>Mật khẩu</label>
               </div>
 
               {/* Họ tên */}
-              <div className="input-box">
+              <div className="info-box">
                 <span className="icon"><ion-icon name="person-circle"></ion-icon></span>
-                <input type="text" name="fullname" value={form.fullname} onChange={handleChange} required />
+                <input type="text" value={form.fullname} readOnly placeholder=" " />
                 <label>Họ và tên</label>
               </div>
 
               {/* Số điện thoại */}
-              <div className="input-box">
+              <div className="info-box">
                 <span className="icon"><ion-icon name="call"></ion-icon></span>
-                <input
-                  type="text"
-                  name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  pattern="[0-9]*"
-                  inputMode="numeric"
-                  onKeyPress={(e) => !/[0-9]/.test(e.key) && e.preventDefault()}
-                />
+                <input type="text" value={form.phone} readOnly placeholder=" " />
                 <label>Số điện thoại</label>
               </div>
 
-              {/* Ngày sinh */}
-              <div className="input-box date-input">
+              {/* Ngày sinh – vẫn dùng .info-box + .date-input */}
+              <div className="info-box date-input">
                 <span className="icon"><ion-icon name="calendar"></ion-icon></span>
                 <label>Ngày sinh</label>
-                <input
-                  type="date"
-                  name="dob"
-                  value={form.dob}
-                  onChange={handleChange}
-                  style={{ color: '#333' }}
-                />
+                <input type="date" value={form.dob} readOnly />
               </div>
 
               {/* Địa chỉ */}
-              <div className="input-box">
+              <div className="info-box">
                 <span className="icon"><ion-icon name="location"></ion-icon></span>
-                <input type="text" name="address" value={form.address} onChange={handleChange} required />
+                <input type="text" value={form.address} readOnly placeholder=" " />
                 <label>Địa chỉ</label>
               </div>
             </form>
           </div>
 
-          {/* NÚT CỐ ĐỊNH DƯỚI */}
+          {/* FOOTER */}
           <div className="footer">
-            <button onClick={handleSave}>Lưu thay đổi</button>
+            <button onClick={() => navigate('/password-change')}>Thay đổi mật khẩu</button>
           </div>
         </div>
       </section>
+      </div>
 
       <IoniconsScripts />
     </>

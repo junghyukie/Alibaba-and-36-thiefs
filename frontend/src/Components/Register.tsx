@@ -55,7 +55,7 @@ const Register: React.FC = () => {
           align-items: center;
           width: 100%;
           height: 100vh;
-          background: url('https://www.thinkupthemes.com/blog/wp-content/uploads/2021/10/best-library-wordpress-themes.jpg') no-repeat;
+          background: url('https://images2.alphacoders.com/104/1042582.jpg') no-repeat;
           background-size: cover;
           background-position: center;
         }
