@@ -1,6 +1,5 @@
- import React, { useState } from "react";
- import "./style.css";
-
+import React, { useState } from "react";
+import "./style.css";
 
 const UpdateReturnDate: React.FC = () => {
   const [idMuon, setIdMuon] = useState("");
@@ -12,23 +11,29 @@ const UpdateReturnDate: React.FC = () => {
 
     console.log("Dữ liệu gửi đi:", {
       id_muon: idMuon,
-      id_doc_gia: idDocGia,
-      ngay_tra_thuc_te: ngayTraThucTe,
+      id_doc_gia: Number(idDocGia),
+      han_tra: ngayTraThucTe,
     });
 
     try {
-      const res = await fetch("http://localhost:3001/api/borrowedcard/update-return", {
+      const res = await fetch("http://localhost:3001/api/borrowed/change-return-date", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id_muon: idMuon,
           id_doc_gia: Number(idDocGia),
-          ngay_tra_thuc_te: ngayTraThucTe,
+          han_tra: ngayTraThucTe,
         }),
       });
 
       const data = await res.json();
-      alert(data.message || "Cập nhật ngày trả thành công!");
+      
+      if(res.ok){
+        alert(data.message || "Cập nhật ngày trả thành công!");
+      }
+      else{
+        alert(data.message || "Lỗi");
+      }
     } catch (err) {
       console.error("Lỗi cập nhật:", err);
       alert("Không thể kết nối tới server!");
@@ -67,5 +72,3 @@ const UpdateReturnDate: React.FC = () => {
 };
 
 export default UpdateReturnDate;
-
-
