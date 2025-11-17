@@ -7,6 +7,8 @@ const getName = () => 'Nguyễn Văn A';
 const getCardId = () => 'ABC123';
 const getCardType = () => 'Thẻ thường';
 const getValidity = () => '01/01/2025 - 31/12/2025';
+const getDebtAmount = () => '500.000 đồng';
+
 
 // Tính phí gia hạn (hiện tại mặc định 500k)
 const CalculateFee = (date: string) => {
@@ -16,10 +18,11 @@ const CalculateFee = (date: string) => {
 const LibraryCard: React.FC = () => {
   const navigate = useNavigate();
   const SoonExpired = true;
-  const InDebt = false;
+  const InDebt = true;
 
   const [showModal, setShowModal] = useState(false);
   const [renewDate, setRenewDate] = useState('');
+  const [showDebtModal, setShowDebtModal] = useState(false);
   const [fee, setFee] = useState('');
 
   const name = getName();
@@ -29,7 +32,7 @@ const LibraryCard: React.FC = () => {
 
   const handleRenewClick = () => {
     if (InDebt) {
-      alert('Tài khoản còn công nợ, chưa thể gia hạn thẻ');
+      setShowDebtModal(true);
     } else {
       setShowModal(true);
     }
@@ -100,6 +103,23 @@ const LibraryCard: React.FC = () => {
           .data-label { min-width:110px; }
           .modal { width: 90vw; }
         }
+
+        .close-button {
+          position: absolute;
+          top: 12px;
+          right: 16px;
+          background: transparent;
+          border: none;
+          font-size: 1.5rem;
+          color: #6b7280;
+          cursor: pointer;
+        }
+        .close-button:hover {
+          color: #111827;
+        }
+        .modal {
+          position: relative;
+        }
       `}</style>
 
       <Header />
@@ -146,12 +166,25 @@ const LibraryCard: React.FC = () => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal">
+            <button className="close-button" onClick={() => setShowModal(false)} aria-label="Đóng cửa sổ">×</button>
             <h2>Gia hạn thẻ</h2>
             <label>Gia hạn đến ngày:</label>
             <input type="date" value={renewDate} onChange={handleDateChange} />
             <label>Phí gia hạn:</label>
             <div className="readonly-box">{fee || '---'}</div>
             <button onClick={handleConfirmRenew}>Gia hạn</button>
+          </div>
+        </div>
+      )}
+
+      {showDebtModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <button className="close-button" onClick={() => setShowDebtModal(false)} aria-label="Đóng cửa sổ">×</button>
+            <h2>Tài khoản còn công nợ</h2>
+            <label>Số tiền nợ:</label>
+            <div className="readonly-box">{getDebtAmount()}</div>
+            <button onClick={() => alert('Chuyển đến trang thanh toán')}>Thanh toán nợ</button>
           </div>
         </div>
       )}
