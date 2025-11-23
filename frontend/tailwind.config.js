@@ -194,6 +194,6 @@ module.exports = {
         		'3.5': '14px'
         	}
         },
-        plugins: [require('@tailwindcss/line-clamp'), require("tailwindcss-animate")],
+        plugins: [ require("tailwindcss-animate")],
         important: '#webcrumbs'
     }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Define cart item type
 type CartItem = {
@@ -38,11 +39,29 @@ const books = [
 const categories = ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Biography", "Horror", "Historical"];
 
 export default function Component() {
+  const navigate = useNavigate();
   const [selectedBook, setSelectedBook] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    try {
+      const raw = localStorage.getItem('cartItems');
+      if (raw) return JSON.parse(raw) as CartItem[];
+    } catch (e) {
+      // ignore parse errors
+    }
+    return [];
+  });
+
+  // Persist cart to localStorage so other pages/components can read it
+  useEffect(() => {
+    try {
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    } catch (e) {
+      // ignore
+    }
+  }, [cartItems]);
 
   // Function to add book to cart
   // const addToCart = (book: any) => {

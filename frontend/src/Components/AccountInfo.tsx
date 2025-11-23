@@ -9,11 +9,11 @@ const IoniconsScripts = () => (
   </>
 );
 
-// Giả lập dữ liệu
-const get_email = () => "anhhai@gmail.com";
+// Giả lập dữ liệu (exported so other components can import)
+export const get_email = () => "anhhai@gmail.com";
 const get_username = () => "anhhai123";
-const get_fullname = () => "Nguyễn Văn Hai";
-const get_phone = () => "0909123456";
+export const get_fullname = () => "Nguyễn Văn Hai";
+export const get_phone = () => "0909123456";
 const get_dob = () => "2000-01-01";
 const get_address = () => "số 10 Đan Phượng, Hà Nội";
 

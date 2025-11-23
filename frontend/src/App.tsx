@@ -4,6 +4,7 @@ import Login from "./Components/Login";
 import ForgetPassword from "./Components/test"
 import UpdateUserForm from "./Components/test"
 import BorrowBookForm from "./Components/test";
+import BorrowBooks from "./Components/BorrowBooks"
 import Register from "./Components/Register"
 import UpdateReturnDate from "./Components/test";
 import Pinfo from "./Components/PersonInfoInsert"
@@ -25,6 +26,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/pinfo" element={<Pinfo />} />
         <Route path="/update" element={<UpdateReturnDate />} />
+        <Route path="/borrowbooks" element={<BorrowBooks />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );

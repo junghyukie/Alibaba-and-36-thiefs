@@ -4,7 +4,7 @@ import Header from './Header';
 
 // Placeholder data functions
 const getName = () => 'Nguyễn Văn A';
-const getCardId = () => 'ABC123';
+export const getCardId = () => 'ABC123';
 const getCardType = () => 'Thẻ thường';
 const getValidity = () => '01/01/2025 - 31/12/2025';
 const getDebtAmount = () => '500.000 đồng';
@@ -15,10 +15,12 @@ const CalculateFee = (date: string) => {
   return '500.000 VNĐ';
 };
 
+// Export debt flag so other components (e.g., BorrowBooks) can read it
+export const InDebt = true;
+
 const LibraryCard: React.FC = () => {
   const navigate = useNavigate();
   const SoonExpired = true;
-  const InDebt = true;
 
   const [showModal, setShowModal] = useState(false);
   const [renewDate, setRenewDate] = useState('');
