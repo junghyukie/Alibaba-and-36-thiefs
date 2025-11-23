@@ -29,9 +29,9 @@ import Header from "./Header";
 
 // Dữ liệu mẫu cho các cuốn sách
 const books = [
-  { id: "BK001", title: "The Midnight Library", author: "Matt Haig", publisher: "Penguin Random House", status: "New", statusVariant: "default" as const, tags: ["Fiction", "Fantasy"], copies: 12, availableCopies: 8, gradient: "from-purple-400 to-indigo-600", emoji: "📖", rating: 4.5, reviews: 234, description: "A dazzling novel about all the choices that go into a life well lived." },
-  { id: "BK002", title: "Project Hail Mary", author: "Andy Weir", publisher: "Ballantine Books", status: "Popular", statusVariant: "secondary" as const, tags: ["Sci-Fi", "Adventure"], copies: 8, availableCopies: 2, gradient: "from-blue-400 to-cyan-600", emoji: "🚀", rating: 4.8, reviews: 456, description: "A lone astronaut must save the earth from disaster." },
-  { id: "BK003", title: "Atomic Habits", author: "James Clear", publisher: "Avery Publishing", status: null, tags: ["Self-Help", "Productivity"], copies: 5, availableCopies: 5, gradient: "from-green-400 to-emerald-600", emoji: "💡", rating: 4.7, reviews: 892, description: "An easy way to build good habits and break bad ones." },
+  { id: 5, title: "The Midnight Library", author: "Matt Haig", publisher: "Penguin Random House", status: "New", statusVariant: "default" as const, tags: ["Fiction", "Fantasy"], copies: 12, availableCopies: 8, gradient: "from-purple-400 to-indigo-600", emoji: "📖", rating: 4.5, reviews: 234, description: "A dazzling novel about all the choices that go into a life well lived." },
+  { id: 6, title: "Project Hail Mary", author: "Andy Weir", publisher: "Ballantine Books", status: "Popular", statusVariant: "secondary" as const, tags: ["Sci-Fi", "Adventure"], copies: 8, availableCopies: 2, gradient: "from-blue-400 to-cyan-600", emoji: "🚀", rating: 4.8, reviews: 456, description: "A lone astronaut must save the earth from disaster." },
+  { id: 7, title: "Atomic Habits", author: "James Clear", publisher: "Avery Publishing", status: null, tags: ["Self-Help", "Productivity"], copies: 5, availableCopies: 5, gradient: "from-green-400 to-emerald-600", emoji: "💡", rating: 4.7, reviews: 892, description: "An easy way to build good habits and break bad ones." },
 ];
 
 // Danh sách các thể loại
@@ -45,29 +45,202 @@ export default function Component() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   // Function to add book to cart
-const addToCart = (book: any) => {
-  // Check if book already exists in cart
-  const exists = cartItems.find(item => item.id === book.id);
-  if (!exists) {
-    setCartItems([...cartItems, book]);
-  }
-};
+  // const addToCart = (book: any) => {
+  //   // Check if book already exists in cart
+  //   const exists = cartItems.find(item => item.id === book.id);
+  //   if (!exists) {
+  //     setCartItems([...cartItems, book]);
+  //   }
+  // };
 
-// Function to remove from cart
-const removeFromCart = (bookId: string) => {
-  setCartItems(cartItems.filter(item => item.id !== bookId));
-};
+  // Function to add book to cart
+  const addToCart = async (book: any) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Vui lòng đăng nhập trước khi thêm vào giỏ hàng!");
+      navigate("/login");
+      return;
+    }
 
-// Function to open book dialog from cart
-const openBookFromCart = (book: any) => {
-  setSelectedBook(book);
-  setIsDialogOpen(true);
-};
+    // Dữ liệu gửi lên server
+    const formData = {
+      id_sach: book.id,
+      so_luong: 1
+    };
+
+    try {
+      console.log("📦 GỬI YÊU CẦU THÊM VÀO GIỎ HÀNG:", formData);
+
+      const res = await fetch("http://localhost:3001/user/service/insert-book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert("❌ Lỗi: " + (data.message || "Không thể thêm vào giỏ hàng"));
+        return;
+      }
+
+      alert("✅ " + (data.message || "Đã thêm vào giỏ hàng!"));
+
+      // Thêm vào giỏ hàng local (frontend)
+      const exists = cartItems.find(item => item.id === book.id);
+      if (!exists) {
+        setCartItems([...cartItems, book]);
+      }
+    } catch (error) {
+      console.error("🚨 Lỗi khi gửi yêu cầu thêm vào giỏ hàng:", error);
+      alert("Có lỗi xảy ra khi thêm vào giỏ hàng!");
+    }
+  };
+
+  const [hasFetchedCart, setHasFetchedCart] = useState(false);
+
+  const toggleCart = async () => {
+    if (!isCartOpen) {
+      // Nếu chưa fetch lần nào, lấy dữ liệu từ server
+      if (!hasFetchedCart) {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Vui lòng đăng nhập để xem giỏ hàng!");
+          navigate("/login");
+          return;
+        }
+
+        try {
+          const res = await fetch("http://localhost:3001/user/service/cart-items", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            alert("❌ Lỗi khi lấy giỏ hàng: " + (data.message || ""));
+            return;
+          }
+
+          // Lưu vào state và localStorage
+          setCartItems(data || []);
+          localStorage.setItem("cartItems", JSON.stringify(data || []));
+          setHasFetchedCart(true);
+
+        } catch (error) {
+          console.error("Lỗi khi fetch cart:", error);
+          alert("Có lỗi xảy ra khi lấy giỏ hàng!");
+        }
+      } else {
+        // Nếu đã fetch rồi, lấy từ localStorage
+        const savedCart = JSON.parse(localStorage.getItem("cartItems") || "[]");
+        setCartItems(savedCart);
+      }
+    }
+
+    setIsCartOpen(!isCartOpen);
+  };
+
+  // Function to remove from cart
+  const removeFromCart = (bookId: string) => {
+    setCartItems(cartItems.filter(item => item.id !== bookId));
+  };
+
+  // Function to open book dialog from cart
+  const openBookFromCart = (book: any) => {
+    setSelectedBook(book);
+    setIsDialogOpen(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");       // Xoá token
+    localStorage.removeItem("cartItems");   // Xoá giỏ hàng trong localStorage
+    setCartItems([]);                       // Xoá giỏ hàng trong state
+    setIsLoggedIn(false);
+    setIsDropdownOpen(false);
+  };
+
+  const handleLogin = () => {
+    // This would navigate to Login.tsx file
+    navigate('/login');
+  };
 
 
   return (
     <div id="webcrumbs" className="bg-muted/40 min-h-screen">
-      <Header />
+      <header className="bg-background shadow-sm sticky top-0 z-10 border-b">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-primary" />
+              <h1 className="text-xl font-bold text-primary">
+                Alibaba and 36 Thiefs
+              </h1>
+            </div>
+
+            <div className="relative flex-1 max-w-sm hidden md:block">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search books, authors..."
+                className="pl-8 w-full"
+              />
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="icon">
+                <Bell className="h-5 w-5" />
+              </Button>
+              {isLoggedIn ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="hover:opacity-75 transition-opacity"
+                  >
+                    <Avatar>
+                      <AvatarFallback>GU</AvatarFallback>
+                    </Avatar>
+                  </button>
+
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-background border border-gray-200 rounded-md shadow-lg z-20">
+                      <button
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          // Navigate to account page
+                          alert("Navigate to Account page");
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 rounded-t-md"
+                      >
+                        <User className="h-4 w-4" />
+                        Account
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600 rounded-b-md"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Button onClick={handleLogin} size="sm">
+                  Login
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
@@ -80,12 +253,12 @@ const openBookFromCart = (book: any) => {
             </p>
           </div>
 
-            <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
+          <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
             <Select>
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by Category" />
               </SelectTrigger>
-              <SelectContent 
+              <SelectContent
                 className="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-md"
                 position="popper"
               >
@@ -105,7 +278,7 @@ const openBookFromCart = (book: any) => {
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
-              <SelectContent 
+              <SelectContent
                 className="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-md"
                 position="popper"
               >
@@ -170,15 +343,15 @@ const openBookFromCart = (book: any) => {
           ))}
         </div>
       </main>
-      <BookDetailDialog 
-        book={selectedBook} 
-        open={isDialogOpen} 
-        onOpenChange={setIsDialogOpen} 
+      <BookDetailDialog
+        book={selectedBook}
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
         onAddToCart={addToCart}
       />
 
       <button
-        onClick={() => setIsCartOpen(!isCartOpen)}
+        onClick={toggleCart}
         className="fixed bottom-4 left-4 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-colors duration-200 flex items-center gap-2"
         aria-label="Toggle cart"
       >
@@ -187,32 +360,14 @@ const openBookFromCart = (book: any) => {
       </button>
 
       {isCartOpen && (
-  <>
-    {/* Backdrop mờ */}
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-40 z-40"
-      onClick={() => setIsCartOpen(false)}
-    />
+        <div className="fixed bottom-20 left-4 bg-white rounded-lg shadow-xl p-4 w-80 max-h-96 overflow-y-auto">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-bold text-lg">Cart</h3>
+            <button onClick={() => setIsCartOpen(false)} className="text-gray-500 hover:text-gray-700">
+              ✕
+            </button>
+          </div>
 
-    {/* Cửa sổ giỏ hàng - căn giữa */}
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div 
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col"
-        onClick={(e) => e.stopPropagation()} // Ngăn đóng khi click vào giỏ hàng
-      >
-        {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b">
-          <h3 className="text-2xl font-bold">Giỏ hàng của bạn</h3>
-          <button 
-            onClick={() => setIsCartOpen(false)} 
-            className="text-2xl text-gray-500 hover:text-gray-800 transition"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Nội dung giỏ hàng - có thể cuộn */}
-        <div className="flex-1 overflow-y-auto p-6">
           {cartItems.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">Giỏ hàng trống</p>
@@ -245,20 +400,8 @@ const openBookFromCart = (book: any) => {
             </div>
           )}
         </div>
+      )}
 
-        {/* Footer (tùy chọn thêm nút thanh toán sau) */}
-        {cartItems.length > 0 && (
-          <div className="p-6 border-t bg-gray-50">
-            <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition">
-              Mượn sách ({cartItems.length} sách)
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  </>
-)}
-        
     </div>
   );
 }

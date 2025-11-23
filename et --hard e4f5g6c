@@ -1,0 +1,20 @@
+[33mb1d9a55[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mVietPham[m[33m, [m[1;31morigin/VietPham[m[33m, [m[1;31morigin/HoangEm[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mHoangEm[m[33m)[m Merge branch 'HoangEm' of https://github.com/junghyukie/Alibaba-and-36-thiefs into HoangEm
+[33m8191acf[m chinh sua nho
+[33me6e6a38[m login-register
+[33mfc3c3a7[m Insert personal info
+[33m6627f6d[m Thêm file register
+[33m4aec45e[m Merge remote-tracking branch 'origin/VietPham' into HoangEm
+[33m7e8c839[m Thêm giao diện thông tin cá nhân
+[33m5fcc4dc[m Doi CSDL sang PostGres
+[33mf3fc27e[m Bổ sung giỏ hàng
+[33m27fb567[m 🧹 clean up: ignore node_modules, dist, and .env
+[33mb728ecb[m chuyen js snag ts
+[33m3de9bd7[m chia lai api
+[33ma20ea1c[m backend
+[33mc759174[m Kết nối trang chủ và login
+[33mb79e98f[m fixed login file, deleted style.css
+[33ma3988a7[m added register
+[33m2260e11[m Login
+[33m5be7073[m update: thêm view detail dialog và 1 số trường trống để sau ghép api
+[33m7661a4f[m update: thêm tailwind, postcss config và thêm 1 placeholder Component để có giao diện
+[33m343f760[m first commit

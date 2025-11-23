@@ -47,3 +47,23 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     res.status(400).json({ message: error.message });
   }
 };
+
+
+import { updateUserService } from "../services/authService";
+import { AuthRequest } from "../types/auth";
+
+export const updateUserController = async (req: AuthRequest, res: Response) => {
+  console.log("Received update request:", req.body);
+  try {
+    const id_acc = req.user?.id_acc; // lấy id từ token
+    if (!id_acc) return res.status(401).json({ message: "Thiếu ID người dùng" });
+
+    const result = await updateUserService(id_acc, req.body);
+
+    if (!result.success) return res.status(400).json(result);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Lỗi server" });
+  }
+};
