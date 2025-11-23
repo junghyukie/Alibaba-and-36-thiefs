@@ -19,3 +19,9 @@ export interface Ban_sao {
     gia_tri : number;
     ke_sach : string;
 }
+
+export interface cartItems{
+    id_sach: number;
+    title : string;
+    author : string;
+}

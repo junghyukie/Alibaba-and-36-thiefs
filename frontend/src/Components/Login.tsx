@@ -28,6 +28,7 @@ const Login: React.FC = () => {
       // alert(data.message); // thông báo từ server
       if (data.success) {
         localStorage.setItem("token", data.token);
+       
         if (data.id_role === 1) {
           alert("Chao mung Users");
           navigate("/");
@@ -46,10 +47,11 @@ const Login: React.FC = () => {
       console.error(err);
     }
   };
+// };
 
-  return (
-    <>
-      <style>{`
+return (
+  <>
+    <style>{`
         * {
           margin: 0;
           padding: 0;
@@ -195,53 +197,53 @@ const Login: React.FC = () => {
         }
       `}</style>
 
-      <section>
-        <div className="box">
-          <form onSubmit={handleSubmit}>
-            <h2>Login</h2>
+    <section>
+      <div className="box">
+        <form onSubmit={handleSubmit}>
+          <h2>Login</h2>
 
-            <div className="input-box">
-              <span className="icon"><ion-icon name="mail"></ion-icon></span>
-              <input 
-                type="email" 
-                required 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <label>Email</label>
-            </div>
+          <div className="input-box">
+            <span className="icon"><ion-icon name="mail"></ion-icon></span>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <label>Email</label>
+          </div>
 
-            <div className="input-box">
-              <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
-              <input 
-                type="password" 
-                required 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <label>Password</label>
-            </div>
+          <div className="input-box">
+            <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <label>Password</label>
+          </div>
 
-            <div className="remember-forgot">
-              <label><input type="checkbox" />Remember me</label>
-              <a href="#">Forgot password?</a>
-            </div>
+          <div className="remember-forgot">
+            <label><input type="checkbox" />Remember me</label>
+            <a href="#">Forgot password?</a>
+          </div>
 
-            <button type="submit">Login</button>
+          <button type="submit">Login</button>
 
-            <div className="register-link">
-              <p>
-                Don't have an account? 
-                <a onClick={() => navigate('/register')}>Register</a>
-              </p>
-            </div>
-          </form>
-        </div>
-      </section>
+          <div className="register-link">
+            <p>
+              Don't have an account?
+              <a onClick={() => navigate('/register')}>Register</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </section>
 
-      <IoniconsScripts />
-    </>
-  );
+    <IoniconsScripts />
+  </>
+);
 };
 
 export default Login;

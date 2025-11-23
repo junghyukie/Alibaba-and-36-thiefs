@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../types/auth"
-import { borrowBookService, insertBookService } from "../services/userService";
+import { borrowBookService, inforBookinCartService, insertBookService } from "../services/userService";
+import { promises } from "nodemailer/lib/xoauth2";
 export const insertBookController = async (req: AuthRequest, res: Response): Promise<any> => {
     try {
         const id_acc = req.user?.id_acc;
@@ -21,7 +22,7 @@ export const insertBookController = async (req: AuthRequest, res: Response): Pro
 }
 
 
-export const borrowBookController  = async (req : AuthRequest, res : Response) : Promise <any> =>{
+export const borrowBookController  = async (req : AuthRequest, res : Response) : Promise <any> => {
     try{
         const id_acc = req.user?.id_acc;
         if (!id_acc) return res.status(401).json({ message: "Xin hay dang nhap" });
@@ -33,6 +34,19 @@ export const borrowBookController  = async (req : AuthRequest, res : Response) :
         else{
             return res.status(200).json(result)
         }
+    }catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Lỗi server" });
+    }
+}
+
+export const inforBookinCartController = async (req : AuthRequest, res : Response) : Promise <any> =>{
+    try{
+        const id_acc = req.user?.id_acc;
+        if (!id_acc) return res.status(401).json({ message: "Xin hay dang nhap" });
+        const results = await inforBookinCartService(id_acc);
+        console.log("Dang chay controller");
+        return res.status(200).json(results);
     }catch (err) {
         console.error(err);
         res.status(500).json({ message: "Lỗi server" });

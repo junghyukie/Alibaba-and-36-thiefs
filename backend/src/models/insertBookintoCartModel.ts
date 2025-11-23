@@ -1,5 +1,5 @@
 import pool from "../config/db";
-import { insertBook } from "../types/userService";
+import { cartItems, insertBook } from "../types/userService";
 export const insertBookModel = async(id_acc : number,data : insertBook) : Promise<any> =>{
     const sql = `
         INSERT INTO gio_hang_chi_tiet(id_account, id_sach , so_luong)
@@ -28,4 +28,17 @@ export const checkBook_Cart = async (id_acc: number,data : insertBook) : Promise
     `
     const results = await pool.query(sql,[id_acc , data.id_sach]);
     return results.rowCount ;
+}
+
+export const inforBookinCart = async (id_acc: number) : Promise<cartItems[]> => {
+    const sql = 
+    `SELECT S.id_sach as id_sach , S.tieu_de as title , Tg.ten as author
+    From gio_hang_chi_tiet g
+    Join sach S on S.id_sach = g.id_sach
+    Join tac_gia Tg on Tg.id_tac_gia = S.id_tac_gia
+    where g.id_account = $1;
+    `
+    const results = await pool.query(sql,[id_acc]);
+    return results.rows || [];
+   
 }

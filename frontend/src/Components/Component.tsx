@@ -50,74 +50,124 @@ export default function Component() {
   const navigate = useNavigate();
 
   // Function to add book to cart
-// const addToCart = (book: any) => {
-//   // Check if book already exists in cart
-//   const exists = cartItems.find(item => item.id === book.id);
-//   if (!exists) {
-//     setCartItems([...cartItems, book]);
-//   }
-// };
+  // const addToCart = (book: any) => {
+  //   // Check if book already exists in cart
+  //   const exists = cartItems.find(item => item.id === book.id);
+  //   if (!exists) {
+  //     setCartItems([...cartItems, book]);
+  //   }
+  // };
 
-// Function to add book to cart
-const addToCart = async (book: any) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Vui lòng đăng nhập trước khi thêm vào giỏ hàng!");
-    navigate("/login");
-    return;
-  }
-
-  // Dữ liệu gửi lên server
-  const formData = {
-    id_sach: book.id,
-    so_luong: 1
-  };
-
-  try {
-    console.log("📦 GỬI YÊU CẦU THÊM VÀO GIỎ HÀNG:", formData);
-
-    const res = await fetch("http://localhost:3001/user/service/insert-book", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert("❌ Lỗi: " + (data.message || "Không thể thêm vào giỏ hàng"));
+  // Function to add book to cart
+  const addToCart = async (book: any) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Vui lòng đăng nhập trước khi thêm vào giỏ hàng!");
+      navigate("/login");
       return;
     }
 
-    alert("✅ " + (data.message || "Đã thêm vào giỏ hàng!"));
+    // Dữ liệu gửi lên server
+    const formData = {
+      id_sach: book.id,
+      so_luong: 1
+    };
 
-    // Thêm vào giỏ hàng local (frontend)
-    const exists = cartItems.find(item => item.id === book.id);
-    if (!exists) {
-      setCartItems([...cartItems, book]);
+    try {
+      console.log("📦 GỬI YÊU CẦU THÊM VÀO GIỎ HÀNG:", formData);
+
+      const res = await fetch("http://localhost:3001/user/service/insert-book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert("❌ Lỗi: " + (data.message || "Không thể thêm vào giỏ hàng"));
+        return;
+      }
+
+      alert("✅ " + (data.message || "Đã thêm vào giỏ hàng!"));
+
+      // Thêm vào giỏ hàng local (frontend)
+      const exists = cartItems.find(item => item.id === book.id);
+      if (!exists) {
+        setCartItems([...cartItems, book]);
+      }
+    } catch (error) {
+      console.error("🚨 Lỗi khi gửi yêu cầu thêm vào giỏ hàng:", error);
+      alert("Có lỗi xảy ra khi thêm vào giỏ hàng!");
     }
-  } catch (error) {
-    console.error("🚨 Lỗi khi gửi yêu cầu thêm vào giỏ hàng:", error);
-    alert("Có lỗi xảy ra khi thêm vào giỏ hàng!");
-  }
-};
+  };
 
+  const [hasFetchedCart, setHasFetchedCart] = useState(false);
 
-// Function to remove from cart
-const removeFromCart = (bookId: string) => {
-  setCartItems(cartItems.filter(item => item.id !== bookId));
-};
+  const toggleCart = async () => {
+    if (!isCartOpen) {
+      // Nếu chưa fetch lần nào, lấy dữ liệu từ server
+      if (!hasFetchedCart) {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Vui lòng đăng nhập để xem giỏ hàng!");
+          navigate("/login");
+          return;
+        }
 
-// Function to open book dialog from cart
-const openBookFromCart = (book: any) => {
-  setSelectedBook(book);
-  setIsDialogOpen(true);
-};
+        try {
+          const res = await fetch("http://localhost:3001/user/service/cart-items", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            alert("❌ Lỗi khi lấy giỏ hàng: " + (data.message || ""));
+            return;
+          }
+
+          // Lưu vào state và localStorage
+          setCartItems(data || []);
+          localStorage.setItem("cartItems", JSON.stringify(data || []));
+          setHasFetchedCart(true);
+
+        } catch (error) {
+          console.error("Lỗi khi fetch cart:", error);
+          alert("Có lỗi xảy ra khi lấy giỏ hàng!");
+        }
+      } else {
+        // Nếu đã fetch rồi, lấy từ localStorage
+        const savedCart = JSON.parse(localStorage.getItem("cartItems") || "[]");
+        setCartItems(savedCart);
+      }
+    }
+
+    setIsCartOpen(!isCartOpen);
+  };
+
+  // Function to remove from cart
+  const removeFromCart = (bookId: string) => {
+    setCartItems(cartItems.filter(item => item.id !== bookId));
+  };
+
+  // Function to open book dialog from cart
+  const openBookFromCart = (book: any) => {
+    setSelectedBook(book);
+    setIsDialogOpen(true);
+  };
 
   const handleLogout = () => {
+    localStorage.removeItem("token");       // Xoá token
+    localStorage.removeItem("cartItems");   // Xoá giỏ hàng trong localStorage
+    setCartItems([]);                       // Xoá giỏ hàng trong state
     setIsLoggedIn(false);
     setIsDropdownOpen(false);
   };
@@ -163,7 +213,7 @@ const openBookFromCart = (book: any) => {
                       <AvatarFallback>GU</AvatarFallback>
                     </Avatar>
                   </button>
-                  
+
                   {isDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-background border border-gray-200 rounded-md shadow-lg z-20">
                       <button
@@ -208,12 +258,12 @@ const openBookFromCart = (book: any) => {
             </p>
           </div>
 
-            <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
+          <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
             <Select>
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by Category" />
               </SelectTrigger>
-              <SelectContent 
+              <SelectContent
                 className="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-md"
                 position="popper"
               >
@@ -233,7 +283,7 @@ const openBookFromCart = (book: any) => {
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
-              <SelectContent 
+              <SelectContent
                 className="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-md"
                 position="popper"
               >
@@ -298,15 +348,15 @@ const openBookFromCart = (book: any) => {
           ))}
         </div>
       </main>
-      <BookDetailDialog 
-        book={selectedBook} 
-        open={isDialogOpen} 
-        onOpenChange={setIsDialogOpen} 
+      <BookDetailDialog
+        book={selectedBook}
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
         onAddToCart={addToCart}
       />
 
       <button
-        onClick={() => setIsCartOpen(!isCartOpen)}
+        onClick={toggleCart}
         className="fixed bottom-4 left-4 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-colors duration-200 flex items-center gap-2"
         aria-label="Toggle cart"
       >
@@ -322,7 +372,7 @@ const openBookFromCart = (book: any) => {
               ✕
             </button>
           </div>
-          
+
           {cartItems.length === 0 ? (
             <p className="text-gray-500 text-center py-4">Cart is empty</p>
           ) : (
@@ -353,7 +403,7 @@ const openBookFromCart = (book: any) => {
           )}
         </div>
       )}
-        
+
     </div>
   );
 }

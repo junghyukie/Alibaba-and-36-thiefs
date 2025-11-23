@@ -1,6 +1,6 @@
 import { borrowBook, insertBook } from "../types/userService"
-import { checkBook_Cart, checkCart, insertBookModel } from "../models/insertBookintoCartModel"
-import { borrowBookModel, checkSoLuongDaMuon, insertPhieuMuonModel, updateBanSao } from "../models/borrowBookModel";
+import { checkBook_Cart, checkCart, inforBookinCart, insertBookModel } from "../models/insertBookintoCartModel"
+import { borrowBookModel, checkBook_Cart2, checkSoLuongDaMuon, insertPhieuMuonModel, updateBanSao } from "../models/borrowBookModel";
 export const insertBookService = async(id_acc : number, data : insertBook) : Promise<any> =>{
     try{
         const check = await checkCart(id_acc);
@@ -26,8 +26,10 @@ export const borrowBookService = async (id_acc : number , data : borrowBook) : P
     try{
         const check = await checkSoLuongDaMuon(id_acc);
         if(check >= 3) return {success : false , message : "Da het luot muon sach"};
+        const test = await checkBook_Cart2(id_acc,data);
+        if(test === 0) return {success : false , message : "Cần cho sách vào giỏ trước khi mượn"};
         const result = await borrowBookModel(data);
-
+        
         if(result){
             console.log("Du so luong ban sao");
             const Phieu_Muon = await insertPhieuMuonModel(id_acc,data ,result.id_ban_sao);
@@ -54,5 +56,15 @@ export const borrowBookService = async (id_acc : number , data : borrowBook) : P
     }catch(err){
         console.error("Loi truy van sql" , err);
         return {success : false};
+    }
+}
+
+export const inforBookinCartService = async (id_acc : number) : Promise<any> => {
+    try{
+        console.log("infor Book Service Success")
+        return await inforBookinCart(id_acc);
+    }catch(err){
+        console.error("Loi truy van sql" , err);
+        return[] ;
     }
 }

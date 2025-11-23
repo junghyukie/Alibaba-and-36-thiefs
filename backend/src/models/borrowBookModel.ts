@@ -39,9 +39,19 @@ export const checkSoLuongDaMuon = async (id_acc : number) : Promise<any> => {
     const sql =
     `SELECT * 
     FROM phieu_muon
-    Where id_account = $1;
+    Where id_doc_gia = $1;
     `
     const result = await pool.query(sql, [id_acc]);
     return result.rowCount;
     
+}
+
+
+export const checkBook_Cart2 = async (id_acc: number,data : borrowBook) : Promise<any> =>{
+    const sql =
+    `SELECT * FROM gio_hang_chi_tiet
+    Where id_account = $1 and id_sach = $2;
+    `
+    const results = await pool.query(sql,[id_acc , data.id_sach]);
+    return results.rowCount ;
 }
