@@ -15,7 +15,9 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Email:', email, 'Password:', password);
+    if (!email || !password) {
+      console.log('You must fill in email and password');
+    }
     // Thêm logic xử lý đăng nhập (gọi API, validate, v.v.) ở đây
     try {
       const res = await fetch("http://localhost:3001/api/auth/login", {
@@ -65,7 +67,7 @@ return (
           align-items: center;
           width: 100%;
           height: 100vh;
-          background: url('https://www.thinkupthemes.com/blog/wp-content/uploads/2021/10/best-library-wordpress-themes.jpg') no-repeat;
+          background: url('https://images2.alphacoders.com/104/1042582.jpg') no-repeat;
           background-size: cover;
           background-position: center;
         }

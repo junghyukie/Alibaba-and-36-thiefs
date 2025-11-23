@@ -1,22 +1,14 @@
+import { Pool } from 'pg'
+import env from "dotenv"
 
-// import mysql from "mysql2";
-
-// export const connection = mysql.createConnection({
-//     host : 'localhost',
-//     port : 3307,
-//     user : 'root',
-//     password : '123456',
-//     database : 'library_sys',
-// });
-
-import { Pool } from "pg";
+env.config({ path: './src/.env' });
 
 const pool = new Pool({
-  user: "postgres",          // tên user trong DBeaver
-  host: "localhost",         // hoặc 127.0.0.1
-  database: "LibraryManagement",  // tên DB bạn đã tạo (vd: librarydb)
-  password: "123456", // mật khẩu bạn đặt khi cài PostgreSQL
-  port: 5432,                // cổng mặc định của PostgreSQL
+    user: process.env.PG_USER,
+    host: process.env.PG_HOST,
+    database: process.env.PG_DATABASE,
+    password: process.env.PG_PASSWORD,
+    port: Number(process.env.PG_PORT),
 });
 
 export default pool;
