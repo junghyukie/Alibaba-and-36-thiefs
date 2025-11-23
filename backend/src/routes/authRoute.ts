@@ -6,6 +6,7 @@ import {
   resetPassword,
 } from "../controllers/authController";
 
+
 const router = Router();
 
 // Đăng nhập
