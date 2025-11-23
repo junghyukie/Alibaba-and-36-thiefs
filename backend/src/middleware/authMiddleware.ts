@@ -10,7 +10,8 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
       return res.status(401).json({ message: "Vui lòng đăng nhập", success: false });
     }
 
-    const secret = "super_secret_key";
+    const secret = process.env.JWT_SECRET || "super_secret_key";
+
     const decoded = jwt.verify(token, secret) as { id_acc: number };
 
     // Lưu payload vào req.user để route có thể dùng

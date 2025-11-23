@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 // Define cart item type
 type CartItem = {
@@ -38,12 +39,19 @@ const books = [
 const categories = ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Biography", "Horror", "Historical"];
 
 export default function Component() {
+  // const [selectedBook, setSelectedBook] = useState(null);
+  // const [isDialogOpen, setIsDialogOpen] = useState(false);
+  // const [selectedCategory, setSelectedCategory] = useState("all");
+  // const [isCartOpen, setIsCartOpen] = useState(false);
+  // const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [selectedBook, setSelectedBook] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-
+  const navigate = useNavigate();
   // Function to add book to cart
   // const addToCart = (book: any) => {
   //   // Check if book already exists in cart
@@ -159,7 +167,18 @@ export default function Component() {
     setIsDialogOpen(true);
   };
 
+ const handleLogout = () => {
+    localStorage.removeItem("token");       // Xoá token
+    localStorage.removeItem("cartItems");   // Xoá giỏ hàng trong localStorage
+    setCartItems([]);                       // Xoá giỏ hàng trong state
+    setIsLoggedIn(false);
+    setIsDropdownOpen(false);
+  };
 
+  const handleLogin = () => {
+    // This would navigate to Login.tsx file
+    navigate('/login');
+  };
   return (
     <div id="webcrumbs" className="bg-muted/40 min-h-screen">
       <Header />
