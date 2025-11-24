@@ -74,7 +74,7 @@ export const getBookById = async (id: number) : Promise<Book | null> => {
         b.nxb_id,
         b.tieu_de,
         b.tom_tat,
-        b.isbn13,
+        b.isbn,
         b.ngon_ngu,
         b.nam_xb,
         tg.ten AS author,
@@ -91,20 +91,20 @@ export const getBookById = async (id: number) : Promise<Book | null> => {
       LEFT JOIN tac_gia tg ON b.tacgia_id = tg.id
       LEFT JOIN nxb p ON b.nxb_id = p.id
       WHERE b.id = $1
-      GROUP BY b.id, b.tacgia_id, b.nxb_id, b.tieu_de, b.tom_tat, b.isbn13, b.ngon_ngu, b.nam_xb, tg.ten, p.ten; `,
+      GROUP BY b.id, b.tacgia_id, b.nxb_id, b.tieu_de, b.tom_tat, b.isbn, b.ngon_ngu, b.nam_xb, tg.ten, p.ten; `,
     [id]
   );
   return result.rows[0] || null;
 }
 
 export const createBook = async (data: Omit<Book, "id">): Promise<Book> => {
-  const { tacgia_id, nxb_id, tieu_de, tom_tat, isbn13, ngon_ngu, nam_xb } = data;
+  const { tacgia_id, nxb_id, tieu_de, tom_tat, isbn, ngon_ngu, nam_xb } = data;
 
   const result = await pool.query(
-    ` INSERT INTO sach (tacgia_id, nxb_id, tieu_de, tom_tat, isbn13, ngon_ngu, nam_xb)
+    ` INSERT INTO sach (tacgia_id, nxb_id, tieu_de, tom_tat, isbn, ngon_ngu, nam_xb)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING * `,
-    [tacgia_id, nxb_id, tieu_de, tom_tat, isbn13, ngon_ngu, nam_xb]
+    [tacgia_id, nxb_id, tieu_de, tom_tat, isbn, ngon_ngu, nam_xb]
   );
   return result.rows[0];
 }
@@ -117,7 +117,7 @@ export const updateBook = async (id: number, data: Partial<Book>): Promise<Book 
 
   const result = await pool.query(
     ` UPDATE sach
-      SET tacgia_id=$1, nxb_id=$2, tieu_de=$3, tom_tat=$4, isbn13=$5, ngon_ngu=$6, nam_xb=$7
+      SET tacgia_id=$1, nxb_id=$2, tieu_de=$3, tom_tat=$4, isbn=$5, ngon_ngu=$6, nam_xb=$7
       WHERE id=$8
       RETURNING * `,
     [
@@ -125,7 +125,7 @@ export const updateBook = async (id: number, data: Partial<Book>): Promise<Book 
       updated.nxb_id,
       updated.tieu_de,
       updated.tom_tat,
-      updated.isbn13,
+      updated.isbn,
       updated.ngon_ngu,
       updated.nam_xb,
       id,

@@ -24,6 +24,9 @@ export class BookController {
   static async getById(req: Request, res: Response, next: NextFunction) {
     try {
       const id = Number(req.params.id);
+      if (isNaN(id) || id <= 0) {
+        return res.status(400).json({ error: "ID sách không hợp lệ" });
+      }
       const book = await BookService.getById(id);
       res.json(book);
     } catch (err) {
@@ -34,8 +37,16 @@ export class BookController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
       const book = await BookService.create(req.body);
-      res.status(201).json(book);
+      res.status(201).json({
+        message: "Thêm sách thành công!",
+        book,
+      });
     } catch (err) {
+        if (err instanceof Error) {
+          if (err.message === "Tên sách đã tồn tại") {
+            return res.status(400).json({ error: err.message });
+          }
+        }
       next(err);
     }
   }

@@ -4,7 +4,7 @@ export interface Book {
   nxb_id: number;
   tieu_de: string;
   tom_tat?: string;
-  isbn13: string;
+  isbn: string;
   ngon_ngu: string;
   nam_xb: number;
 }
