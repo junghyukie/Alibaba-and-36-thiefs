@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRoute from "./routes/authRoute"; // import đúng cú pháp ESModule
 import userServiceRoute from "./routes/userRoute";
+import bookRoute from "./routes/bookRoute";
 dotenv.config();
 
 const app: Application = express();
@@ -20,6 +21,8 @@ app.get("/", (req: Request, res: Response) => {
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/user/service/",userServiceRoute);
+// Books API
+app.use("/api/books", bookRoute);
 
 // Start server
 app.listen(port, () => {

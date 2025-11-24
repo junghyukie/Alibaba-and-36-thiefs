@@ -8,6 +8,7 @@ import BorrowBooks from "./Components/BorrowBooks"
 import Register from "./Components/Register"
 import UpdateReturnDate from "./Components/test";
 import Pinfo from "./Components/PersonInfoInsert"
+import LibraryCard from "./Components/LibraryCard";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 //import type UpdateReturnDate from "./Components/test";
 
@@ -28,6 +29,7 @@ function App() {
         <Route path="/update" element={<UpdateReturnDate />} />
         <Route path="/borrowbooks" element={<BorrowBooks />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/librarycard" element={<LibraryCard />} />
       </Routes>
     </BrowserRouter>
   );

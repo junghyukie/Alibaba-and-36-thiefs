@@ -28,18 +28,49 @@ import { Heart, ShoppingCart } from "lucide-react";
 import BookDetailDialog from "./BookDetailDialog";
 import Header from "./Header";
 
-// Dữ liệu mẫu cho các cuốn sách
-const books = [
-  { id: 5, title: "The Midnight Library", author: "Matt Haig", publisher: "Penguin Random House", status: "New", statusVariant: "default" as const, tags: ["Fiction", "Fantasy"], copies: 12, availableCopies: 8, gradient: "from-purple-400 to-indigo-600", emoji: "📖", rating: 4.5, reviews: 234, description: "A dazzling novel about all the choices that go into a life well lived." },
-  { id: 6, title: "Project Hail Mary", author: "Andy Weir", publisher: "Ballantine Books", status: "Popular", statusVariant: "secondary" as const, tags: ["Sci-Fi", "Adventure"], copies: 8, availableCopies: 2, gradient: "from-blue-400 to-cyan-600", emoji: "🚀", rating: 4.8, reviews: 456, description: "A lone astronaut must save the earth from disaster." },
-  { id: 7, title: "Atomic Habits", author: "James Clear", publisher: "Avery Publishing", status: null, tags: ["Self-Help", "Productivity"], copies: 5, availableCopies: 5, gradient: "from-green-400 to-emerald-600", emoji: "💡", rating: 4.7, reviews: 892, description: "An easy way to build good habits and break bad ones." },
-];
-
 // Danh sách các thể loại
 const categories = ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Biography", "Horror", "Historical"];
 
 export default function Component() {
   const navigate = useNavigate();
+  // Books state fetched from backend
+  const [books, setBooks] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const res = await fetch("http://localhost:3001/api/books");
+        const data = await res.json();
+        if (!res.ok) {
+          console.error("Failed to fetch books:", data);
+          return;
+        }
+
+        const mapped = (data || []).map((b: any) => ({
+          id: b.id,
+          title: b.tieu_de || b.title || "Untitled",
+          author: b.author || b.tacgia || "",
+          publisher: b.publisher || b.nxb || "",
+          tags: Array.isArray(b.the_loai) ? b.the_loai.map((t: any) => t.ten) : [],
+          status: null,
+          statusVariant: "default",
+          copies: b.copies || 0,
+          availableCopies: b.availableCopies || 0,
+          gradient: "from-green-400 to-emerald-600",
+          emoji: "📚",
+          rating: b.rating || 0,
+          reviews: b.reviews || 0,
+          description: b.tom_tat || "",
+        }));
+
+        setBooks(mapped);
+      } catch (err) {
+        console.error("Error fetching books:", err);
+      }
+    };
+
+    fetchBooks();
+  }, []);
   const [selectedBook, setSelectedBook] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -178,88 +209,9 @@ export default function Component() {
     setIsDialogOpen(true);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");       // Xoá token
-    localStorage.removeItem("cartItems");   // Xoá giỏ hàng trong localStorage
-    setCartItems([]);                       // Xoá giỏ hàng trong state
-    setIsLoggedIn(false);
-    setIsDropdownOpen(false);
-  };
-
-  const handleLogin = () => {
-    // This would navigate to Login.tsx file
-    navigate('/login');
-  };
-
-
   return (
     <div id="webcrumbs" className="bg-muted/40 min-h-screen">
-      <header className="bg-background shadow-sm sticky top-0 z-10 border-b">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-6 w-6 text-primary" />
-              <h1 className="text-xl font-bold text-primary">
-                Alibaba and 36 Thiefs
-              </h1>
-            </div>
-
-            <div className="relative flex-1 max-w-sm hidden md:block">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search books, authors..."
-                className="pl-8 w-full"
-              />
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-              </Button>
-              {isLoggedIn ? (
-                <div className="relative">
-                  <button
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="hover:opacity-75 transition-opacity"
-                  >
-                    <Avatar>
-                      <AvatarFallback>GU</AvatarFallback>
-                    </Avatar>
-                  </button>
-
-                  {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-background border border-gray-200 rounded-md shadow-lg z-20">
-                      <button
-                        onClick={() => {
-                          setIsDropdownOpen(false);
-                          // Navigate to account page
-                          alert("Navigate to Account page");
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 rounded-t-md"
-                      >
-                        <User className="h-4 w-4" />
-                        Account
-                      </button>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600 rounded-b-md"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Button onClick={handleLogin} size="sm">
-                  Login
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
