@@ -4,13 +4,14 @@ import dotenv from "dotenv";
 import authRoute from "./routes/authRoute"; // import đúng cú pháp ESModule
 import userServiceRoute from "./routes/userRoute";
 // import authRoute from "./routes/authRoute";
-import bookRoute from "./routes/bookRoute";
+// import bookRoute from "./routes/bookRoute";
 import categoryRoute from "./routes/categoryRoute";
 import authorRoute from "./routes/authorRoute";
 import publisherRoute from "./routes/publisherRoute";
 import borrowRoute from "./routes/borrowRoute"
 import { errorHandler } from "./middleware/errorHandler";
 
+import bookRoute from "./routes/bookRoute";
 dotenv.config();
 
 const app: Application = express();
@@ -35,6 +36,8 @@ app.use("/api/publisher", publisherRoute);
 app.use("/api/borrow", borrowRoute)
 
 app.use(errorHandler); // must come last
+// Books API
+app.use("/api/books", bookRoute);
 
 // Start server
 app.listen(port, () => {

@@ -1,7 +1,8 @@
 import { Pool } from 'pg'
 import env from "dotenv"
 
-env.config({ path: './src/.env' });
+// Load environment variables from the backend/.env file (default behavior)
+env.config();
 
 const pool = new Pool({
     user: process.env.PG_USER,
