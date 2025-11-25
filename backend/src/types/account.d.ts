@@ -1,7 +1,7 @@
 export interface AccountData {
   email: string;
   mat_khau_hash: string;
-  id_role: number;
+  vai_tro: string;
   failed_attempts: number;
   locked_until: Date | null;
 }
