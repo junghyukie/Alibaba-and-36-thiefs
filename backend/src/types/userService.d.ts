@@ -12,7 +12,7 @@ export interface borrowBook{
 }
 
 export interface Ban_sao {
-    id_ban_sao : number
+    id : number
     id_sach : number;
     ma_vach : string;       
     trang_thai: string;

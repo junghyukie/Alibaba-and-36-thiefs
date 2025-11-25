@@ -30,10 +30,11 @@ export const borrowBookController  = async (req : AuthRequest, res : Response) :
         if (!id_acc) return res.status(401).json({ message: "Xin hay dang nhap" });
         const result = await borrowBookService(id_acc, req.body);
         if(result.success === false){
-            console.log("Loi controller");
+            console.log("Loi controller borrow");
             return res.status(400).json(result);
         }
         else{
+            console.log("Đang chạy controller borrow book");
             return res.status(200).json(result)
         }
     }catch (err) {
