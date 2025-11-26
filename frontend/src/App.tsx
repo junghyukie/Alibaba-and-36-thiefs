@@ -27,16 +27,8 @@ function App() {
         <Route path="/borrow" element={<BorrowBookForm />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/pinfo" element={<Pinfo />} />
+        <Route path="/accinfo" element={<AccInfo />} />
         <Route path="/update" element={<UpdateReturnDate />} />
-        {/* <Route path="/accinfo" element={<AccInfo />} /> */}
-        {/* <Route path="/password-change" element={<PasswordChange />} /> */}
-        <Route path="/librarycard" element={<LibraryCard />} />
-        {/* <Route path="/extendcard" element={<ExtendCard />} /> */}
-        {/* <Route path="/borrowhistory" element={<BorrowHistory />} /> */}
-        <Route path="/borrowbooks" element={<BorrowBooks />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/librarycard" element={<LibraryCard />} />
-        <Route path="/addbook" element={<AddBookForm />} />
       </Routes>
     </BrowserRouter>
   );

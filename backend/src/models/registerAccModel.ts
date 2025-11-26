@@ -13,12 +13,12 @@ export const Register = async (
   password: string,
 ): Promise<number> => {
   const sql = `
-    INSERT INTO tai_khoan (ho_ten,email, mat_khau_hash)
+    INSERT INTO tai_khoan (ho_ten, email, mat_khau_hash)
     VALUES ($1, $2 , $3)
     RETURNING id
   `;
   const result = await pool.query(sql, [username,email, password]);
-  return result.rows[0].id_account as number;
+  return result.rows[0].id as number;
 };
 
 

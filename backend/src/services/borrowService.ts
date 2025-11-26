@@ -3,6 +3,12 @@ import * as FineModel from "../models/fineModel"
 import { AppError } from "../utils/appError";
 
 export class BorrowService {
+  static async getByNotReturnedCopy(ban_sao_id: number) {
+    const ticket = await BorrowModel.getBorrowByNotReturnedCopy(ban_sao_id);
+    if (!ticket) throw new AppError("Borrow ticket not found", 404);
+    return ticket;
+  }
+
   static async returnBook(id: number, tinh_trang: string) {
     if (!['OK', 'HONG', 'MAT'].includes(tinh_trang)) {
       throw new AppError("Invalid book status", 400);

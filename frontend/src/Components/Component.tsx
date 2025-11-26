@@ -12,19 +12,22 @@ type CartItem = {
 };
 
 // 1. Import tất cả component cần thiết từ shadcn/ui và lucide-react
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
+import { Badge } from "@/Components/ui/badge";
+import { Button } from "@/Components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/Components/ui/card";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
+import { Home } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Heart, ShoppingCart } from "lucide-react";
+} from "@/Components/ui/select";
+import { Bell, Heart, Search, BookOpen, LogOut, User, ShoppingCart } from "lucide-react";
 import BookDetailDialog from "./BookDetailDialog";
 import Header from "./Header";
 
@@ -398,14 +401,32 @@ const handleBorrow = async (book : any) => {
       </button>
 
       {isCartOpen && (
-        <div className="fixed bottom-20 left-4 bg-white rounded-lg shadow-xl p-4 w-80 max-h-96 overflow-y-auto">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="font-bold text-lg">Cart</h3>
-            <button onClick={() => setIsCartOpen(false)} className="text-gray-500 hover:text-gray-700">
-              ✕
-            </button>
-          </div>
+  <>
+    {/* Backdrop mờ */}
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-40 z-40"
+      onClick={() => setIsCartOpen(false)}
+    />
 
+    {/* Cửa sổ giỏ hàng - căn giữa */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div 
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col"
+        onClick={(e) => e.stopPropagation()} // Ngăn đóng khi click vào giỏ hàng
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center p-6 border-b">
+          <h3 className="text-2xl font-bold">Giỏ hàng của bạn</h3>
+          <button 
+            onClick={() => setIsCartOpen(false)} 
+            className="text-2xl text-gray-500 hover:text-gray-800 transition"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Nội dung giỏ hàng - có thể cuộn */}
+        <div className="flex-1 overflow-y-auto p-6">
           {cartItems.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">Giỏ hàng trống</p>
@@ -438,8 +459,16 @@ const handleBorrow = async (book : any) => {
             </div>
           )}
         </div>
-      )}
 
+        {/* Footer (tùy chọn thêm nút thanh toán sau) */}
+        {cartItems.length > 0 && (
+          <div className="p-6 border-t bg-gray-50">
+            <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+              Mượn sách ({cartItems.length} sách)
+            </button>
+          </div>
+        )}
+      </div>
     </div>
-  );
-}
+  </>
+)}

@@ -15,7 +15,7 @@ export class BookController {
         search: search ? String(search) : undefined,
         filters: {ngon_ngu: ngon_ngu? String(ngon_ngu) : undefined, theloai_id}
       });
-      res.json(books);
+      res.status(200).json(books);
     } catch (err) {
       next(err);
     }
@@ -28,7 +28,7 @@ export class BookController {
         return res.status(400).json({ error: "ID sách không hợp lệ" });
       }
       const book = await BookService.getById(id);
-      res.json(book);
+      res.status(200).json(book);
     } catch (err) {
       next(err);
     }
@@ -55,7 +55,7 @@ export class BookController {
     try {
       const id = Number(req.params.id);
       const updated = await BookService.update(id, req.body);
-      res.json(updated);
+      res.status(200).json(updated);
     } catch (err) {
       next(err);
     }
@@ -65,7 +65,7 @@ export class BookController {
     try {
       const id = Number(req.params.id);
       const result = await BookService.delete(id);
-      res.json(result);
+      res.status(204).json(result);
     } catch (err) {
       next(err);
     }
@@ -75,7 +75,7 @@ export class BookController {
     try {
       const bookId = Number(req.params.id);
       const copies = await BookService.getAllCopies(bookId);
-      res.json(copies);
+      res.status(200).json(copies);
     } catch (err) {
       next(err);
     }
