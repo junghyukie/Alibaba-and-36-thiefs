@@ -22,16 +22,4 @@ export const Register = async (
 };
 
 
-export const UpdateDoc_gia = async (
-  id_acc: number,
-  ho_ten: string,
-  SDT: string,
-  ngay_sinh: string,
-  dia_chi: string
-): Promise<void> => {
-  const sql = `
-    INSERT INTO doc_gia (id_account, ho_ten, SDT, ngay_sinh, dia_chi)
-    VALUES ($1, $2, $3, $4, $5)
-  `;
-  await pool.query(sql, [id_acc, ho_ten, SDT, ngay_sinh, dia_chi]);
-};
+

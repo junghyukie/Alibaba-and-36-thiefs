@@ -7,6 +7,7 @@ import categoryRoute from "./routes/categoryRoute";
 import authorRoute from "./routes/authorRoute";
 import publisherRoute from "./routes/publisherRoute";
 import borrowRoute from "./routes/borrowRoute"
+import userServiceRoute from "./routes/userRoute";
 import { errorHandler } from "./middleware/errorHandler";
 
 dotenv.config();
@@ -29,9 +30,11 @@ app.use("/api/book", bookRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/author", authorRoute);
 app.use("/api/publisher", publisherRoute);
-app.use("/api/borrow", borrowRoute)
+app.use("/api/borrow", borrowRoute);
+app.use("/user/service/",userServiceRoute);
 
 app.use(errorHandler); // must come last
+
 
 // Start server
 app.listen(port, () => {

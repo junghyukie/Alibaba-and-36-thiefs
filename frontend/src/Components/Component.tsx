@@ -32,9 +32,9 @@ import BookDetailDialog from "./BookDetailDialog";
 
 // Dữ liệu mẫu cho các cuốn sách
 const books = [
-  { id: "BK001", title: "The Midnight Library", author: "Matt Haig", publisher: "Penguin Random House", status: "New", statusVariant: "default" as const, tags: ["Fiction", "Fantasy"], copies: 12, availableCopies: 8, gradient: "from-purple-400 to-indigo-600", emoji: "📖", rating: 4.5, reviews: 234, description: "A dazzling novel about all the choices that go into a life well lived." },
-  { id: "BK002", title: "Project Hail Mary", author: "Andy Weir", publisher: "Ballantine Books", status: "Popular", statusVariant: "secondary" as const, tags: ["Sci-Fi", "Adventure"], copies: 8, availableCopies: 2, gradient: "from-blue-400 to-cyan-600", emoji: "🚀", rating: 4.8, reviews: 456, description: "A lone astronaut must save the earth from disaster." },
-  { id: "BK003", title: "Atomic Habits", author: "James Clear", publisher: "Avery Publishing", status: null, tags: ["Self-Help", "Productivity"], copies: 5, availableCopies: 5, gradient: "from-green-400 to-emerald-600", emoji: "💡", rating: 4.7, reviews: 892, description: "An easy way to build good habits and break bad ones." },
+  { id: 5, title: "The Midnight Library", author: "Matt Haig", publisher: "Penguin Random House", status: "New", statusVariant: "default" as const, tags: ["Fiction", "Fantasy"], copies: 12, availableCopies: 8, gradient: "from-purple-400 to-indigo-600", emoji: "📖", rating: 4.5, reviews: 234, description: "A dazzling novel about all the choices that go into a life well lived." },
+  { id: 6, title: "Project Hail Mary", author: "Andy Weir", publisher: "Ballantine Books", status: "Popular", statusVariant: "secondary" as const, tags: ["Sci-Fi", "Adventure"], copies: 8, availableCopies: 2, gradient: "from-blue-400 to-cyan-600", emoji: "🚀", rating: 4.8, reviews: 456, description: "A lone astronaut must save the earth from disaster." },
+  { id: 7, title: "Atomic Habits", author: "James Clear", publisher: "Avery Publishing", status: null, tags: ["Self-Help", "Productivity"], copies: 5, availableCopies: 5, gradient: "from-green-400 to-emerald-600", emoji: "💡", rating: 4.7, reviews: 892, description: "An easy way to build good habits and break bad ones." },
 ];
 
 // Danh sách các thể loại
@@ -51,26 +51,124 @@ export default function Component() {
   const navigate = useNavigate();
 
   // Function to add book to cart
-const addToCart = (book: any) => {
-  // Check if book already exists in cart
-  const exists = cartItems.find(item => item.id === book.id);
-  if (!exists) {
-    setCartItems([...cartItems, book]);
-  }
-};
+  // const addToCart = (book: any) => {
+  //   // Check if book already exists in cart
+  //   const exists = cartItems.find(item => item.id === book.id);
+  //   if (!exists) {
+  //     setCartItems([...cartItems, book]);
+  //   }
+  // };
 
-// Function to remove from cart
-const removeFromCart = (bookId: string) => {
-  setCartItems(cartItems.filter(item => item.id !== bookId));
-};
+  // Function to add book to cart
+  const addToCart = async (book: any) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Vui lòng đăng nhập trước khi thêm vào giỏ hàng!");
+      navigate("/login");
+      return;
+    }
 
-// Function to open book dialog from cart
-const openBookFromCart = (book: any) => {
-  setSelectedBook(book);
-  setIsDialogOpen(true);
-};
+    // Dữ liệu gửi lên server
+    const formData = {
+      id_sach: book.id,
+      so_luong: 1
+    };
+
+    try {
+      console.log("📦 GỬI YÊU CẦU THÊM VÀO GIỎ HÀNG:", formData);
+
+      const res = await fetch("http://localhost:3001/user/service/insert-book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert("❌ Lỗi: " + (data.message || "Không thể thêm vào giỏ hàng"));
+        return;
+      }
+
+      alert("✅ " + (data.message || "Đã thêm vào giỏ hàng!"));
+
+      // Thêm vào giỏ hàng local (frontend)
+      const exists = cartItems.find(item => item.id === book.id);
+      if (!exists) {
+        setCartItems([...cartItems, book]);
+      }
+    } catch (error) {
+      console.error("🚨 Lỗi khi gửi yêu cầu thêm vào giỏ hàng:", error);
+      alert("Có lỗi xảy ra khi thêm vào giỏ hàng!");
+    }
+  };
+
+  const [hasFetchedCart, setHasFetchedCart] = useState(false);
+
+  const toggleCart = async () => {
+    if (!isCartOpen) {
+      // Nếu chưa fetch lần nào, lấy dữ liệu từ server
+      if (!hasFetchedCart) {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Vui lòng đăng nhập để xem giỏ hàng!");
+          navigate("/login");
+          return;
+        }
+
+        try {
+          const res = await fetch("http://localhost:3001/user/service/cart-items", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            alert("❌ Lỗi khi lấy giỏ hàng: " + (data.message || ""));
+            return;
+          }
+
+          // Lưu vào state và localStorage
+          setCartItems(data || []);
+          localStorage.setItem("cartItems", JSON.stringify(data || []));
+          setHasFetchedCart(true);
+
+        } catch (error) {
+          console.error("Lỗi khi fetch cart:", error);
+          alert("Có lỗi xảy ra khi lấy giỏ hàng!");
+        }
+      } else {
+        // Nếu đã fetch rồi, lấy từ localStorage
+        const savedCart = JSON.parse(localStorage.getItem("cartItems") || "[]");
+        setCartItems(savedCart);
+      }
+    }
+
+    setIsCartOpen(!isCartOpen);
+  };
+
+  // Function to remove from cart
+  const removeFromCart = (bookId: string) => {
+    setCartItems(cartItems.filter(item => item.id !== bookId));
+  };
+
+  // Function to open book dialog from cart
+  const openBookFromCart = (book: any) => {
+    setSelectedBook(book);
+    setIsDialogOpen(true);
+  };
 
   const handleLogout = () => {
+    localStorage.removeItem("token");       // Xoá token
+    localStorage.removeItem("cartItems");   // Xoá giỏ hàng trong localStorage
+    setCartItems([]);                       // Xoá giỏ hàng trong state
     setIsLoggedIn(false);
     setIsDropdownOpen(false);
   };
@@ -130,7 +228,7 @@ const openBookFromCart = (book: any) => {
                       <AvatarFallback>GU</AvatarFallback>
                     </Avatar>
                   </button>
-                  
+
                   {isDropdownOpen && (
                     <div
                       className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20"
@@ -184,12 +282,12 @@ const openBookFromCart = (book: any) => {
             </p>
           </div>
 
-            <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
+          <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
             <Select>
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by Category" />
               </SelectTrigger>
-              <SelectContent 
+              <SelectContent
                 className="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-md"
                 position="popper"
               >
@@ -209,7 +307,7 @@ const openBookFromCart = (book: any) => {
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
-              <SelectContent 
+              <SelectContent
                 className="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-md"
                 position="popper"
               >
@@ -274,15 +372,15 @@ const openBookFromCart = (book: any) => {
           ))}
         </div>
       </main>
-      <BookDetailDialog 
-        book={selectedBook} 
-        open={isDialogOpen} 
-        onOpenChange={setIsDialogOpen} 
+      <BookDetailDialog
+        book={selectedBook}
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
         onAddToCart={addToCart}
       />
 
       <button
-        onClick={() => setIsCartOpen(!isCartOpen)}
+        onClick={toggleCart}
         className="fixed bottom-4 left-4 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-colors duration-200 flex items-center gap-2"
         aria-label="Toggle cart"
       >
@@ -362,7 +460,3 @@ const openBookFromCart = (book: any) => {
     </div>
   </>
 )}
-        
-    </div>
-  );
-}

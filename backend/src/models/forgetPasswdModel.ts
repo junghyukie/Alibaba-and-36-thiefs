@@ -1,5 +1,5 @@
 import pool from "../config/db";
-import { OTPRecord } from "../types/account";
+import { OTPRecord } from "../types/auth";
 
 export const existing_email = async (email: string): Promise<{ email: string }[]> => {
   const sql = "SELECT email FROM account WHERE email = $1";
