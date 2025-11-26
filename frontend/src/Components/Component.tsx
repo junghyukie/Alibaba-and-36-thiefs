@@ -12,21 +12,21 @@ type CartItem = {
 };
 
 // 1. Import tất cả component cần thiết từ shadcn/ui và lucide-react
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
+import { Badge } from "@/Components/ui/badge";
+import { Button } from "@/Components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/Components/ui/card";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
 import { Home } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/Components/ui/select";
 import { Bell, Heart, Search, BookOpen, LogOut, User, ShoppingCart } from "lucide-react";
 import BookDetailDialog from "./BookDetailDialog";
 

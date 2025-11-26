@@ -1,6 +1,15 @@
 import pool from "../config/db";
 import { Borrow } from "../types/borrow";
 
+export const getBorrowByNotReturnedCopy = async (ban_sao_id: number) : Promise<Borrow | null> => {
+  const result = await pool.query(
+    ` SELECT * FROM phieu_muon 
+      WHERE ban_sao_id = $1 AND tinh_trang = 'CHUA_TRA'; `,
+    [ban_sao_id]
+  );
+  return result.rows[0] || null;
+}
+
 export const getBorrowById = async (id: number) : Promise<Borrow | null> => {
   const result = await pool.query(
     ` SELECT * FROM phieu_muon WHERE id = $1; `,

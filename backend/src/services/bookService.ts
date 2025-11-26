@@ -27,6 +27,15 @@ export class BookService {
   }
 
   static async delete(id: number) {
+    // Lấy tất cả bản sao của đầu sách
+    const copies = await BookService.getAllCopies(id).catch(() => []);
+  
+    // Nếu có bản sao đang được mượn → không cho xoá
+    const hasBorrowedCopy = copies.some(copy => copy.trang_thai === 'BORROWED');
+    if (hasBorrowedCopy) {
+      throw new AppError("Cannot delete book: Some copies are currently borrowed", 400);
+    }
+
     const deleted = await BookModel.deleteBook(id);
     if (!deleted) throw new AppError("Book not found", 404);
     return { message: "Book deleted successfully" };

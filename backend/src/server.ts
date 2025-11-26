@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRoute from "./routes/authRoute";
 import bookRoute from "./routes/bookRoute";
+import copyRoute from "./routes/copyRoute";
 import categoryRoute from "./routes/categoryRoute";
 import authorRoute from "./routes/authorRoute";
 import publisherRoute from "./routes/publisherRoute";
@@ -27,6 +28,7 @@ app.get("/", (req: Request, res: Response) => {
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/api/book", bookRoute);
+app.use("/api/copy", copyRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/author", authorRoute);
 app.use("/api/publisher", publisherRoute);
@@ -34,7 +36,6 @@ app.use("/api/borrow", borrowRoute);
 app.use("/user/service/",userServiceRoute);
 
 app.use(errorHandler); // must come last
-
 
 // Start server
 app.listen(port, () => {

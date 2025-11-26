@@ -1,10 +1,10 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/Components/ui/badge";
+import { Button } from "@/Components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Label } from "@/Components/ui/label";
+import { Switch } from "@/Components/ui/switch";
 import { Star, AlertCircle, X } from "lucide-react";
 
 // Dữ liệu mẫu - sau này sẽ fetch từ API

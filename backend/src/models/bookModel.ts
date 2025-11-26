@@ -10,7 +10,9 @@ export const getBooks = async (query: BookQuery): Promise<Book[]> => {
     // --- search filter ---
   if (search) {
     params.push(`%${search}%`);
-    whereClauses.push(`b.tieu_de ILIKE $${params.length}`);
+    whereClauses.push(`
+      unaccent_immutable(b.tieu_de) ILIKE unaccent_immutable($${params.length})
+    `);
   }
 
   // --- language filter ---

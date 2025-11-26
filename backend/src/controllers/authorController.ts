@@ -5,7 +5,7 @@ export class AuthorController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const authors = await AuthorService.getAll();
-      res.json(authors);
+      res.status(200).json(authors);
     } catch (err) {
       next(err);
     }

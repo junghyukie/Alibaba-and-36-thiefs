@@ -3,8 +3,8 @@ import { AccountData } from "../types/auth";
 
 export const Account = async (email: string): Promise<AccountData[]> => {
   const sql = `
-    SELECT id_account, email, mat_khau_hash, id_role, failed_attempts, locked_until
-    FROM account
+    SELECT id, email, mat_khau_hash, vai_tro, failed_attempts, locked_until
+    FROM tai_khoan
     WHERE email = $1
   `;
   const results = await pool.query(sql, [email]);
@@ -13,7 +13,7 @@ export const Account = async (email: string): Promise<AccountData[]> => {
 
 export const Lock = async (fail: number, lock_until: Date | null, email: string): Promise<any> => {
   const sql = `
-    UPDATE account
+    UPDATE tai_khoan
     SET failed_attempts = $1, locked_until = $2
     WHERE email = $3
   `;

@@ -17,7 +17,6 @@ export const getFineByTicketId = async (ticketId: number) : Promise<Fine[]> => {
   return result.rows;
 }
 
-
 export const getFineByUserId = async (userId: number) : Promise<Fine[]> => {
   const result = await pool.query(
     ` SELECT * FROM phat WHERE doc_gia_id = $1; `,

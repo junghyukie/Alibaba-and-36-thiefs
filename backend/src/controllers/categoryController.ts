@@ -5,7 +5,7 @@ export class CategoryController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const categories = await CategoryService.getAll();
-      res.json(categories);
+      res.status(200).json(categories);
     } catch (err) {
       next(err);
     }
@@ -15,7 +15,7 @@ export class CategoryController {
     try {
       const id = Number(req.params.id);
       const book = await CategoryService.getById(id);
-      res.json(book);
+      res.status(200).json(book);
     } catch (err) {
       next(err);
     }

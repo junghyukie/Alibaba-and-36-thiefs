@@ -11,15 +11,6 @@ export interface borrowBook{
     ngay_het_han: Date;
 }
 
-export interface Ban_sao {
-    id_ban_sao : number
-    id_sach : number;
-    ma_vach : string;       
-    trang_thai: string;
-    gia_tri : number;
-    ke_sach : string;
-}
-
 export interface cartItems{
     id_sach: number;
     title : string;

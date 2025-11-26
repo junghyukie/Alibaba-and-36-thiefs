@@ -5,7 +5,7 @@ export class PublisherController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const publishers = await PublisherService.getAll();
-      res.json(publishers);
+      res.status(200).json(publishers);
     } catch (err) {
       next(err);
     }
@@ -15,7 +15,7 @@ export class PublisherController {
     try {
       const id = Number(req.params.id);
       const publisher = await PublisherService.getById(id);
-      res.json(publisher);
+      res.status(200).json(publisher);
     } catch (err) {
       next(err);
     }
