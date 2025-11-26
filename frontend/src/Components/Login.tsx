@@ -31,13 +31,13 @@ const Login: React.FC = () => {
       if (data.success) {
         localStorage.setItem("token", data.token);
        
-        if (data.id_role === 1) {
+        if (data.vai_tro === "DOC_GIA") {
           alert("Chao mung Users");
           navigate("/");
-        } else if (data.id_role === 2) {
+        } else if (data.vai_tro === "NHAN_VIEN") {
           alert("Chao mung Staff");
           // navigate("/staff");
-        } else if (data.id_role === 3) {
+        } else if (data.vai_tro === "ADMIN") {
           alert("Chao mung admin");
           // navigate("/admin");
         }

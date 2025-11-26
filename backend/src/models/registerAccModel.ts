@@ -2,7 +2,7 @@ import pool from "../config/db";
 import { RegisterData } from "../types/auth";
 
 export const Check_email = async (email: string): Promise<{ email: string }[]> => {
-  const sql = "SELECT email FROM account WHERE email = $1";
+  const sql = "SELECT email FROM tai_khoan WHERE email = $1";
   const results = await pool.query(sql, [email]);
   return results.rows as { email: string }[];
 };
@@ -13,9 +13,9 @@ export const Register = async (
   password: string,
 ): Promise<number> => {
   const sql = `
-    INSERT INTO account (ho_ten,email, mat_khau_hash)
+    INSERT INTO tai_khoan (ho_ten,email, mat_khau_hash)
     VALUES ($1, $2 , $3)
-    RETURNING id_account
+    RETURNING id
   `;
   const result = await pool.query(sql, [username,email, password]);
   return result.rows[0].id_account as number;

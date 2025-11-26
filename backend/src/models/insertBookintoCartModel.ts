@@ -32,11 +32,15 @@ export const checkBook_Cart = async (id_acc: number,data : insertBook) : Promise
 
 export const inforBookinCart = async (id_acc: number) : Promise<cartItems[]> => {
     const sql = 
-    `SELECT S.id_sach as id_sach , S.tieu_de as title , Tg.ten as author
-    From gio_hang_chi_tiet g
-    Join sach S on S.id_sach = g.id_sach
-    Join tac_gia Tg on Tg.id_tac_gia = S.id_tac_gia
-    where g.id_account = $1;
+    `SELECT 
+    s.id AS id_sach,
+    s.tieu_de AS title,
+    tg.ten AS author
+FROM gio_hang_chi_tiet g
+JOIN sach s ON s.id = g.id_sach
+JOIN tac_gia tg ON tg.id = s.tacgia_id
+WHERE g.id_account = $1;
+
     `
     const results = await pool.query(sql,[id_acc]);
     return results.rows || [];

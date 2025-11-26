@@ -2,7 +2,7 @@ import { Pool } from 'pg'
 import env from "dotenv"
 
 // Load environment variables from the backend/.env file (default behavior)
-env.config();
+env.config({ path: './src/.env' });
 
 const pool = new Pool({
     user: process.env.PG_USER,
@@ -16,3 +16,7 @@ export default pool;
 
 
 //giỏ sách , mượn sách , trả sách
+//Danh sách người mượn sách quá hạn xếp theo độ trễ
+// + Danh sách account
+// + Quy trình đặt chỗ (query)
+// + lịch sử mượn trả của từng account
