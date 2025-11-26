@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Define cart item type
 type CartItem = {
@@ -12,43 +12,87 @@ type CartItem = {
 };
 
 // 1. Import tất cả component cần thiết từ shadcn/ui và lucide-react
-import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
-import { Badge } from "@/Components/ui/badge";
-import { Button } from "@/Components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/Components/ui/card";
-import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
-import { Home } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/Components/ui/select";
-import { Bell, Heart, Search, BookOpen, LogOut, User, ShoppingCart } from "lucide-react";
+} from "@/components/ui/select";
+import { Heart, ShoppingCart } from "lucide-react";
 import BookDetailDialog from "./BookDetailDialog";
-
-// Dữ liệu mẫu cho các cuốn sách
-const books = [
-  { id: 5, title: "The Midnight Library", author: "Matt Haig", publisher: "Penguin Random House", status: "New", statusVariant: "default" as const, tags: ["Fiction", "Fantasy"], copies: 12, availableCopies: 8, gradient: "from-purple-400 to-indigo-600", emoji: "📖", rating: 4.5, reviews: 234, description: "A dazzling novel about all the choices that go into a life well lived." },
-  { id: 6, title: "Project Hail Mary", author: "Andy Weir", publisher: "Ballantine Books", status: "Popular", statusVariant: "secondary" as const, tags: ["Sci-Fi", "Adventure"], copies: 8, availableCopies: 2, gradient: "from-blue-400 to-cyan-600", emoji: "🚀", rating: 4.8, reviews: 456, description: "A lone astronaut must save the earth from disaster." },
-  { id: 7, title: "Atomic Habits", author: "James Clear", publisher: "Avery Publishing", status: null, tags: ["Self-Help", "Productivity"], copies: 5, availableCopies: 5, gradient: "from-green-400 to-emerald-600", emoji: "💡", rating: 4.7, reviews: 892, description: "An easy way to build good habits and break bad ones." },
-];
+import Header from "./Header";
 
 // Danh sách các thể loại
 const categories = ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Biography", "Horror", "Historical"];
 
 export default function Component() {
+  const navigate = useNavigate();
+  // Books state fetched from backend
+  const [books, setBooks] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const res = await fetch("http://localhost:3001/api/books");
+        const data = await res.json();
+        if (!res.ok) {
+          console.error("Failed to fetch books:", data);
+          return;
+        }
+
+        const mapped = (data || []).map((b: any) => ({
+          id: b.id,
+          title: b.tieu_de || b.title || "Untitled",
+          author: b.author || b.tacgia || "",
+          publisher: b.publisher || b.nxb || "",
+          tags: Array.isArray(b.the_loai) ? b.the_loai.map((t: any) => t.ten) : [],
+          status: null,
+          statusVariant: "default",
+          copies: b.copies || 0,
+          availableCopies: b.availableCopies || 0,
+          gradient: "from-green-400 to-emerald-600",
+          emoji: "📚",
+          rating: b.rating || 0,
+          reviews: b.reviews || 0,
+          description: b.tom_tat || "",
+        }));
+
+        setBooks(mapped);
+      } catch (err) {
+        console.error("Error fetching books:", err);
+      }
+    };
+
+    fetchBooks();
+  }, []);
   const [selectedBook, setSelectedBook] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    try {
+      const raw = localStorage.getItem('cartItems');
+      if (raw) return JSON.parse(raw) as CartItem[];
+    } catch (e) {
+      // ignore parse errors
+    }
+    return [];
+  });
+
+  // Persist cart to localStorage so other pages/components can read it
+  useEffect(() => {
+    try {
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    } catch (e) {
+      // ignore
+    }
+  }, [cartItems]);
 
   // Function to add book to cart
   // const addToCart = (book: any) => {
@@ -165,111 +209,9 @@ export default function Component() {
     setIsDialogOpen(true);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");       // Xoá token
-    localStorage.removeItem("cartItems");   // Xoá giỏ hàng trong localStorage
-    setCartItems([]);                       // Xoá giỏ hàng trong state
-    setIsLoggedIn(false);
-    setIsDropdownOpen(false);
-  };
-
-  const handleLogin = () => {
-    // This would navigate to Login.tsx file
-    navigate('/login');
-  };
-
-  const handleAccount = () => {
-    // This would navigate to AccountInfo.tsx file
-    navigate('/accinfo');
-  }
-
-  const handleHome = () => {
-    navigate('/');
-  }
-
-
   return (
     <div id="webcrumbs" className="bg-muted/40 min-h-screen">
-      <header className="bg-background shadow-sm sticky top-0 z-10 border-b">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-
-            <button onClick={handleHome} className="p-2 hover:bg-gray-100 rounded">
-              <Home className="h-6 w-6 text-primary" />
-            </button>
-
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-6 w-6 text-primary" />
-              <h1 className="text-xl font-bold text-primary">
-                Alibaba and 36 Thiefs
-              </h1>
-            </div>
-
-            <div className="relative flex-1 max-w-sm hidden md:block">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search books, authors..."
-                className="pl-8 w-full"
-              />
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-              </Button>
-              {isLoggedIn ? (
-                <div className="relative">
-                  <button
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="hover:opacity-75 transition-opacity"
-                  >
-                    <Avatar>
-                      <AvatarFallback>GU</AvatarFallback>
-                    </Avatar>
-                  </button>
-
-                  {isDropdownOpen && (
-                    <div
-                      className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20"
-                      // close when clicking outside
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {/* Account button */}
-                      <button
-                        onClick={() => {
-                          setIsDropdownOpen(false);
-                          handleAccount();               // calls your function
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 rounded-t-md transition"
-                      >
-                        <User className="h-4 w-4" />
-                        Account
-                      </button>
-
-                      {/* Logout button */}
-                      <button
-                        onClick={() => {
-                          setIsDropdownOpen(false);
-                          handleLogout();
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600 rounded-b-md transition"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Button onClick={handleLogin} size="sm">
-                  Login
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
@@ -389,32 +331,14 @@ export default function Component() {
       </button>
 
       {isCartOpen && (
-  <>
-    {/* Backdrop mờ */}
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-40 z-40"
-      onClick={() => setIsCartOpen(false)}
-    />
+        <div className="fixed bottom-20 left-4 bg-white rounded-lg shadow-xl p-4 w-80 max-h-96 overflow-y-auto">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-bold text-lg">Cart</h3>
+            <button onClick={() => setIsCartOpen(false)} className="text-gray-500 hover:text-gray-700">
+              ✕
+            </button>
+          </div>
 
-    {/* Cửa sổ giỏ hàng - căn giữa */}
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div 
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col"
-        onClick={(e) => e.stopPropagation()} // Ngăn đóng khi click vào giỏ hàng
-      >
-        {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b">
-          <h3 className="text-2xl font-bold">Giỏ hàng của bạn</h3>
-          <button 
-            onClick={() => setIsCartOpen(false)} 
-            className="text-2xl text-gray-500 hover:text-gray-800 transition"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Nội dung giỏ hàng - có thể cuộn */}
-        <div className="flex-1 overflow-y-auto p-6">
           {cartItems.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">Giỏ hàng trống</p>
@@ -447,16 +371,8 @@ export default function Component() {
             </div>
           )}
         </div>
+      )}
 
-        {/* Footer (tùy chọn thêm nút thanh toán sau) */}
-        {cartItems.length > 0 && (
-          <div className="p-6 border-t bg-gray-50">
-            <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition">
-              Mượn sách ({cartItems.length} sách)
-            </button>
-          </div>
-        )}
-      </div>
     </div>
-  </>
-)}
+  );
+}
