@@ -42,7 +42,7 @@ export const checkSoLuongDaMuon = async (id_acc : number) : Promise<any> => {
     const result = await pool.query(sql, [id_acc]);
     return result.rowCount;
     
-// }
+}
 
 export const checkBook_Cart2 = async (id_acc: number,data : borrowBook) : Promise<any> =>{
     const sql =
