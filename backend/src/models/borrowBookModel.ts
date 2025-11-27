@@ -44,11 +44,15 @@ export const checkSoLuongDaMuon = async (id_acc : number) : Promise<any> => {
     
 }
 
-export const checkBook_Cart2 = async (id_acc: number,data : borrowBook) : Promise<any> =>{
-    const sql =
-    `SELECT * FROM gio_hang_chi_tiet
-    Where id_account = $1 and id_sach = $2;
-    `
-    const results = await pool.query(sql,[id_acc , data.id_sach]);
-    return results.rowCount ;
-}
+// Kiểm tra  đã mượn sách này 
+export const checkBorrowedBook = async (id_acc: number, data: borrowBook): Promise<any> => {
+  const sql = `
+    SELECT * 
+    FROM phieu_muon pm
+    JOIN ban_sao bs ON bs.id = pm.ban_sao_id
+    JOIN sach s on s.id = bs.sach_id
+    WHERE doc_gia_id = $1 AND s.id = $2;
+  `;
+  const result = await pool.query(sql, [id_acc, data.id_sach]);
+  return result.rowCount;
+};

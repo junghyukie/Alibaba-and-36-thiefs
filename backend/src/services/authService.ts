@@ -38,7 +38,7 @@ export const loginService = async (email: string, password: string): Promise<Log
   await Lock(0, null, email);
   
   const secret = process.env.JWT_SECRET || "super_secret_key";
-  const payload = { id_acc: acc.id};
+  const payload = { id_acc: acc.id , vai_tro : acc.vai_tro};
   const token = jwt.sign(payload, secret, { expiresIn: "1h" });
 
   return {

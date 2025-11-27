@@ -6,13 +6,16 @@ import UpdateUserForm from "./Components/test"
 import BorrowBookForm from "./Components/test";
 import BorrowBooks from "./Components/BorrowBooks"
 import Register from "./Components/Register"
-import UpdateReturnDate from "./Components/test";
+import HistoryButton from "./Components/test";
+import ListAccountPage from "./Components/test";
+import LateListPage from "./Components/test";
 import Pinfo from "./Components/PersonInfoInsert"
 import LibraryCard from "./Components/LibraryCard";
 import AddBookForm from "./Components/AddBook";
 import AccInfo from "./Components/AccountInfo"; 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 //import type UpdateReturnDate from "./Components/test";
+
 
 
 
@@ -25,13 +28,19 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgetpassword" element={<ForgetPassword />} />
         <Route path="/update-user" element={<UpdateUserForm />} />
-        <Route path="/borrow" element={<BorrowBookForm />} />
+        <Route path="/reserve" element={<BorrowBookForm />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/pinfo" element={<Pinfo />} />
-        <Route path="/accinfo" element={<AccInfo />} />
-        <Route path="/update" element={<UpdateReturnDate />} />
+        {/* <Route path="/update" element={<UpdateReturnDate />} /> */}
+        {/* <Route path="/accinfo" element={<AccInfo />} /> */}
+        {/* <Route path="/password-change" element={<PasswordChange />} /> */}
+        <Route path="/librarycard" element={<LibraryCard />} />
+        <Route path="/list-accounts" element={<LateListPage />} />
+        {/* <Route path="/extendcard" element={<ExtendCard />} /> */}
+        <Route path="/borrowhistory" element={<HistoryButton />} />
         <Route path="/borrowbooks" element={<BorrowBooks />} />
         <Route path="/register" element={<Register />} />
+    
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
       </Routes>
