@@ -16,6 +16,7 @@ export const lateController = async (
     if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
 
     const results: LateServiceResult = await lateService();
+    console.log(results)
     return res.status(results.success ? 200 : 400).json(results);
   } catch (err) {
     console.error(err);
