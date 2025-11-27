@@ -4,14 +4,14 @@ import { BookService } from "../services/bookService";
 export class BookController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const { search, ngon_ngu, the_loai, page = "1", limit = "10" } = req.query;
+      const { search, ngon_ngu, the_loai, page = "1", limit = "100" } = req.query;
       const theloai_id =
         typeof the_loai === "string"
           ? the_loai.split(",").map((id) => Number(id.trim())).filter(Boolean)
           : undefined;
       const books = await BookService.getAll({
         page: page ? Number(page) : 1,
-        limit: limit ? Number(limit) : 10,
+        limit: limit ? Number(limit) : 100,
         search: search ? String(search) : undefined,
         filters: {ngon_ngu: ngon_ngu? String(ngon_ngu) : undefined, theloai_id}
       });

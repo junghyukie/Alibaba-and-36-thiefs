@@ -42,7 +42,7 @@ export default function Component() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const res = await fetch("http://localhost:3001/api/books");
+        const res = await fetch("http://localhost:3001/api/book");
         const data = await res.json();
         if (!res.ok) {
           console.error("Failed to fetch books:", data);
@@ -472,3 +472,6 @@ const handleBorrow = async (book : any) => {
     </div>
   </>
 )}
+</div>
+  );
+}
