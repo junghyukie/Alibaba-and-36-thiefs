@@ -18,7 +18,7 @@ export const Register = async (
     RETURNING id
   `;
   const result = await pool.query(sql, [username,email, password]);
-  return result.rows[0].id_account as number;
+  return result.rows[0].id as number;
 };
 
 

@@ -12,7 +12,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 
     const secret = process.env.JWT_SECRET || "super_secret_key";
 
-    const decoded = jwt.verify(token, secret) as { id_acc: number };
+    const decoded = jwt.verify(token, secret) as { id_acc: number , vai_tro : string};
 
     // Lưu payload vào req.user để route có thể dùng
     (req as any).user = decoded;

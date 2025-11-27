@@ -25,3 +25,16 @@ export interface cartItems{
     title : string;
     author : string;
 }
+
+export interface logResults{
+    tieu_de : string;
+    ngay_muọn : Date;
+    ngay_het_han : Date;
+    ngay_tra : Date;
+}
+
+export interface logServiceResult{
+    success: boolean;
+    data?: logResults[];
+    message?: string;
+}

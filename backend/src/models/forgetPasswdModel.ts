@@ -2,7 +2,7 @@ import pool from "../config/db";
 import { OTPRecord } from "../types/auth";
 
 export const existing_email = async (email: string): Promise<{ email: string }[]> => {
-  const sql = "SELECT email FROM account WHERE email = $1";
+  const sql = "SELECT email FROM tai_khoan WHERE email = $1";
   const results = await pool.query(sql, [email]);
   return results.rows as { email: string }[];
 };

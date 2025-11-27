@@ -263,7 +263,7 @@ const handleBorrow = async (book : any) => {
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.message || "Không thể mượn sách");
+      alert(data.message);
     }
     else {
       alert("✅ " + (data.message || "Đã thêm vào giỏ hàng!"));
