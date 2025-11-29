@@ -23,7 +23,7 @@ export const loginService = async (email: string, password: string): Promise<Log
   }
 
   if (acc.mat_khau_hash !== password) {
-    const fail = acc.failed_attempts + 1;
+    const fail = acc.failed_attempt + 1;
 
     if (fail >= 5) {
       const lock_until = new Date(Date.now() + 30 * 1000); // 30 giây
@@ -38,14 +38,14 @@ export const loginService = async (email: string, password: string): Promise<Log
   await Lock(0, null, email);
   
   const secret = process.env.JWT_SECRET || "super_secret_key";
-  const payload = { id_acc: acc.id_account};
+  const payload = { id_acc: acc.id , vai_tro : acc.vai_tro};
   const token = jwt.sign(payload, secret, { expiresIn: "1h" });
 
   return {
     status: 200,
     message: "Đăng nhập thành công",
     success: true,
-    id_role: acc.id_role,
+    vai_tro: acc.vai_tro,
     token, // trả token về cho frontend
   };
   //return { status: 200, message: "Đăng nhập thành công", success: true, id_role: acc.id_role };

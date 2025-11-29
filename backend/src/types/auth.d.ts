@@ -2,7 +2,7 @@ export interface LoginResult {
   status: number;
   message: string;
   success?: boolean;
-  id_role?: number;
+  vai_tro?: string;
   token? : string;
 }
 
@@ -17,11 +17,11 @@ export interface RegisterData {
 }
 
 export interface AccountData {
-  id_account : number;
+  id : number;
   email: string;
   mat_khau_hash: string;
-  id_role: number;
-  failed_attempts: number;
+  vai_tro: string;
+  failed_attempt: number;
   locked_until: Date | null;
 }
 
@@ -44,5 +44,6 @@ import { Request } from "express";
 export interface AuthRequest extends Request {
   user?: {
     id_acc: number;
+    vai_tro : string;
   };
 }

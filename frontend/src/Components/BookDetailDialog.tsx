@@ -17,9 +17,12 @@ interface BookDetailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddToCart: (book: any) => void;
+  onhandleBorrow :  (book : any) => void;
+
 }
 
-export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart }: BookDetailDialogProps) {
+
+export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart,onhandleBorrow  }: BookDetailDialogProps) {
   if (!book || !open) return null;
   const [author, setAuthor] = useState<Author | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
@@ -212,7 +215,12 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
         >
           Thêm vào giỏ hàng
         </Button>
-        <Button className="px-6 bg-blue-600 hover:bg-blue-700 text-white">
+        <Button className="px-6 bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => {
+                onhandleBorrow(book);
+             // Optional: close dialog after adding
+          }}
+          >
           Mượn sách
         </Button>
       </div>

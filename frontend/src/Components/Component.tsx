@@ -218,6 +218,70 @@ export default function Component() {
     setIsDialogOpen(true);
   };
 
+ const handleLogout = () => {
+    localStorage.removeItem("token");       // Xoá token
+    localStorage.removeItem("cartItems");   // Xoá giỏ hàng trong localStorage
+    setCartItems([]);                       // Xoá giỏ hàng trong state
+    setIsLoggedIn(false);
+    setIsDropdownOpen(false);
+  };
+
+  const handleLogin = () => {
+    // This would navigate to Login.tsx file
+    navigate('/login');
+  };
+
+  
+const handleBorrow = async (book : any) => {
+  if (!book) return;
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Vui lòng đăng nhập trước khi mượn sách!");
+    return;
+  }
+
+  const now = new Date();
+  const ngayMuon = now.toISOString().split("T")[0];
+
+  const ngayHetHan = new Date();
+  ngayHetHan.setMonth(ngayHetHan.getMonth() + 1); // 1 tháng sau
+  const ngayHetHanStr = ngayHetHan.toISOString().split("T")[0];
+
+  const formData = {
+    id_sach: book.id,
+    so_luong: 1,
+    ngay_muon: ngayMuon,
+    ngay_het_han: ngayHetHanStr,
+  };
+
+  try {
+    console.log("📤 Gửi yêu cầu mượn sách:", formData);
+
+    const res = await fetch("http://localhost:3001/user/service/borrow-book", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message);
+    }
+    else {
+      alert("✅ " + (data.message || "Đã thêm vào giỏ hàng!"));
+    }
+
+   // postMessage("✅ Mượn sách thành công!");
+  } catch (err: any) {
+    console.error("❌ Lỗi khi gửi dữ liệu:", err);
+    //postMessage("❌ Có lỗi xảy ra: " + (err.message || "Lỗi không xác định"));
+  }
+};
   return (
     <div id="webcrumbs" className="bg-muted/40 min-h-screen">
       <Header onSearch={handleSearch} />
@@ -273,6 +337,7 @@ export default function Component() {
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         onAddToCart={addToCart}
+        onhandleBorrow={handleBorrow}
       />
 
       <button
