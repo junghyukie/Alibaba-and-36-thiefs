@@ -22,14 +22,14 @@ export const insertPhieuMuonModel = async(id_acc : number , data: borrowBook , i
     return results.rows;
 }
 
-export const updateBanSao = async(id_ban_sao : number) : Promise<any> =>{
+export const updateBanSao = async(id_ban_sao : number, trang_thai : string) : Promise<any> =>{
     const sql =
     `UPDATE ban_sao
-    SET trang_thai = 'BORROWED'
-    WHERE id = $1
+    SET trang_thai = $1
+    WHERE id = $2
     returning *;
     `
-    const result = await pool.query(sql, [id_ban_sao]);
+    const result = await pool.query(sql, [trang_thai, id_ban_sao]);
     return result.rows;
 }
 
