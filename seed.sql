@@ -311,6 +311,8 @@ ON phieu_muon
 FOR EACH ROW
 EXECUTE FUNCTION tao_phat_tu_dong();
 
+-- Test chức năng tạo phạt tự động
+/* 
 INSERT INTO tai_khoan (mat_khau_hash, ho_ten, email, vai_tro) VALUES
 ('123456', 'Độc Giả A', 'abc@gmail.com', 'DOC_GIA')
 
@@ -329,7 +331,7 @@ INSERT INTO phieu_muon (doc_gia_id,ban_sao_id,ngay_muon,ngay_het_han) VALUES
 
 SELECT * FROM ban_sao
 WHERE id = 2
-
+*/
 
  create table gio_hang_chi_tiet ( 
 id_account int not null, 
@@ -349,7 +351,6 @@ create table the(
 	foreign key (tai_khoan_id) references tai_khoan(id)
 );
 
-
 create table dat_cho(
 	id SERIAL PRIMARY KEY,
 	tai_khoan_id int not null,
@@ -362,8 +363,6 @@ create table dat_cho(
 	foreign key (sach_id) references sach(id),
 	foreign key (ban_sao_id) references ban_sao(id)
 );
-
-
 
 CREATE TABLE thong_bao (
     id SERIAL PRIMARY KEY,
@@ -379,3 +378,18 @@ CREATE TABLE thong_bao (
     ngay_het_han TIMESTAMP   ,      
     foreign key (tai_khoan_id) references tai_khoan(id)-- dùng cho loại có giới hạn thời gian, NULL nếu không
 );
+
+-- Tải extension unaccent để tìm kiếm không dấu
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
+-- Tạo index tăng tốc query
+CREATE OR REPLACE FUNCTION unaccent_immutable(text)
+RETURNS text
+LANGUAGE sql
+IMMUTABLE
+PARALLEL SAFE AS $$
+  SELECT public.unaccent($1);
+$$;
+
+CREATE INDEX IF NOT EXISTS idx_book_unaccent_search 
+ON sach (unaccent_immutable(tieu_de) varchar_pattern_ops);
