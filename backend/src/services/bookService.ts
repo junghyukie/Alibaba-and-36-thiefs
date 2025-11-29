@@ -15,7 +15,7 @@ export class BookService {
   }
 
   static async create(data: Omit<Book, "id">) {
-    if (!data.tieu_de || !data.isbn13)
+    if (!data.tieu_de || !data.isbn)
       throw new AppError("Missing required fields: tieu_de, isbn13", 400);
     return BookModel.createBook(data);
   }
@@ -45,5 +45,11 @@ export class BookService {
     const copies = await CopyModel.getCopyByBookId(bookId);
     if (!copies) throw new AppError("No copy found", 404);
     return copies;
+  }
+
+  static async getNumCopies(bookId: number) {
+    const numCopies = await CopyModel.getNumCopies(bookId);
+    if (!numCopies) throw new AppError("No copy found", 404);
+    return numCopies;
   }
 }

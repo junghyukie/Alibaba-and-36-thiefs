@@ -16,10 +16,3 @@ export interface BookQuery {
   search?: string;
   filters?: {ngon_ngu?: string; theloai_id?: number[]};
 }
-
-export interface QueryAnswer {
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-  data: Book[];
-}

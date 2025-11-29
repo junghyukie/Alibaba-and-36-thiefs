@@ -1,7 +1,7 @@
 import pool from "../config/db";
-import { Book, BookQuery } from "../types/book.d";
+import { Book, BookQuery, QueryAnswer } from "../types/book.d";
 
-export const getBooks = async (query: BookQuery): Promise<Book[]> => {
+export const getBooks = async (query: BookQuery): Promise<QueryAnswer> => {
   const {page = 1, limit = 10 , search, filters} = query;
   const offset = (page - 1) * limit;
   const params: any[] = [];
@@ -38,6 +38,15 @@ export const getBooks = async (query: BookQuery): Promise<Book[]> => {
   }
 
   const whereSQL = whereClauses.length ? `WHERE ${whereClauses.join(" AND ")}` : "";
+  const countSQL = `
+    SELECT COUNT(*) AS total
+    FROM sach b
+    ${whereSQL}
+  `;
+  const countResult = await pool.query(countSQL, params);
+  const totalItems = Number(countResult.rows[0].total);
+  const totalPages = Math.ceil(totalItems / limit);
+
   const sql = `
     SELECT 
       b.*,
@@ -56,7 +65,12 @@ export const getBooks = async (query: BookQuery): Promise<Book[]> => {
     LIMIT ${limit} OFFSET ${offset};
   `;
   const result = await pool.query(sql, params);
-  return result.rows;
+  return {
+    currentPage: page,
+    totalPages,
+    totalItems,
+    data: result.rows
+  };
 }
 
 export const getBookById = async (id: number) : Promise<Book | null> => {
@@ -82,13 +96,13 @@ export const getBookById = async (id: number) : Promise<Book | null> => {
 }
 
 export const createBook = async (data: Omit<Book, "id">): Promise<Book> => {
-  const { tacgia_id, nxb_id, tieu_de, tom_tat, isbn13, ngon_ngu, nam_xb } = data;
+  const { tacgia_id, nxb_id, tieu_de, tom_tat, isbn, ngon_ngu, nam_xb } = data;
 
   const result = await pool.query(
     ` INSERT INTO sach (tacgia_id, nxb_id, tieu_de, tom_tat, isbn13, ngon_ngu, nam_xb)
       VALUES ($1,$2,$3,$4,$5,$6,$7)
       RETURNING * `,
-    [tacgia_id, nxb_id, tieu_de, tom_tat, isbn13, ngon_ngu, nam_xb]
+    [tacgia_id, nxb_id, tieu_de, tom_tat, isbn, ngon_ngu, nam_xb]
   );
   return result.rows[0];
 }
@@ -109,7 +123,7 @@ export const updateBook = async (id: number, data: Partial<Book>): Promise<Book 
       updated.nxb_id,
       updated.tieu_de,
       updated.tom_tat,
-      updated.isbn13,
+      updated.isbn,
       updated.ngon_ngu,
       updated.nam_xb,
       id,

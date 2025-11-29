@@ -1,5 +1,5 @@
 import pool from "../config/db";
-import { Copy } from "../types/copy";
+import { Copy, NumCopy } from "../types/copy";
 
 export const getCopyByBarcode = async (ma_vach: string) : Promise<Copy | null> => {
   const result = await pool.query(
@@ -23,6 +23,20 @@ export const getCopyByBookId = async (bookId: number) : Promise<Copy[]> => {
     [bookId]
   );
   return result.rows;
+}
+
+export const getNumCopies = async (bookId: number) : Promise<NumCopy> => {
+  const result = await pool.query(
+    ` SELECT
+        sach_id,
+        COUNT(*) AS total_copies,
+        COUNT(*) FILTER (WHERE trang_thai = 'AVAILABLE') AS available_copies
+      FROM ban_sao
+      WHERE sach_id = $1
+      GROUP BY sach_id;`,
+    [bookId]
+  );
+  return result.rows[0];
 }
 
 export const createCopy = async (data: Omit<Copy, "id">) : Promise<Copy> => {

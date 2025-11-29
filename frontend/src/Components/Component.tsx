@@ -15,65 +15,74 @@ type CartItem = {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Heart, ShoppingCart } from "lucide-react";
 import BookDetailDialog from "./BookDetailDialog";
 import Header from "./Header";
-
-// Danh sách các thể loại
-const categories = ["Fantasy", "Sci-Fi", "Mystery", "Romance", "Biography", "Horror", "Historical"];
+import type { Book } from "@/types/book";
+import CategorySelector from "./CategorySelector";
+import type { Category } from "@/types/category";
 
 export default function Component() {
   const navigate = useNavigate();
-  // Books state fetched from backend
-  const [books, setBooks] = useState<any[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [query, setQuery] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCats, setSelectedCats] = useState<number[]>([]);
+
+  // Gọi API lấy sách theo filter
+  const fetchBooks = async () => {
+    const params = new URLSearchParams({
+      search: query,
+      page: page.toString(),
+    });
+    if (selectedCats.length > 0) {
+      params.append("the_loai", selectedCats.join(","));
+    }
+    const res = await fetch(`http://localhost:3001/api/book?${params}&limit=6`);
+    const data = await res.json();
+
+    setBooks(data.data);
+    setPage(data.currentPage);
+    setTotalPages(data.totalPages);
+  };
+
+  const handleSearch = (searchText: string) => {
+    setQuery(searchText);
+  };
+
+  const handlePrev = () => {
+    if (page > 1) setPage(page - 1);
+  };
+
+  const handleNext = () => {
+    if (page < totalPages) setPage(page + 1);
+  };
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const res = await fetch("http://localhost:3001/api/books");
-        const data = await res.json();
-        if (!res.ok) {
-          console.error("Failed to fetch books:", data);
-          return;
-        }
-
-        const mapped = (data || []).map((b: any) => ({
-          id: b.id,
-          title: b.tieu_de || b.title || "Untitled",
-          author: b.author || b.tacgia || "",
-          publisher: b.publisher || b.nxb || "",
-          tags: Array.isArray(b.the_loai) ? b.the_loai.map((t: any) => t.ten) : [],
-          status: null,
-          statusVariant: "default",
-          copies: b.copies || 0,
-          availableCopies: b.availableCopies || 0,
-          gradient: "from-green-400 to-emerald-600",
-          emoji: "📚",
-          rating: b.rating || 0,
-          reviews: b.reviews || 0,
-          description: b.tom_tat || "",
-        }));
-
-        setBooks(mapped);
-      } catch (err) {
-        console.error("Error fetching books:", err);
-      }
-    };
-
     fetchBooks();
+  }, [page, query, selectedCats]);
+
+  const fetchCategories = async () => {
+    const res = await fetch("http://localhost:3001/api/category");
+    const data = await res.json();
+    setCategories(data);
+  };
+
+  const handleToggleCat = (id: number, checked: boolean) => {
+    setSelectedCats((prev) =>
+      checked ? [...prev, id] : prev.filter((x) => x !== id)
+    );
+    setPage(1);
+  };
+
+  useEffect(() => {
+    fetchCategories();
   }, []);
-  const [selectedBook, setSelectedBook] = useState(null);
+
+  const [selectedBook, setSelectedBook] = useState<Book|null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     try {
@@ -211,7 +220,7 @@ export default function Component() {
 
   return (
     <div id="webcrumbs" className="bg-muted/40 min-h-screen">
-      <Header />
+      <Header onSearch={handleSearch} />
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
@@ -223,89 +232,34 @@ export default function Component() {
               Browse our extensive collection of books
             </p>
           </div>
-
-          <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
-            <Select>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Filter by Category" />
-              </SelectTrigger>
-              <SelectContent
-                className="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-md"
-                position="popper"
-              >
-                <SelectItem value="all" className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100">
-                  All Categories
-                </SelectItem>
-                <SelectItem value="fiction" className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100">
-                  Fiction
-                </SelectItem>
-                <SelectItem value="fantasy" className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100">
-                  Fantasy
-                </SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent
-                className="relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-md"
-                position="popper"
-              >
-                <SelectItem value="newest" className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100">
-                  Newest First
-                </SelectItem>
-                <SelectItem value="oldest" className="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100">
-                  Oldest First
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
         </div>
 
-        <RadioGroup
-          value={selectedCategory}
-          onValueChange={setSelectedCategory}
-          className="flex flex-wrap gap-x-4 gap-y-2 mb-6"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="all" id="r-all" />
-            <Label htmlFor="r-all">All Books</Label>
-          </div>
-          {categories.map((category) => (
-            <div key={category} className="flex items-center space-x-2">
-              <RadioGroupItem value={category.toLowerCase()} id={`r-${category.toLowerCase()}`} />
-              <Label htmlFor={`r-${category.toLowerCase()}`}>{category}</Label>
-            </div>
-          ))}
-        </RadioGroup>
+        <CategorySelector
+          categories={categories}
+          selected={selectedCats}
+          onChange={handleToggleCat}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {books.map((book) => (
             <Card key={book.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className={`relative h-48 bg-gradient-to-br ${book.gradient} flex items-center justify-center`}>
-                <span className="text-6xl">{book.emoji}</span>
+              <div className={`relative h-48 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center`}>
+                <span className="text-6xl">📚</span>
                 <Button variant="secondary" size="icon" className="absolute top-2 right-2 h-8 w-8 rounded-full">
                   <Heart className="h-4 w-4" />
                 </Button>
               </div>
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <CardTitle>{book.title}</CardTitle>
-                  {book.status && <Badge variant={book.statusVariant}>{book.status}</Badge>}
+                  <CardTitle>{book.tieu_de}</CardTitle>
                 </div>
-                <p className="text-sm text-muted-foreground pt-1 !mt-0">by {book.author}</p>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {book.tags.map(tag => <Badge key={tag} variant="outline">{tag}</Badge>)}
+                  {book.the_loai?.map(c => <Badge key={c.id} variant="outline">{c.ten}</Badge>)}
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between items-center">
-                <div className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">{book.copies}</span> copies available
-                </div>
                 <Button size="sm" onClick={() => { setSelectedBook(book); setIsDialogOpen(true); }}>
                   View Details
                 </Button>
@@ -372,7 +326,11 @@ export default function Component() {
           )}
         </div>
       )}
-
+      <div className="flex justify-center items-center gap-3 mt-6">
+        <Button onClick={handlePrev} disabled={page <= 1}>Prev</Button>
+        <span>{page} / {totalPages}</span>
+        <Button onClick={handleNext} disabled={page >= totalPages}>Next</Button>
+      </div>
     </div>
   );
 }

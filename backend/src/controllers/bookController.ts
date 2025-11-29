@@ -69,4 +69,14 @@ export class BookController {
       next(err);
     }
   }
+
+  static async getNumCopies(req: Request, res: Response, next: NextFunction) {
+    try {
+      const bookId = Number(req.params.id);
+      const numCopies = await BookService.getNumCopies(bookId);
+      res.status(200).json(numCopies);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
