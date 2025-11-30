@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
-import { getEmailFromToken } from '../types/auth';
 
 interface UserInfo {
   email: string
@@ -39,9 +38,6 @@ const AccountInfo: React.FC = () => {
         return;
       }
       
-      // Lấy email từ token (hoặc chỉ cần token để Server tự xác thực)
-      // const emailFromToken = getEmailFromToken();
-      
       // BƯỚC QUAN TRỌNG: Gọi API tới Server để lấy dữ liệu profile
       try {
         const res = await fetch("http://localhost:3001/api/auth/user-info", { 
@@ -49,7 +45,7 @@ const AccountInfo: React.FC = () => {
           headers: { 
             "Content-Type": "application/json",
             // Đính kèm token vào Header Authorization theo chuẩn Bearer
-            "Áuthorization": `Bearer ${token}` 
+            "Authorization": `Bearer ${token}` 
           },
         });
 
@@ -64,17 +60,23 @@ const AccountInfo: React.FC = () => {
           throw new Error("Lỗi khi tải thông tin người dùng.");
         }
 
-        const data: UserInfo = await res.json();
+        const dataWrapper = await res.json(); 
+        const data = dataWrapper.data;
         
-        // Cập nhật state với dữ liệu nhận được từ Server
-        setForm({
-          email: token ? getEmailFromToken() || "" : "",
-          ho_ten: data.ho_ten,
-          ngay_sinh: data.ngay_sinh,
-          dien_thoai: data.dien_thoai,
-          dia_chi: data.dia_chi,
-          gioi_tinh: data.gioi_tinh
-        });
+        if (dataWrapper.success && data) {
+            // Cập nhật state với dữ liệu nhận được từ Server, đảm bảo luôn là chuỗi
+            setForm({
+                email: data.email || "",
+                ho_ten: data.ho_ten || "",
+                ngay_sinh: data.ngay_sinh || "",
+                dien_thoai: data.dien_thoai || "",
+                dia_chi: data.dia_chi || "",
+                gioi_tinh: data.gioi_tinh || ""
+            });
+        } else {
+            // Xử lý trường hợp Server trả về success=false hoặc data=null
+            throw new Error("Dữ liệu hồ sơ không hợp lệ hoặc rỗng.");
+        }
 
       } catch (err) {
         console.error(err);

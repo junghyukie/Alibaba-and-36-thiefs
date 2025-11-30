@@ -70,26 +70,26 @@ export const updateUserController = async (req: AuthRequest, res: Response) => {
 };
 
 export const getUserInfoController = async (req: Request, res: Response) => {
-    // 1. Trích xuất email từ request (sau khi token đã được middleware xác thực)
-    const userEmail = (req as any).userEmail; 
+    // 1. ⚠️ TRÍCH XUẤT id_acc TỪ req.user ⚠️
+    const userIdAcc = (req as any).user?.id_acc; 
 
-    if (!userEmail) {
-        // Đây là lỗi nếu middleware xác thực chưa hoạt động đúng
+    if (!userIdAcc) {
+        // Nếu không có id_acc trong token payload (hoặc token không được đính kèm)
         return res.status(401).json({ 
             success: false, 
-            message: "Unauthorized or email not found in request." 
+            message: "Unauthorized: ID tài khoản không được tìm thấy trong token." 
         });
     }
 
     try {
-        // 2. Gọi hàm Service để lấy dữ liệu
-        const userInfo = await getUserInfoService(userEmail);
+        // 2. Gọi hàm Service bằng ID
+        const userInfo = await getUserInfoService(userIdAcc);
 
         if (userInfo) {
             // 3. Trả về thông tin người dùng
             return res.status(200).json({
                 success: true,
-                data: userInfo,
+                data: userInfo, // userInfo hiện đã chứa email, ho_ten, v.v.
             });
         } else {
             // 4. Không tìm thấy người dùng

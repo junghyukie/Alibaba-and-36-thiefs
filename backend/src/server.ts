@@ -11,7 +11,6 @@ import authorRoute from "./routes/authorRoute";
 import publisherRoute from "./routes/publisherRoute";
 import borrowRoute from "./routes/borrowRoute"
 import { errorHandler } from "./middleware/errorHandler";
-import copyRoute from "./routes/copyRoute";
 // server.ts
 import './controllers/queueCron';
 // Khi server chạy, cron sẽ tự chạy
@@ -39,7 +38,6 @@ app.get("/", (req: Request, res: Response) => {
 
 // Routes
 app.use("/api/auth", authRoute);
-app.use("/user/service/",userServiceRoute);
 app.use("/staff/service/",staffserviceRoute);
 app.use("/api/book", bookRoute);
 app.use("/api/copy", copyRoute);

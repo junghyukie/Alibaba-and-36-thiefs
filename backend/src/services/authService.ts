@@ -129,22 +129,18 @@ export const updateUserService = async (
   }
 };
 
-export const getUserInfoService = async (email: string): Promise<UserInformation | null> => {
+export const getUserInfoService = async (id_acc: number): Promise<UserInformation | null> => {
     try {
-        // 1. Gọi hàm Model (truy vấn DB)
-        const userInfo = await getUserInfo(email);
+        // 1. Gọi hàm Model (truy vấn DB) bằng id_acc
+        const userInfo = await getUserInfo(id_acc);
         
-        // 2. Xử lý dữ liệu (ví dụ: format lại ngày tháng, kiểm tra null)
-        if (userInfo && userInfo.ngay_sinh instanceof Date) {
-            // Ví dụ: format Date object thành chuỗi 'YYYY-MM-DD' trước khi gửi đi
-            // userInfo.ngay_sinh = userInfo.ngay_sinh.toISOString().split('T')[0];
-        }
+        // 2. Xử lý dữ liệu (nếu có, ví dụ: format ngày tháng)
+        // ...
 
         return userInfo;
 
     } catch (error) {
         console.error("Lỗi trong Service:", error);
-        // Ném lỗi để Controller xử lý response 500
         throw new Error("Service failed to fetch user info.");
     }
 };
