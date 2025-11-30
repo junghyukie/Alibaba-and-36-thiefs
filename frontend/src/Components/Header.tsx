@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Home, Bell, Search, BookOpen, LogOut, User } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
+import { Button } from "@/Components/ui/button";
+import { SearchBar } from './SearchBar';
+import { Home, Bell, BookOpen, LogOut, User } from "lucide-react";
 
-const Header: React.FC = () => {
+const Header = ({ onSearch }: { onSearch: (query: string) => void }) => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -99,23 +99,7 @@ const Header: React.FC = () => {
           </div>
 
           {/* Search Bar */}
-          <div 
-            className="relative flex-1 max-w-sm hidden md:block"
-            style={{
-              display: 'block',
-              flex: '1 1 auto',
-              maxWidth: '28rem',
-              marginLeft: '1rem',
-              marginRight: '1rem'
-            }}
-          >
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search books, authors..."
-              className="pl-8 w-full"
-            />
-          </div>
+          <SearchBar onSearch={onSearch}/>
 
           {/* Right Section - Notifications & User */}
           <div 

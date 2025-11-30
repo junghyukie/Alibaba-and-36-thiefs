@@ -5,26 +5,15 @@ import { Button } from "@/Components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Label } from "@/Components/ui/label";
 import { Switch } from "@/Components/ui/switch";
-import { Star, AlertCircle, X } from "lucide-react";
-
-// Dữ liệu mẫu - sau này sẽ fetch từ API
-const borrowRecords = [
-  { id: "BR001", userId: "U123", userName: "Nguyễn Văn A", cardId: "LC001", borrowDate: "2025-10-01", returnDate: "2025-10-15", copies: 1, fine: 0, status: "Active" },
-  { id: "BR002", userId: "U456", userName: "Trần Thị B", cardId: "LC002", borrowDate: "2025-09-20", returnDate: "2025-10-04", copies: 1, fine: 15000, status: "Overdue" },
-];
-
-const bookings = [
-  { id: "BG001", userId: "U789", userName: "Lê Văn C", cardId: "LC003", bookingDate: "2025-10-05", expiryDate: "2025-10-12", status: "Pending" },
-  { id: "BG002", userId: "U234", userName: "Phạm Thị D", cardId: "LC004", bookingDate: "2025-10-06", expiryDate: "2025-10-13", status: "Ready" },
-];
-
-const complaints = [
-  { id: "CP001", userId: "U123", userName: "Nguyễn Văn A", issue: "Sách bị rách trang 45", date: "2025-10-03", status: "Resolved" },
-  { id: "CP002", userId: "U567", userName: "Hoàng Văn E", issue: "Không tìm thấy sách trên kệ", date: "2025-10-05", status: "Pending" },
-];
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { Author } from "@/types/author";
+import type { Publisher } from "@/types/publisher";
+import type { NumCopy } from "@/types/copy";
+import type { Book } from "@/types/book";
 
 interface BookDetailDialogProps {
-  book: any;
+  book: Book | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddToCart: (book: any) => void;
@@ -35,6 +24,45 @@ interface BookDetailDialogProps {
 
 export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart,onhandleBorrow  }: BookDetailDialogProps) {
   if (!book || !open) return null;
+  const [author, setAuthor] = useState<Author | null>(null);
+  const [publisher, setPublisher] = useState<Publisher | null>(null);
+  const [copies, setCopies] = useState<NumCopy | null>(null);
+
+    // 🔥 Khi book thay đổi => gọi API
+  useEffect(() => {
+    if (!book) return;
+
+    setAuthor(null);
+    setPublisher(null);
+
+    const fetchDetails = async () => {
+      try {
+        const [authorRes, publisherRes, copiesRes] = await Promise.all([
+          fetch(`http://localhost:3001/api/author/${book.tacgia_id}`),
+          fetch(`http://localhost:3001/api/publisher/${book.nxb_id}`),
+          fetch(`http://localhost:3001/api/book/${book.id}/num_copies`),
+        ]);
+
+        if (!authorRes.ok || !publisherRes.ok || !copiesRes.ok) {
+          throw new Error("API response not ok");
+        }
+
+        const authorData = await authorRes.json();
+        const publisherData = await publisherRes.json();
+        const copiesData = await copiesRes.json();
+
+        setAuthor(authorData);
+        setPublisher(publisherData);
+        setCopies(copiesData);
+
+      } catch (err) {
+        console.error("Lỗi fetch:", err);
+      }
+    };
+
+
+    fetchDetails();
+  }, [book]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -49,13 +77,10 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
         {/* Header */}
         <div className="sticky top-0 bg-white border-b p-6 flex items-start justify-between rounded-t-lg">
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-gray-900">{book.title}</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{book.tieu_de}</h2>
             <p className="text-base text-gray-700 mt-2">
-              by {book.author} • {book.publisher}
+              by {author?.ten} • {publisher?.ten}
             </p>
-          </div>
-          <div className={`w-20 h-20 rounded-lg bg-gradient-to-br ${book.gradient} flex items-center justify-center text-3xl flex-shrink-0 ml-4`}>
-            {book.emoji}
           </div>
           <button 
             onClick={() => onOpenChange(false)}
@@ -93,70 +118,54 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label className="text-gray-600 text-sm font-medium">Mã sách</Label>
-                    <p className="font-medium text-gray-900">{book.id}</p>
+                    <Label className="text-gray-600 text-sm font-medium">Mã ISBN</Label>
+                    <p className="font-medium text-gray-900">{book.isbn}</p>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-gray-600 text-sm font-medium">Tác giả</Label>
-                    <p className="font-medium text-gray-900">{book.author}</p>
+                    <p className="font-medium text-gray-900">{author?.ten}</p>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-gray-600 text-sm font-medium">Nhà xuất bản</Label>
-                    <p className="font-medium text-gray-900">{book.publisher}</p>
+                    <p className="font-medium text-gray-900">{publisher?.ten}</p>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-gray-600 text-sm font-medium">Thể loại</Label>
                     <div className="flex gap-2">
-                      {book.tags.map((tag: string) => (
-                        <Badge key={tag} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                          {tag}
+                      {book.the_loai?.map(c => (
+                        <Badge key={c.id} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                          {c.ten}
                         </Badge>
                       ))}
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-gray-600 text-sm font-medium">Tổng số bản sao</Label>
-                    <p className="font-medium text-gray-900">{book.copies} bản</p>
+                    <p className="font-medium text-gray-900">{copies?.total_copies} bản</p>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-gray-600 text-sm font-medium">Bản sao khả dụng</Label>
-                    <p className="font-medium text-green-600">{book.availableCopies} bản</p>
+                    <p className="font-medium text-green-600">{copies?.available_copies} bản</p>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-gray-600 text-sm font-medium">Trạng thái</Label>
                     <div>
-                      {book.status ? (
-                        <Badge variant={book.statusVariant} className="bg-green-100 text-green-800">
-                          {book.status}
+                      {copies?.available_copies ? (
+                        <Badge variant="outline" className="bg-red-100 text-red-800">
+                          Hết sách
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="bg-gray-100 text-gray-800">
-                          Available
+                        <Badge variant="outline" className="bg-green-100 text-green-800">
+                          Còn sách
                         </Badge>
                       )}
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-gray-600 text-sm font-medium">Đánh giá</Label>
-                    <div className="flex items-center gap-2">
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star 
-                            key={i} 
-                            className={`h-4 w-4 ${i < Math.floor(book.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} 
-                          />
-                        ))}
-                      </div>
-                      <span className="text-sm font-medium text-gray-700">
-                        {book.rating || 0} ({book.reviews || 0} reviews)
-                      </span>
                     </div>
                   </div>
                 </div>
                 
                 <div className="border-t border-gray-200 pt-6 mt-6">
                   <Label className="text-gray-600 text-sm font-medium">Mô tả</Label>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-700">{book.description}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-700">{book.tom_tat}</p>
                 </div>
 
                 <div className="border-t border-gray-200 pt-6 mt-6 space-y-4">

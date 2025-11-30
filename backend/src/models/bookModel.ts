@@ -1,13 +1,13 @@
 import pool from "../config/db";
-import { Book, BookQuery } from "../types/book.d";
+import { Book, BookQuery, QueryAnswer } from "../types/book.d";
 
-export const getBooks = async (query: BookQuery): Promise<Book[]> => {
-  const {page = 1, limit = 100 , search, filters} = query;
+export const getBooks = async (query: BookQuery): Promise<QueryAnswer> => {
+  const {page = 1, limit = 10 , search, filters} = query;
   const offset = (page - 1) * limit;
   const params: any[] = [];
   let whereClauses: string[] = [];
 
-  // --- search filter ---
+    // --- search filter ---
   if (search) {
     params.push(`%${search}%`);
     whereClauses.push(`
@@ -23,6 +23,9 @@ export const getBooks = async (query: BookQuery): Promise<Book[]> => {
 
   // --- multi-category filter ---
   if (filters?.theloai_id && filters.theloai_id.length > 0) {
+    //const placeholders = filters.theloai_id.map((_, i) => `$${params.length + i + 1}`).join(",");
+    //params.push(...filters.theloai_id);
+    //whereClauses.push(`bc.theloai_id IN (${placeholders})`);
     const placeholders = filters.theloai_id.map((_, i) => `$${params.length + i + 1}`).join(", ");
     params.push(...filters.theloai_id);
     whereClauses.push(`
@@ -35,14 +38,18 @@ export const getBooks = async (query: BookQuery): Promise<Book[]> => {
   }
 
   const whereSQL = whereClauses.length ? `WHERE ${whereClauses.join(" AND ")}` : "";
-  
-  // FIX 1: Thêm b.id vào SELECT và GROUP BY
+  const countSQL = `
+    SELECT COUNT(*) AS total
+    FROM sach b
+    ${whereSQL}
+  `;
+  const countResult = await pool.query(countSQL, params);
+  const totalItems = Number(countResult.rows[0].total);
+  const totalPages = Math.ceil(totalItems / limit);
+
   const sql = `
     SELECT 
-      b.id,
-      b.tieu_de, 
-      tg.ten AS author,
-      p.ten AS publisher,
+      b.*,
       COALESCE(
         json_agg(
           DISTINCT jsonb_build_object('id', c.id, 'ten', c.ten)
@@ -52,35 +59,26 @@ export const getBooks = async (query: BookQuery): Promise<Book[]> => {
     FROM sach b
     LEFT JOIN sach_theloai bc ON b.id = bc.sach_id
     LEFT JOIN the_loai c ON bc.theloai_id = c.id
-    LEFT JOIN tac_gia tg ON b.tacgia_id = tg.id
-    LEFT JOIN nxb p ON b.nxb_id = p.id
     ${whereSQL}
-    GROUP BY b.id, b.tieu_de, tg.ten, p.ten
+    GROUP BY b.id
     ORDER BY b.id
-    LIMIT $${params.length + 1} OFFSET $${params.length + 2};
+    LIMIT ${limit} OFFSET ${offset};
   `;
-  
-  // FIX 2: Thêm limit và offset vào params thay vì string concatenation
-  params.push(limit, offset);
-  
   const result = await pool.query(sql, params);
-  return result.rows;
+  return {
+    currentPage: page,
+    totalPages,
+    totalItems,
+    data: result.rows
+  };
 }
 
 export const getBookById = async (id: number) : Promise<Book | null> => {
-  // FIX 3: Thêm b.id vào GROUP BY và SELECT đầy đủ columns
+  //const result = await pool.query("SELECT * FROM sach WHERE id = $1", [id]);
+  //return result.rows[0] || null;
   const result = await pool.query(
     ` SELECT 
-        b.id,
-        b.tacgia_id,
-        b.nxb_id,
-        b.tieu_de,
-        b.tom_tat,
-        b.isbn,
-        b.ngon_ngu,
-        b.nam_xb,
-        tg.ten AS author,
-        p.ten AS publisher,
+        b.*,
         COALESCE(
           json_agg(
             DISTINCT jsonb_build_object('id', c.id, 'ten', c.ten)
@@ -90,10 +88,8 @@ export const getBookById = async (id: number) : Promise<Book | null> => {
       FROM sach b
       LEFT JOIN sach_theloai bc ON b.id = bc.sach_id
       LEFT JOIN the_loai c ON bc.theloai_id = c.id
-      LEFT JOIN tac_gia tg ON b.tacgia_id = tg.id
-      LEFT JOIN nxb p ON b.nxb_id = p.id
       WHERE b.id = $1
-      GROUP BY b.id, b.tacgia_id, b.nxb_id, b.tieu_de, b.tom_tat, b.isbn, b.ngon_ngu, b.nam_xb, tg.ten, p.ten; `,
+      GROUP BY b.id; `,
     [id]
   );
   return result.rows[0] || null;
@@ -103,8 +99,8 @@ export const createBook = async (data: Omit<Book, "id">): Promise<Book> => {
   const { tacgia_id, nxb_id, tieu_de, tom_tat, isbn, ngon_ngu, nam_xb } = data;
 
   const result = await pool.query(
-    ` INSERT INTO sach (tacgia_id, nxb_id, tieu_de, tom_tat, isbn, ngon_ngu, nam_xb)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+    ` INSERT INTO sach (tacgia_id, nxb_id, tieu_de, tom_tat, isbn13, ngon_ngu, nam_xb)
+      VALUES ($1,$2,$3,$4,$5,$6,$7)
       RETURNING * `,
     [tacgia_id, nxb_id, tieu_de, tom_tat, isbn, ngon_ngu, nam_xb]
   );
@@ -119,7 +115,7 @@ export const updateBook = async (id: number, data: Partial<Book>): Promise<Book 
 
   const result = await pool.query(
     ` UPDATE sach
-      SET tacgia_id=$1, nxb_id=$2, tieu_de=$3, tom_tat=$4, isbn=$5, ngon_ngu=$6, nam_xb=$7
+      SET tacgia_id=$1, nxb_id=$2, tieu_de=$3, tom_tat=$4, isbn13=$5, ngon_ngu=$6, nam_xb=$7
       WHERE id=$8
       RETURNING * `,
     [
@@ -136,8 +132,8 @@ export const updateBook = async (id: number, data: Partial<Book>): Promise<Book 
   return result.rows[0];
 }
 
-export const deleteBook = async (id: number): Promise<boolean> => {
-  // FIX 4: Đổi Number thành number, và kiểm tra rowCount
+export const deleteBook = async (id: Number): Promise<boolean> => {
   const result = await pool.query("DELETE FROM sach WHERE id = $1", [id]);
-  return result.rowCount !== null && result.rowCount > 0;
+  if (!result) return false;
+  else return true;
 }
