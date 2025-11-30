@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from './Header';
-import { get_fullname } from './AccountInfo';
+import useUser from '../hooks/useUser';
 import { getCardId, InDebt } from './LibraryCard';
 
 type CartItem = {
@@ -21,7 +21,7 @@ const BorrowBooks: React.FC = () => {
     }
   }, []);
 
-  const fullname = get_fullname();
+  const fullname = useUser().userInfo?.ho_ten || 'Bạn chưa cập nhật thông tin';
   const cardId = getCardId();
 
   const handleConfirm = () => {

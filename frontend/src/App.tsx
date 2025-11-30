@@ -9,7 +9,7 @@ import Register from "./Components/Register"
 import HistoryButton from "./Components/test";
 import ListAccountPage from "./Components/test";
 import LateListPage from "./Components/test";
-import Pinfo from "./Components/PersonInfoInsert"
+import PersonalInfoInsert from "./Components/PersonInfoInsert"
 import LibraryCard from "./Components/LibraryCard";
 import AddBookForm from "./Components/AddBook";
 import AccInfo from "./Components/AccountInfo"; 
@@ -30,9 +30,9 @@ function App() {
         <Route path="/update-user" element={<UpdateUserForm />} />
         <Route path="/reserve" element={<BorrowBookForm />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/pinfo" element={<Pinfo />} />
+        <Route path="/personal-info-insert" element={<PersonalInfoInsert />} />
         {/* <Route path="/update" element={<UpdateReturnDate />} /> */}
-        {/* <Route path="/accinfo" element={<AccInfo />} /> */}
+        <Route path="/accinfo" element={<AccInfo />} />
         {/* <Route path="/password-change" element={<PasswordChange />} /> */}
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/list-accounts" element={<LateListPage />} />

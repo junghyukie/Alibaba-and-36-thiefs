@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import { getEmailFromToken } from '../types/auth';
+
+interface UserInfo {
+  email: string
+  ho_ten : string;
+  ngay_sinh : string;
+  dien_thoai: string;
+  dia_chi : string;
+  gioi_tinh : string;
+}
 
 const IoniconsScripts = () => (
   <>
@@ -10,31 +20,76 @@ const IoniconsScripts = () => (
 );
 
 // Giả lập dữ liệu (exported so other components can import)
-export const get_email = () => "anhhai@gmail.com";
-const get_username = () => "anhhai123";
-export const get_fullname = () => "Nguyễn Văn Hai";
-export const get_phone = () => "0909123456";
-const get_dob = () => "2000-01-01";
-const get_address = () => "số 10 Đan Phượng, Hà Nội";
-
 const AccountInfo: React.FC = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    email: "", username: "", password: "",
-    fullname: "", phone: "", dob: "", address: ""
+  // Khởi tạo state với giá trị rỗng
+  const [form, setForm] = useState<UserInfo>({
+    email: "", ho_ten: "", ngay_sinh: "", dien_thoai: "", dia_chi: "", gioi_tinh: ""
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setForm({
-      email: get_email(),
-      username: get_username(),
-      password: "",
-      fullname: get_fullname(),
-      phone: get_phone(),
-      dob: get_dob(),
-      address: get_address()
-    });
-  }, []);
+    const fetchUserInfo = async () => {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        alert("Bạn chưa đăng nhập. Đang chuyển hướng...");
+        navigate("/login"); // Chuyển hướng về trang đăng nhập
+        return;
+      }
+      
+      // Lấy email từ token (hoặc chỉ cần token để Server tự xác thực)
+      // const emailFromToken = getEmailFromToken();
+      
+      // BƯỚC QUAN TRỌNG: Gọi API tới Server để lấy dữ liệu profile
+      try {
+        const res = await fetch("http://localhost:3001/api/auth/user-info", { 
+          method: "GET",
+          headers: { 
+            "Content-Type": "application/json",
+            // Đính kèm token vào Header Authorization theo chuẩn Bearer
+            "Áuthorization": `Bearer ${token}` 
+          },
+        });
+
+        if (res.status === 401) {
+            alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+            localStorage.removeItem("token");
+            navigate("/login");
+            return;
+        }
+
+        if (!res.ok) {
+          throw new Error("Lỗi khi tải thông tin người dùng.");
+        }
+
+        const data: UserInfo = await res.json();
+        
+        // Cập nhật state với dữ liệu nhận được từ Server
+        setForm({
+          email: token ? getEmailFromToken() || "" : "",
+          ho_ten: data.ho_ten,
+          ngay_sinh: data.ngay_sinh,
+          dien_thoai: data.dien_thoai,
+          dia_chi: data.dia_chi,
+          gioi_tinh: data.gioi_tinh
+        });
+
+      } catch (err) {
+        console.error(err);
+        alert("Không thể kết nối hoặc tải dữ liệu hồ sơ.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserInfo();
+  }, [navigate]); // navigate là dependency để tránh warning
+
+  if (loading) {
+    return <div>Đang tải thông tin...</div>;
+  }
 
   return (
     <>
@@ -144,50 +199,50 @@ const AccountInfo: React.FC = () => {
             <form onSubmit={e => e.preventDefault()}>
               {/* Email */}
               <div className="info-box">
-                <span className="icon"><ion-icon name="mail"></ion-icon></span>
+                <span className="icon"></span>
                 <input type="email" value={form.email} readOnly placeholder=" " />
                 <label>Email</label>
               </div>
 
-              {/* Tên đăng nhập */}
-              <div className="info-box">
-                <span className="icon"><ion-icon name="person"></ion-icon></span>
-                <input type="text" value={form.username} readOnly placeholder=" " />
-                <label>Tên đăng nhập</label>
-              </div>
-
               {/* Mật khẩu */}
               <div className="info-box">
-                <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                <span className="icon"></span>
                 <input type="password" value="********" readOnly placeholder=" " />
                 <label>Mật khẩu</label>
               </div>
 
               {/* Họ tên */}
               <div className="info-box">
-                <span className="icon"><ion-icon name="person-circle"></ion-icon></span>
-                <input type="text" value={form.fullname} readOnly placeholder=" " />
+                <span className="icon"></span>
+                <input type="text" value={form.ho_ten} readOnly placeholder=" " />
                 <label>Họ và tên</label>
+              </div>
+
+              {/* Giới tính */}
+              <div className="info-box">
+                <span className="icon"></span>
+                <input type="text" value={form.gioi_tinh} readOnly placeholder=" " />
+                <label>Giới tính</label>
               </div>
 
               {/* Số điện thoại */}
               <div className="info-box">
-                <span className="icon"><ion-icon name="call"></ion-icon></span>
-                <input type="text" value={form.phone} readOnly placeholder=" " />
+                <span className="icon"></span>
+                <input type="text" value={form.dien_thoai} readOnly placeholder=" " />
                 <label>Số điện thoại</label>
               </div>
 
               {/* Ngày sinh – vẫn dùng .info-box + .date-input */}
               <div className="info-box date-input">
-                <span className="icon"><ion-icon name="calendar"></ion-icon></span>
+                <span className="icon"></span>
                 <label>Ngày sinh</label>
-                <input type="date" value={form.dob} readOnly />
+                <input type="date" value={form.ngay_sinh} readOnly />
               </div>
 
               {/* Địa chỉ */}
               <div className="info-box">
-                <span className="icon"><ion-icon name="location"></ion-icon></span>
-                <input type="text" value={form.address} readOnly placeholder=" " />
+                <span className="icon"></span>
+                <input type="text" value={form.dia_chi} readOnly placeholder=" " />
                 <label>Địa chỉ</label>
               </div>
             </form>

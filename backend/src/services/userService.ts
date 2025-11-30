@@ -43,7 +43,7 @@ export const borrowBookService = async (id_acc: number, data: borrowBook): Promi
     const phieuMuon = await insertPhieuMuonModel(id_acc, data, banSao.id);
     if (!phieuMuon) return { success: false, message: "Tạo phiếu mượn thất bại" };
     console.log("qua check 3");
-    const updateBanSaoResult = await updateBanSao(banSao.id, 'BORROWED');
+    const updateBanSaoResult = await updateBanSao(banSao.id);
     if (!updateBanSaoResult.length) return { success: false, message: "Cập nhật trạng thái bản sao thất bại" };
     console.log("qua check 4");
     return { success: true, phieuMuon , message: "Mượn sách thành công" };

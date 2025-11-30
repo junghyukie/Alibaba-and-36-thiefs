@@ -1,4 +1,5 @@
 // src/types/auth.ts
+import { jwtDecode } from "jwt-decode";
 
 export interface User {
   id: number;
@@ -28,3 +29,21 @@ export interface RegisterCredentials {
   email: string;
   password: string;
 }
+
+interface DecodedToken {
+  email: string; 
+  [key: string]: any;
+}
+
+export const getEmailFromToken = (): string | null => {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+
+  try {
+    const decoded = jwtDecode<DecodedToken>(token);
+    return decoded.email; // Lấy email từ payload
+  } catch (error) {
+    console.error("Lỗi giải mã token:", error);
+    return null;
+  }
+};

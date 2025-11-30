@@ -4,14 +4,13 @@ import dotenv from "dotenv";
 import authRoute from "./routes/authRoute"; // import đúng cú pháp ESModule
 import userServiceRoute from "./routes/userRoute";
 import staffserviceRoute from "./routes/staffRoute";
-// import authRoute from "./routes/authRoute";
-// import bookRoute from "./routes/bookRoute";
+import bookRoute from "./routes/bookRoute";
 import categoryRoute from "./routes/categoryRoute";
 import authorRoute from "./routes/authorRoute";
 import publisherRoute from "./routes/publisherRoute";
 import borrowRoute from "./routes/borrowRoute"
-import userServiceRoute from "./routes/userRoute";
 import { errorHandler } from "./middleware/errorHandler";
+import copyRoute from "./routes/copyRoute";
 // server.ts
 import './controllers/queueCron';
 // Khi server chạy, cron sẽ tự chạy
@@ -22,7 +21,14 @@ const app: Application = express();
 const port = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    allowedHeaders: ["Content-Type", "authorization", "Authorization",],
+  })
+);
+
+
 app.use(express.json());
 
 // Route test
@@ -40,7 +46,6 @@ app.use("/api/category", categoryRoute);
 app.use("/api/author", authorRoute);
 app.use("/api/publisher", publisherRoute);
 app.use("/api/borrow", borrowRoute);
-app.use("/user/service/",userServiceRoute);
 
 app.use(errorHandler); // must come last
 

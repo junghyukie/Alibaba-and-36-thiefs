@@ -4,6 +4,7 @@ import {
   registerService,
   forgotPasswordService,
   resetPasswordService,
+  getUserInfoService
 } from "../services/authService";
 
 export const login = async (req: Request, res: Response): Promise<void> => {
@@ -20,7 +21,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await registerService(req.body);
-    res.status(200).json({ message: result });
+    res.status(200).json({ success: true, message: result });
   } catch (error: any) {
     console.error("Lỗi đăng ký:", error);
     res.status(500).json({ message: error.message || "Lỗi server" });
@@ -66,4 +67,42 @@ export const updateUserController = async (req: AuthRequest, res: Response) => {
     console.error(err);
     res.status(500).json({ message: "Lỗi server" });
   }
+};
+
+export const getUserInfoController = async (req: Request, res: Response) => {
+    // 1. Trích xuất email từ request (sau khi token đã được middleware xác thực)
+    const userEmail = (req as any).userEmail; 
+
+    if (!userEmail) {
+        // Đây là lỗi nếu middleware xác thực chưa hoạt động đúng
+        return res.status(401).json({ 
+            success: false, 
+            message: "Unauthorized or email not found in request." 
+        });
+    }
+
+    try {
+        // 2. Gọi hàm Service để lấy dữ liệu
+        const userInfo = await getUserInfoService(userEmail);
+
+        if (userInfo) {
+            // 3. Trả về thông tin người dùng
+            return res.status(200).json({
+                success: true,
+                data: userInfo,
+            });
+        } else {
+            // 4. Không tìm thấy người dùng
+            return res.status(404).json({
+                success: false,
+                message: "Thông tin tài khoản không được tìm thấy."
+            });
+        }
+    } catch (error) {
+        console.error("Lỗi trong Controller:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Lỗi Server nội bộ khi lấy thông tin người dùng."
+        });
+    }
 };

@@ -27,11 +27,11 @@ const Register: React.FC = () => {
 
       const data = await res.json();
       // alert(data.message); // thông báo từ server
-      if (data.success) {
-        alert("Đăng ký thành công!");
-        navigate('/pinfo');
+      if (data.success) {   
+        alert("Đăng ký thành công! Vui lòng điền thông tin cá nhân.");     
+        navigate('/personal-info-insert');  
       } else {
-        alert(data.message);
+        alert("failed:" + data.message);
       }
     } catch (err) {
       alert("Lỗi kết nối server");
@@ -209,7 +209,7 @@ const Register: React.FC = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
-              <label>Username</label>
+              <label>Họ và tên</label>
             </div>
 
             <div className="input-box">

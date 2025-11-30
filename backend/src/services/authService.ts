@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { Account, Lock } from "../models/accountModel";
+import { Account, Lock, getUserInfo } from "../models/accountModel";
 import { existing_email, updateOTP, checkOTP, resetPass } from "../models/forgetPasswdModel";
 import { Check_email, Register } from "../models/registerAccModel";
 import { LoginResult, RegisterData } from "../types/auth";
@@ -127,4 +127,24 @@ export const updateUserService = async (
     console.error("Lỗi khi cập nhật:", err);
     return { success: false, message: "Lỗi server khi cập nhật" };
   }
+};
+
+export const getUserInfoService = async (email: string): Promise<UserInformation | null> => {
+    try {
+        // 1. Gọi hàm Model (truy vấn DB)
+        const userInfo = await getUserInfo(email);
+        
+        // 2. Xử lý dữ liệu (ví dụ: format lại ngày tháng, kiểm tra null)
+        if (userInfo && userInfo.ngay_sinh instanceof Date) {
+            // Ví dụ: format Date object thành chuỗi 'YYYY-MM-DD' trước khi gửi đi
+            // userInfo.ngay_sinh = userInfo.ngay_sinh.toISOString().split('T')[0];
+        }
+
+        return userInfo;
+
+    } catch (error) {
+        console.error("Lỗi trong Service:", error);
+        // Ném lỗi để Controller xử lý response 500
+        throw new Error("Service failed to fetch user info.");
+    }
 };
