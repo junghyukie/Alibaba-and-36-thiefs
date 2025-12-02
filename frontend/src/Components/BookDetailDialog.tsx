@@ -150,13 +150,13 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
                   <div className="space-y-2">
                     <Label className="text-gray-600 text-sm font-medium">Trạng thái</Label>
                     <div>
-                      {copies?.available_copies ? (
-                        <Badge variant="outline" className="bg-red-100 text-red-800">
-                          Hết sách
-                        </Badge>
-                      ) : (
+                      {copies?.available_copies && copies.available_copies > 0 ? (
                         <Badge variant="outline" className="bg-green-100 text-green-800">
                           Còn sách
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="bg-red-100 text-red-800">
+                          Hết sách
                         </Badge>
                       )}
                     </div>
