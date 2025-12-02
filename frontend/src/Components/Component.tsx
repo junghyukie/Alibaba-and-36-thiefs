@@ -350,7 +350,7 @@ const handleBorrow = async (book : any) => {
       </button>
 
       {isCartOpen && (
-        <div className="fixed bottom-20 left-4 bg-white rounded-lg shadow-xl p-4 w-80 max-h-96 overflow-y-auto">
+        <div className="fixed bottom-1/2 left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-white rounded-lg shadow-xl p-6 w-[600px] max-h-[80vh] overflow-y-auto">
           <div className="flex justify-between items-center mb-3">
             <h3 className="font-bold text-lg">Cart</h3>
             <button onClick={() => setIsCartOpen(false)} className="text-gray-500 hover:text-gray-700">

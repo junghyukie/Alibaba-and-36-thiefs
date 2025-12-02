@@ -10,6 +10,7 @@ import categoryRoute from "./routes/categoryRoute";
 import authorRoute from "./routes/authorRoute";
 import publisherRoute from "./routes/publisherRoute";
 import borrowRoute from "./routes/borrowRoute"
+import userService from "./routes/userRoute"
 import { errorHandler } from "./middleware/errorHandler";
 // server.ts
 import './controllers/queueCron';
@@ -45,6 +46,7 @@ app.use("/api/category", categoryRoute);
 app.use("/api/author", authorRoute);
 app.use("/api/publisher", publisherRoute);
 app.use("/api/borrow", borrowRoute);
+app.use("/user/service", userService);
 
 app.use(errorHandler); // must come last
 
