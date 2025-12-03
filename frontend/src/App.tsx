@@ -12,7 +12,8 @@ import LateListPage from "./Components/test";
 import PersonalInfoInsert from "./Components/PersonInfoInsert"
 import LibraryCard from "./Components/LibraryCard";
 import AddBookForm from "./Components/AddBook";
-import AccInfo from "./Components/AccountInfo"; 
+import AccInfo from "./Components/AccountInfo";
+import PatronList from "./Components/PatronList"; 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 //import type UpdateReturnDate from "./Components/test";
 
@@ -43,6 +44,7 @@ function App() {
     
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
+        <Route path="/patronlist" element={<PatronList />} />
       </Routes>
     </BrowserRouter>
   );
