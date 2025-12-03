@@ -8,6 +8,8 @@ import BorrowBooks from "./Components/BorrowBooks"
 import Register from "./Components/Register"
 import HistoryButton from "./Components/test";
 import ListAccountPage from "./Components/test";
+import AddBook from "./Components/test";
+import AddBanSao from "./Components/test";
 import LateListPage from "./Components/test";
 import PersonalInfoInsert from "./Components/PersonInfoInsert"
 import LibraryCard from "./Components/LibraryCard";
@@ -40,7 +42,8 @@ function App() {
         <Route path="/borrowhistory" element={<HistoryButton />} />
         <Route path="/borrowbooks" element={<BorrowBooks />} />
         <Route path="/register" element={<Register />} />
-    
+        <Route path="/add" element={<AddBook />} />
+        <Route path="/add-ban-sao" element={<AddBanSao />} />
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
       </Routes>

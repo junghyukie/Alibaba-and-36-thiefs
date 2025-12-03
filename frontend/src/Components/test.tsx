@@ -1,104 +1,360 @@
-// src/components/LateListPage.tsx
+// // src/components/LateListPage.tsx
 
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 
-// --- TypeScript interface ---
-export interface LateRecord {
-  ten_doc_gia: string;
-  tieu_de: string;
-  ngay_het_han: string;
-  so_ngay_tre: number;
+// // --- TypeScript interface ---
+// export interface LateRecord {
+//   ten_doc_gia: string;
+//   tieu_de: string;
+//   ngay_het_han: string;
+//   so_ngay_tre: number;
+// }
+
+// const LateListPage: React.FC = () => {
+//   const [records, setRecords] = useState<LateRecord[]>([]);
+//   const [loading, setLoading] = useState<boolean>(true);
+
+//   const fetchLateRecords = async () => {
+//     const token = localStorage.getItem("token");
+
+//     if (!token) {
+//       alert("❌ Bạn chưa đăng nhập!");
+//       return;
+//     }
+
+//     try {
+//       const res = await fetch(`http://localhost:3001/staff/service/late`, {
+//         method: "GET",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+
+//       const data = await res.json();
+
+//       if (!res.ok || !data.success) {
+//         alert(data.message || "❌ Lỗi server");
+//         setRecords([]);
+//         return;
+//       }
+
+//       setRecords(data.data || []);
+//     } catch (err) {
+//       console.error("❌ Lỗi fetch:", err);
+//       alert("❌ Không thể kết nối server!");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchLateRecords();
+//   }, []);
+
+//   if (loading) return <div>Đang tải dữ liệu...</div>;
+//   if (records.length === 0) return <div>Không có độc giả quá hạn</div>;
+
+//   return (
+//     <div style={styles.container}>
+//       <h2>📄 Danh sách độc giả quá hạn</h2>
+
+//       <table style={styles.table}>
+//         <thead>
+//           <tr>
+//             <th>Độc giả</th>
+//             <th>Tựa đề</th>
+//             <th>Ngày hết hạn</th>
+//             <th>Số ngày trễ</th>
+//           </tr>
+//         </thead>
+
+//         <tbody>
+//           {records.map((r, index) => (
+//             <tr key={index}>
+//               <td>{r.ten_doc_gia}</td>
+//               <td>{r.tieu_de}</td>
+//               <td>{r.ngay_het_han}</td>
+//               <td>{r.so_ngay_tre}</td>
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+//     </div>
+//   );
+// };
+
+// export default LateListPage;
+
+// const styles = {
+//   container: {
+//     maxWidth: "800px",
+//     margin: "40px auto",
+//     background: "#fff",
+//     padding: "20px",
+//     borderRadius: "10px",
+//     boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+//     textAlign: "center" as const,
+//   },
+//   table: {
+//     width: "100%",
+//     borderCollapse: "collapse" as const,
+//     marginTop: "20px",
+//   },
+// };
+
+// import React, { useState } from "react";
+
+// const AddBook: React.FC = () => {
+//   const [form, setForm] = useState({
+//     ten_tg: "",
+//     nxb: "",
+//     tieu_de: "",
+//     isbn: "",
+//     tom_tat: "",
+//     nam_xb: "",
+//     ngon_ngu: "",
+//     the_loai: "", // thêm field thể loại
+//   });
+
+//   // --- handle change ---
+//   const handleChange = (
+//     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+//   ) => {
+//     setForm({
+//       ...form,
+//       [e.target.name]: e.target.value,
+//     });
+//   };
+
+//   // --- handle submit ---
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+
+//     const token = localStorage.getItem("token");
+//     if (!token) {
+//       alert("❌ Bạn chưa đăng nhập!");
+//       return;
+//     }
+
+//     // chuyển thể loại từ chuỗi -> mảng
+//     const theLoaiArray = form.the_loai
+//       .split(",")
+//       .map((t) => t.trim())
+//       .filter((t) => t !== "");
+
+//     const payload = {
+//       ten_tg: form.ten_tg,
+//       nxb: form.nxb,
+//       tieu_de: form.tieu_de,
+//       isbn: form.isbn,
+//       tom_tat: form.tom_tat.trim() === "" ? null : form.tom_tat,
+//       nam_xb: Number(form.nam_xb),
+//       ngon_ngu: form.ngon_ngu,
+//       the_loai: theLoaiArray, // gửi mảng thể loại
+//     };
+
+//     try {
+//       const res = await fetch("http://localhost:3001/staff/service/add-book", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify(payload),
+//       });
+
+//       const data = await res.json();
+//       console.log("Server response:", data);
+
+//       if (!res.ok || !data.success) {
+//         alert(data.message || "❌ Lỗi server");
+//         return;
+//       }
+
+//       alert("✔️ Thêm sách thành công!");
+//     } catch (err) {
+//       console.error("❌ Lỗi fetch:", err);
+//       alert("❌ Không thể kết nối server!");
+//     }
+//   };
+
+//   return (
+//     <>
+//       <style>{`
+//         body { margin:0; padding:0; font-family:Poppins, sans-serif; background:#f0f0f0; }
+//         .container { width:100%; min-height:100vh; display:flex; justify-content:center; align-items:center; }
+//         .box { background:white; padding:25px; width:420px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+//         h2 { text-align:center; margin-bottom:20px; }
+//         .input-field { margin-bottom:15px; }
+//         .input-field label { display:block; margin-bottom:5px; font-weight:500; }
+//         .input-field input, .input-field textarea { width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; outline:none; font-size:0.95rem; }
+//         button { width:100%; padding:10px; background:#333; color:white; border:none; border-radius:8px; cursor:pointer; font-size:1rem; }
+//         button:hover { opacity:0.9; }
+//       `}</style>
+
+//       <div className="container">
+//         <div className="box">
+//           <h2>Thêm Sách</h2>
+
+//           <form onSubmit={handleSubmit}>
+//             <div className="input-field">
+//               <label>Tên tác giả</label>
+//               <input name="ten_tg" value={form.ten_tg} onChange={handleChange} required />
+//             </div>
+
+//             <div className="input-field">
+//               <label>Nhà xuất bản</label>
+//               <input name="nxb" value={form.nxb} onChange={handleChange} required />
+//             </div>
+
+//             <div className="input-field">
+//               <label>Tiêu đề</label>
+//               <input name="tieu_de" value={form.tieu_de} onChange={handleChange} required />
+//             </div>
+
+//             <div className="input-field">
+//               <label>ISBN</label>
+//               <input name="isbn" value={form.isbn} onChange={handleChange} required />
+//             </div>
+
+//             <div className="input-field">
+//               <label>Tóm tắt (optional)</label>
+//               <textarea name="tom_tat" rows={3} value={form.tom_tat} onChange={handleChange} />
+//             </div>
+
+//             <div className="input-field">
+//               <label>Năm xuất bản</label>
+//               <input type="number" name="nam_xb" value={form.nam_xb} onChange={handleChange} required />
+//             </div>
+
+//             <div className="input-field">
+//               <label>Ngôn ngữ</label>
+//               <input name="ngon_ngu" value={form.ngon_ngu} onChange={handleChange} required />
+//             </div>
+
+//             <div className="input-field">
+//               <label>Thể loại (có thể nhập nhiều, cách nhau bằng dấu , )</label>
+//               <input name="the_loai" value={form.the_loai} onChange={handleChange} placeholder="Văn học, Khoa học, Truyện tranh..." />
+//             </div>
+
+//             <button type="submit">Gửi</button>
+//           </form>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };
+
+// export default AddBook;
+
+
+import React, { useState } from "react";
+
+export interface addBanSaoInput {
+  ten_sach: string;
+  ma_vach: string;
+  ngay_mua: string; // ISO string
+  gia_tri: number;
+  ke_sach: string;
 }
 
-const LateListPage: React.FC = () => {
-  const [records, setRecords] = useState<LateRecord[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+const AddBanSao: React.FC = () => {
+  const [form, setForm] = useState({
+    ten_sach: "",
+    ma_vach: "",
+    ngay_mua: "",
+    gia_tri: "", // string
+    ke_sach: "",
+  });
 
-  const fetchLateRecords = async () => {
+  // --- handle change ---
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // --- handle submit ---
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     const token = localStorage.getItem("token");
-
     if (!token) {
       alert("❌ Bạn chưa đăng nhập!");
       return;
     }
 
+    const payload: addBanSaoInput = {
+      ten_sach: form.ten_sach,
+      ma_vach: form.ma_vach,
+      ngay_mua: form.ngay_mua,
+      gia_tri: Number(form.gia_tri), // chuyển sang number
+      ke_sach: form.ke_sach,
+    };
+
     try {
-      const res = await fetch(`http://localhost:3001/staff/service/late`, {
-        method: "GET",
+      const res = await fetch("http://localhost:3001/staff/service/add-ban-sao", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
+      console.log("Server response:", data);
 
       if (!res.ok || !data.success) {
         alert(data.message || "❌ Lỗi server");
-        setRecords([]);
         return;
       }
 
-      setRecords(data.data || []);
+      alert("✔️ Thêm bản sao thành công!");
     } catch (err) {
       console.error("❌ Lỗi fetch:", err);
       alert("❌ Không thể kết nối server!");
-    } finally {
-      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchLateRecords();
-  }, []);
-
-  if (loading) return <div>Đang tải dữ liệu...</div>;
-  if (records.length === 0) return <div>Không có độc giả quá hạn</div>;
-
   return (
-    <div style={styles.container}>
-      <h2>📄 Danh sách độc giả quá hạn</h2>
+    <div className="container">
+      <div className="box">
+        <h2>Thêm Bản Sao Sách</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="input-field">
+            <label>Tên sách</label>
+            <input name="ten_sach" value={form.ten_sach} onChange={handleChange} required />
+          </div>
 
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th>Độc giả</th>
-            <th>Tựa đề</th>
-            <th>Ngày hết hạn</th>
-            <th>Số ngày trễ</th>
-          </tr>
-        </thead>
+          <div className="input-field">
+            <label>Mã vạch</label>
+            <input name="ma_vach" value={form.ma_vach} onChange={handleChange} required />
+          </div>
 
-        <tbody>
-          {records.map((r, index) => (
-            <tr key={index}>
-              <td>{r.ten_doc_gia}</td>
-              <td>{r.tieu_de}</td>
-              <td>{r.ngay_het_han}</td>
-              <td>{r.so_ngay_tre}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          <div className="input-field">
+            <label>Ngày mua</label>
+            <input type="date" name="ngay_mua" value={form.ngay_mua} onChange={handleChange} required />
+          </div>
+
+          <div className="input-field">
+            <label>Giá trị</label>
+            <input type="number" name="gia_tri" value={form.gia_tri} onChange={handleChange} required />
+          </div>
+
+          <div className="input-field">
+            <label>Kệ sách</label>
+            <input name="ke_sach" value={form.ke_sach} onChange={handleChange} required />
+          </div>
+
+          <button type="submit">Gửi</button>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default LateListPage;
-
-const styles = {
-  container: {
-    maxWidth: "800px",
-    margin: "40px auto",
-    background: "#fff",
-    padding: "20px",
-    borderRadius: "10px",
-    boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-    textAlign: "center" as const,
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse" as const,
-    marginTop: "20px",
-  },
-};
+export default AddBanSao;
