@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../types/auth"
-import { borrowBookService, inforBookinCartService, insertBookService, logService } from "../services/userService";
+import { borrowBookService, deleteBookFromCartService, inforBookinCartService, insertBookService, logService } from "../services/userService";
 //import { promises } from "nodemailer/lib/xoauth2";
 export const insertBookController = async (req: AuthRequest, res: Response): Promise<any> => {
     try {
@@ -20,6 +20,27 @@ export const insertBookController = async (req: AuthRequest, res: Response): Pro
         res.status(500).json({ message: "Lỗi server" });
     }
 
+}
+
+export const deleteBookFromCartController = async (req: AuthRequest, res: Response): Promise<any> => {
+    try {
+        console.log(req.headers);
+        const id_acc = req.user?.id_acc;
+        if (!id_acc) return res.status(401).json({ message: "Xin hãy đăng nhập" });
+        const id_sach = Number(req.params.id_sach);
+        if(isNaN(id_sach)) return res.status(400).json({ message: "ID sách không hợp lệ" });
+        const result = await deleteBookFromCartService(id_acc, id_sach);
+        if (result.success === false) {
+            console.log("Loi controller delete");
+            return res.status(400).json(result);
+        }
+        else {
+            return res.status(200).json(result)
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Lỗi server" });
+    }
 }
 
 export const inforBookinCartController = async (req : AuthRequest, res : Response) : Promise <any> =>{

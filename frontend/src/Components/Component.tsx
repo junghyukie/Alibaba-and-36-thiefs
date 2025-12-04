@@ -5,11 +5,18 @@ import { useNavigate } from "react-router-dom";
 
 // Define cart item type
 type CartItem = {
-  id: string;
-  title: string;
-  author: string;
-  // Add other book properties you need
+  id: number;
+  title?: string;
+  author?: string;
+  tieu_de?: string;
+  tac_gia?: string;
+  so_luong?: number;
+  [key: string]: any; // Allow other backend fields
 };
+
+// Helper to get the display title from a cart item (handle both Vietnamese and English field names)
+const getItemTitle = (item: CartItem) => item.title || item.tieu_de || 'Unknown';
+const getItemAuthor = (item: CartItem) => item.author || item.tac_gia || 'Unknown';
 
 // 1. Import tất cả component cần thiết từ shadcn/ui và lucide-react
 import { Badge } from "@/components/ui/badge";
@@ -94,6 +101,31 @@ export default function Component() {
     return [];
   });
 
+  // Selected items in the cart for bulk actions (borrow)
+  // Store IDs as number for consistent comparison with item IDs
+  const [selectedCartIds, setSelectedCartIds] = useState<(number)[]>([]);
+
+  // Persist selectedCartIds to localStorage (optional but recommended for UX)
+  useEffect(() => {
+    try {
+      localStorage.setItem('selectedCartIds', JSON.stringify(selectedCartIds));
+    } catch (e) {
+      // ignore
+    }
+  }, [selectedCartIds]);
+
+  // On mount, restore selectedCartIds if it exists
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('selectedCartIds');
+      if (saved) {
+        setSelectedCartIds(JSON.parse(saved));
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
   // Persist cart to localStorage so other pages/components can read it
   useEffect(() => {
     try {
@@ -148,10 +180,19 @@ export default function Component() {
 
       alert("✅ " + (data.message || "Đã thêm vào giỏ hàng!"));
 
-      // Thêm vào giỏ hàng local (frontend)
+            // Thêm vào giỏ hàng local (frontend)
       const exists = cartItems.find(item => item.id === book.id);
       if (!exists) {
-        setCartItems([...cartItems, book]);
+        // Normalize the book data to ensure title/author fields exist
+        const normalizedBook: CartItem = {
+          id: book.id,
+          title: book.title || book.tieu_de,
+          author: book.author || book.tac_gia,
+          tieu_de: book.tieu_de,
+          tac_gia: book.tac_gia,
+          ...book, // Include all other fields from the book object
+        };
+        setCartItems([...cartItems, normalizedBook]);
       }
     } catch (error) {
       console.error("🚨 Lỗi khi gửi yêu cầu thêm vào giỏ hàng:", error);
@@ -207,9 +248,71 @@ export default function Component() {
     setIsCartOpen(!isCartOpen);
   };
 
-  // Function to remove from cart
-  const removeFromCart = (bookId: string) => {
-    setCartItems(cartItems.filter(item => item.id !== bookId));
+    // Function to remove from cart by specific ID - async with backend integration
+  const removeFromCart = async (bookId: number | string | undefined) => {
+    // Defensive: ensure we have an ID to delete
+    if (bookId === undefined || bookId === null) {
+      console.error('removeFromCart called with undefined id');
+      alert('Không thể xóa: ID sách không hợp lệ');
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No token found. User must be logged in to remove from cart.');
+      alert('Vui lòng đăng nhập để xóa sách khỏi giỏ hàng!');
+      return;
+    }
+
+    try {
+      // Coerce ID to string for URL
+      const idStr = String(bookId);
+      // Construct the DELETE endpoint URL
+      const url = `http://localhost:3001/user/service/delete-book/${encodeURIComponent(idStr)}`;
+
+      console.log(`📤 Deleting book from cart: ${url}`);
+
+      // Make the DELETE request
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      // Check if the response is successful
+      if (!response.ok) {
+        // Try to parse error body if present
+        let errMsg = `Failed to delete book (status: ${response.status})`;
+        try {
+          const errBody = await response.json();
+          if (errBody && errBody.message) errMsg = errBody.message;
+        } catch (e) {
+          // ignore parse error
+        }
+        throw new Error(errMsg);
+      }
+
+      // Only update local state if the API call was successful
+      const newItems = cartItems.filter((item) => item.id !== bookId && String(item.id) !== idStr && (item as any).id_sach !== bookId);
+      setCartItems(newItems);
+
+      // Also remove from selected IDs if it was selected
+      setSelectedCartIds((prev) => prev.filter((id) => id !== bookId && String(id) !== idStr));
+
+      // Update localStorage with the new cart items
+      try {
+        localStorage.setItem('cartItems', JSON.stringify(newItems));
+      } catch (e) {
+        console.error('Failed to update localStorage:', e);
+      }
+
+      console.log(`✅ Successfully removed book ${idStr} from cart`);
+    } catch (error) {
+      console.error('❌ Error removing book from cart:', error);
+      alert(`Có lỗi xảy ra khi xóa sách: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   };
 
   // Function to open book dialog from cart
@@ -282,6 +385,36 @@ const handleBorrow = async (book : any) => {
     //postMessage("❌ Có lỗi xảy ra: " + (err.message || "Lỗi không xác định"));
   }
 };
+
+// Borrow all selected books from cart
+const borrowSelected = async () => {
+  if (selectedCartIds.length === 0) {
+    alert('Vui lòng chọn sách để mượn');
+    return;
+  }
+
+  const selected = cartItems.filter((it) => selectedCartIds.includes(it.id));
+  for (const b of selected) {
+    try {
+      // await each call sequentially to keep server load reasonable
+      // handleBorrow already performs token/checks and alerts
+      // eslint-disable-next-line no-await-in-loop
+      await handleBorrow(b);
+    } catch (err) {
+      console.error('Lỗi khi mượn sách', b, err);
+    }
+  }
+
+  // Remove borrowed items from cart
+  const remaining = cartItems.filter((it) => !selectedCartIds.includes(it.id));
+  setCartItems(remaining);
+  try { localStorage.setItem('cartItems', JSON.stringify(remaining)); } catch (e) {}
+  setSelectedCartIds([]);
+  setIsCartOpen(false);
+  alert('Hoàn tất mượn sách đã chọn');
+};
+
+
   return (
     <div id="webcrumbs" className="bg-muted/40 min-h-screen">
       <Header onSearch={handleSearch} />
@@ -377,16 +510,55 @@ const handleBorrow = async (book : any) => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      removeFromCart(item.id);
+                      // Some backend payloads use different id fields (id, id_sach, ID, ma_sach).
+                      // Resolve the most likely id value to avoid sending `undefined` to the API.
+                      const resolvedId = (item as any).id ?? (item as any).id_sach ?? (item as any).ID ?? (item as any).ma_sach;
+                      removeFromCart(resolvedId);
                     }}
                     className="absolute top-3 right-3 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity text-xl"
+                    aria-label={`Remove ${item.title}`}
                   >
                     ✕
                   </button>
-                  <h4 className="font-semibold text-lg pr-8">{item.title}</h4>
-                  <p className="text-gray-600">{item.author}</p>
+
+                  {/* Checkbox for selecting item - stop propagation so it doesn't open the item */}
+                  <label className="absolute top-3 right-10" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={selectedCartIds.includes(item.id)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        console.log('Checkbox toggled for item ID:', item.id, 'Checked:', checked, 'Current selectedCartIds:', selectedCartIds);
+                        // Ensure we're using the correct ID and not accidentally affecting other items
+                        setSelectedCartIds((prev) => {
+                          if (checked) {
+                            // Only add if not already present
+                            return prev.includes(item.id) ? prev : [...prev, item.id];
+                          } else {
+                            // Only remove the specific item by ID
+                            return prev.filter((id) => id !== item.id);
+                          }
+                        });
+                      }}
+                      aria-label={`Select ${item.title}`}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </label>
+
+                  <h4 className="font-semibold text-lg pr-8">{getItemTitle(item)}</h4>
+                  <p className="text-gray-600">{getItemAuthor(item)}</p>
                 </div>
               ))}
+
+              {/* Bulk borrow button - visible when there are items */}
+              <div className="mt-4 border-t pt-4">
+                <button
+                  onClick={borrowSelected}
+                  className="w-full bg-green-600 text-white py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition"
+                >
+                  Xác nhận mượn sách ({selectedCartIds.length} được chọn)
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -1,8 +1,9 @@
 
 import { insertBook, borrowBook, logServiceResult } from "../types/userService";
-import { checkBook_Cart, checkCart, inforBookinCart, insertBookModel } from "../models/insertBookintoCartModel";
+import { checkBook_Cart, checkCart, inforBookinCart, insertBookModel, deleteBookFromCartModel } from "../models/insertBookintoCartModel";
 import { borrowBookModel, checkBorrowedBook, checkSoLuongDaMuon, insertPhieuMuonModel, updateBanSao } from "../models/borrowBookModel";
 import { LogModel } from "../models/logModel";
+import e from "express";
 
 
 export const insertBookService = async (id_acc: number, data: insertBook): Promise<any> => {
@@ -17,6 +18,16 @@ export const insertBookService = async (id_acc: number, data: insertBook): Promi
     return result.length ? { success: true } : { success: false, message: "Thêm sách thất bại" };
   } catch (err) {
     console.error("Lỗi SQL insertBookService:", err);
+    return { success: false, message: "Lỗi server" };
+  }
+};
+
+export const deleteBookFromCartService = async (id_acc: number, id_sach: number): Promise<any> => {
+  try {
+    const result = await deleteBookFromCartModel(id_acc, id_sach);
+    return result.length ? { success: true } : { success: false, message: "Xóa sách thất bại" };
+  } catch (err) {
+    console.error("Lỗi SQL deleteBookFromCartService:", err);
     return { success: false, message: "Lỗi server" };
   }
 };
