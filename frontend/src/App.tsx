@@ -15,6 +15,8 @@ import PersonalInfoInsert from "./Components/PersonInfoInsert"
 import LibraryCard from "./Components/LibraryCard";
 import AddBookForm from "./Components/AddBook";
 import AccInfo from "./Components/AccountInfo"; 
+import PatronList from "./Components/PatronList";
+import LockAccount from "./Components/test";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 //import type UpdateReturnDate from "./Components/test";
 
@@ -44,6 +46,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/add" element={<AddBook />} />
         <Route path="/add-ban-sao" element={<AddBanSao />} />
+         <Route path="/lock" element={<LockAccount />} />
+        <Route path="/patronlist" element={<PatronList />} />
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
       </Routes>

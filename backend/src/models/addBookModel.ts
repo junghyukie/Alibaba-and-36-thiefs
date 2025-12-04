@@ -1,5 +1,5 @@
 // import pool from "../config/db";
-// // import { addBookInput } from "../types/addBook";
+// import { addBookInput } from "../types/addBook";
 // export const AddBookModel = async(tacgia_id : number,nxb_id : number,tieu_de : string,isbn : string,tom_tat : string | null,nam_xb : number,ngon_ngu : string) 
 // : Promise<{success : boolean , message : string}> =>{
 //     const sql = `INSERT INTO sach(tacgia_id, nxb_id, tieu_de, isbn, tom_tat, nam_xb, ngon_ngu)

@@ -249,73 +249,144 @@
 // export default AddBook;
 
 
+// import React, { useState } from "react";
+
+// export interface addBanSaoInput {
+//   ten_sach: string;
+//   ma_vach: string;
+//   ngay_mua: string; // ISO string
+//   gia_tri: number;
+//   ke_sach: string;
+// }
+
+// const AddBanSao: React.FC = () => {
+//   const [form, setForm] = useState({
+//     ten_sach: "",
+//     ma_vach: "",
+//     ngay_mua: "",
+//     gia_tri: "", // string
+//     ke_sach: "",
+//   });
+
+//   // --- handle change ---
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const { name, value } = e.target;
+//     setForm((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   };
+
+//   // --- handle submit ---
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+
+//     const token = localStorage.getItem("token");
+//     if (!token) {
+//       alert("❌ Bạn chưa đăng nhập!");
+//       return;
+//     }
+
+//     const payload: addBanSaoInput = {
+//       ten_sach: form.ten_sach,
+//       ma_vach: form.ma_vach,
+//       ngay_mua: form.ngay_mua,
+//       gia_tri: Number(form.gia_tri), // chuyển sang number
+//       ke_sach: form.ke_sach,
+//     };
+
+//     try {
+//       const res = await fetch("http://localhost:3001/staff/service/add-ban-sao", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify(payload),
+//       });
+
+//       const data = await res.json();
+//       console.log("Server response:", data);
+
+//       if (!res.ok || !data.success) {
+//         alert(data.message || "❌ Lỗi server");
+//         return;
+//       }
+
+//       alert("✔️ Thêm bản sao thành công!");
+//     } catch (err) {
+//       console.error("❌ Lỗi fetch:", err);
+//       alert("❌ Không thể kết nối server!");
+//     }
+//   };
+
+//   return (
+//     <div className="container">
+//       <div className="box">
+//         <h2>Thêm Bản Sao Sách</h2>
+//         <form onSubmit={handleSubmit}>
+//           <div className="input-field">
+//             <label>Tên sách</label>
+//             <input name="ten_sach" value={form.ten_sach} onChange={handleChange} required />
+//           </div>
+
+//           <div className="input-field">
+//             <label>Mã vạch</label>
+//             <input name="ma_vach" value={form.ma_vach} onChange={handleChange} required />
+//           </div>
+
+//           <div className="input-field">
+//             <label>Ngày mua</label>
+//             <input type="date" name="ngay_mua" value={form.ngay_mua} onChange={handleChange} required />
+//           </div>
+
+//           <div className="input-field">
+//             <label>Giá trị</label>
+//             <input type="number" name="gia_tri" value={form.gia_tri} onChange={handleChange} required />
+//           </div>
+
+//           <div className="input-field">
+//             <label>Kệ sách</label>
+//             <input name="ke_sach" value={form.ke_sach} onChange={handleChange} required />
+//           </div>
+
+//           <button type="submit">Gửi</button>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AddBanSao;
+
+
 import React, { useState } from "react";
 
-export interface addBanSaoInput {
-  ten_sach: string;
-  ma_vach: string;
-  ngay_mua: string; // ISO string
-  gia_tri: number;
-  ke_sach: string;
-}
+const LockAccount: React.FC = () => {
+  const [accountId, setAccountId] = useState("");
 
-const AddBanSao: React.FC = () => {
-  const [form, setForm] = useState({
-    ten_sach: "",
-    ma_vach: "",
-    ngay_mua: "",
-    gia_tri: "", // string
-    ke_sach: "",
-  });
-
-  // --- handle change ---
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  // --- handle submit ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const token = localStorage.getItem("token");
-    if (!token) {
-      alert("❌ Bạn chưa đăng nhập!");
-      return;
-    }
-
-    const payload: addBanSaoInput = {
-      ten_sach: form.ten_sach,
-      ma_vach: form.ma_vach,
-      ngay_mua: form.ngay_mua,
-      gia_tri: Number(form.gia_tri), // chuyển sang number
-      ke_sach: form.ke_sach,
-    };
+    if (!token) return alert("❌ Bạn chưa đăng nhập!");
 
     try {
-      const res = await fetch("http://localhost:3001/staff/service/add-ban-sao", {
+      const res = await fetch("http://localhost:3001/staff/service/activate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ id: Number(accountId) }),
       });
 
       const data = await res.json();
-      console.log("Server response:", data);
+      if (!res.ok || !data.success) return alert(data.message || "❌ Có lỗi xảy ra");
 
-      if (!res.ok || !data.success) {
-        alert(data.message || "❌ Lỗi server");
-        return;
-      }
-
-      alert("✔️ Thêm bản sao thành công!");
+      alert("🔒 Khóa tài khoản thành công!");
     } catch (err) {
-      console.error("❌ Lỗi fetch:", err);
+      console.error(err);
       alert("❌ Không thể kết nối server!");
     }
   };
@@ -323,38 +394,23 @@ const AddBanSao: React.FC = () => {
   return (
     <div className="container">
       <div className="box">
-        <h2>Thêm Bản Sao Sách</h2>
+        <h2>Khóa Tài Khoản</h2>
         <form onSubmit={handleSubmit}>
           <div className="input-field">
-            <label>Tên sách</label>
-            <input name="ten_sach" value={form.ten_sach} onChange={handleChange} required />
+            <label>ID tài khoản</label>
+            <input
+              type="number"
+              value={accountId}
+              onChange={(e) => setAccountId(e.target.value)}
+              required
+            />
           </div>
 
-          <div className="input-field">
-            <label>Mã vạch</label>
-            <input name="ma_vach" value={form.ma_vach} onChange={handleChange} required />
-          </div>
-
-          <div className="input-field">
-            <label>Ngày mua</label>
-            <input type="date" name="ngay_mua" value={form.ngay_mua} onChange={handleChange} required />
-          </div>
-
-          <div className="input-field">
-            <label>Giá trị</label>
-            <input type="number" name="gia_tri" value={form.gia_tri} onChange={handleChange} required />
-          </div>
-
-          <div className="input-field">
-            <label>Kệ sách</label>
-            <input name="ke_sach" value={form.ke_sach} onChange={handleChange} required />
-          </div>
-
-          <button type="submit">Gửi</button>
+          <button type="submit">Khóa</button>
         </form>
       </div>
     </div>
   );
 };
 
-export default AddBanSao;
+export default LockAccount;

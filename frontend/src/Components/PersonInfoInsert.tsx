@@ -25,6 +25,7 @@ const PersonInfoInsert: React.FC = () => {
     };
 
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch("http://localhost:3001/api/auth/update-user", {
         method: "POST",
         headers: {
@@ -273,8 +274,8 @@ const PersonInfoInsert: React.FC = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="male"
-                  checked={gioiTinh === 'male'}
+                  value="NAM"
+                  checked={gioiTinh === 'NAM'}
                   onChange={(e) => setGioiTinh(e.target.value)}
                 /> Nam
               </label>
@@ -282,8 +283,8 @@ const PersonInfoInsert: React.FC = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="female"
-                  checked={gioiTinh === 'female'}
+                  value="NU"
+                  checked={gioiTinh === 'NU'}
                   onChange={(e) => setGioiTinh(e.target.value)}
                 /> Nữ
               </label>

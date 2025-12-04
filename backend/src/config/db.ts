@@ -23,3 +23,14 @@ export default pool;
 //khi mượn thì xóa như nào ?? đoạn xử lý khi có sách thì xử lý như nào
 // + lịch sử mượn trả của từng account : cầm thêm database log?? , lưu lịch sử mượn , hạn trả, và trả thực tiễn có trùng với phiếu mượn chi tiết ko???
 //đặt chỗ , nếu có người đặt chỗ , trả sách chuyển sang reserve, nếu mượn thì chuyển sang borrowed, thêm sách cx vậy
+
+
+
+///trả sách -> list sách chưa trả , ấn trả ---
+/// bổ sung thêm thứ tự đang đợi ???
+/// sửa lại cho hợp format staff ---
+/// thêm unlock và lock , active tài khoản , list tài khoản : đang có rồi, tài khoản đang actbe , sửa lại login--
+/// thông tin độc giả--
+
+// Tạo thẻ, gia hạn thể , nâng cấp thẻ
+

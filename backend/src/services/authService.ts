@@ -36,7 +36,7 @@ export const loginService = async (email: string, password: string): Promise<Log
   }
 
   await Lock(0, null, email);
-  
+  if(acc.trang_thai != "ACTIVE") return { status: 400, message: "Tài khoản đang bị khóa hoặc chưa được kích hoạt, liên hệ nhân viên để biết thêm" };
   const secret = process.env.JWT_SECRET || "super_secret_key";
   const payload = { id_acc: acc.id , vai_tro : acc.vai_tro};
   const token = jwt.sign(payload, secret, { expiresIn: "1h" });
