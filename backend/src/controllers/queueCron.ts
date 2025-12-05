@@ -1,7 +1,7 @@
 import pool from "../config/db";
-import { theQuaHanModel } from "../models/CardModel";
+import { theConHanModel, theQuaHanModel } from "../models/CardModel";
 import { ReservationService } from "../services/reservceBookService";
-import { lockAccService } from "../services/staffService";
+import { activeAccService, lockAccService } from "../services/staffService";
 
 /**
  * Cron job: kiểm tra sách TRONG_KHO và queue để gán cho người đầu tiên
@@ -40,6 +40,11 @@ const processQueueCron = async () => {
         const id_the_qua_han = await theQuaHanModel();
         for(const id of id_the_qua_han){
             await lockAccService(id);
+        }
+
+        const id_the_con_han = await theConHanModel();
+        for(const id of id_the_con_han){
+            await activeAccService(id);
         }
         
         console.log("✅ Cron job xử lý queue xong");

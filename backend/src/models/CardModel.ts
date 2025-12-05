@@ -59,3 +59,12 @@ export const inforTheModel = async(id_acc : number)
   return result.rows[0] as theInforResult
   
 }
+
+export const theConHanModel = async()
+: Promise<number[]> =>{
+  const sql = `SELECT tai_khoan_id FROM the
+              JOIN tai_khoan tk ON tk.id = the.tai_khoan_id
+              WHERE ngay_het_han > NOW() and tk.trang_thai = 'LOCKED';`
+  const result = await pool.query(sql,[]);
+ return result.rows.map(r => r.tai_khoan_id);
+}
