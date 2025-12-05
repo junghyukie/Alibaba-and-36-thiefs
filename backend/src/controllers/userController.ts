@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../types/auth"
-import { borrowBookService, inforBookinCartService, insertBookService, logService } from "../services/userService";
+import { borrowBookService, inforBookinCartService, insertBookService, logService, theInforService } from "../services/userService";
 //import { promises } from "nodemailer/lib/xoauth2";
 export const insertBookController = async (req: AuthRequest, res: Response): Promise<any> => {
     try {
@@ -85,5 +85,23 @@ export const LogController = async(req: AuthRequest, res: Response): Promise<Res
 };
 
 
-//đọc giả quá hạn trả sách
+//thông tin thẻ độc giả
+export const theInforController = async(req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+        const id_acc = req.user?.id_acc;
+        if (!id_acc) return res.status(401).json({ message: "Xin hãy đăng nhập" });
 
+        const result = await theInforService(id_acc);
+        if (result.success === false) {
+            console.log("Lỗi controller the");
+            return res.status(400).json(result);
+        } else {
+            console.log("Đang chạy controller log");
+            console.log(result.data);
+            return res.status(200).json(result.data);
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Lỗi server" }); 
+    }
+};

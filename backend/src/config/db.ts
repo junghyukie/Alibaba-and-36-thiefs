@@ -32,5 +32,8 @@ export default pool;
 /// thêm unlock và lock , active tài khoản , list tài khoản : đang có rồi, tài khoản đang actbe , sửa lại login--
 /// thông tin độc giả--
 
-// Tạo thẻ, gia hạn thể , nâng cấp thẻ
+// Tạo thẻ ---, gia hạn thể ---, nâng cấp thẻ ---
+// Khóa thẻ nếu quá hạn ---
+// 
+
 

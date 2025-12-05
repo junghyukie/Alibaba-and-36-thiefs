@@ -10,6 +10,7 @@ import {
 import { addBanSaoInput } from "../types/addBanSao";
 import { addBanSao } from "../models/addBanSaoModel";
 import { activateAccModel, lockAccModel } from "../models/changeStateAccModel";
+import { addTheModel, extendTheModel, upgradeTheModel } from "../models/CardModel";
 
 // Đọc giả quá hạn
 export const lateService = async (): Promise<LateServiceResult> => {
@@ -140,5 +141,42 @@ export const activeAccService = async (id_acc: number)
   } catch (err) {
     console.error("Khóa tài khoản error:", err);
     return { success: false, message: "Lỗi server khi khóa tài khoản" };
+  }
+ }
+
+
+ export const addTheService = async (id_acc: number)
+  : Promise<{ success: boolean; message: string }> => {
+  try {
+    const result = await addTheModel(id_acc);
+    console.log(result.message + " Service");
+    return {success : result.success , message : result.message}
+  } catch (err) {
+    console.error("Tạo Thẻ error:", err);
+    return { success: false, message: "Lỗi server khi tạo thẻ" };
+  }
+ }
+
+  export const extendTheService = async (id_acc: number)
+  : Promise<{ success: boolean; message: string }> => {
+  try {
+    const result = await extendTheModel(id_acc);
+    console.log(result.message + " Service");
+    return {success : result.success , message : result.message}
+  } catch (err) {
+    console.error("Gia hạn error:", err);
+    return { success: false, message: "Lỗi server khi gia hạn tài khoản" };
+  }
+ }
+
+  export const upgradeTheService = async (id_acc: number, loai_the : string)
+  : Promise<{ success: boolean; message: string }> => {
+  try {
+    const result = await upgradeTheModel(id_acc, loai_the);
+    console.log(result.message + " Service");
+    return {success : result.success , message : result.message}
+  } catch (err) {
+    console.error("Nâng cấp error:", err);
+    return { success: false, message: "Lỗi server khi nâng cấp thẻ" };
   }
  }
