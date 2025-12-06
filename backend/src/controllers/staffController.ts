@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { AuthRequest } from "../types/auth";
-import { lateService, listAccountService } from "../services/staffService";
+import { activeAccService, addBanSaoService, addBookService, lateService, listAccountService, lockAccService } from "../services/staffService";
 import { LateServiceResult, ListAccountResult } from "../types/staffService";
 
 // Controller lấy danh sách đọc giả quá hạn
@@ -46,3 +46,83 @@ export const listAccountController = async (
     return res.status(500).json({ success: false, message: "Lỗi server" });
   }
 };
+
+export const addBookController = async(
+   req: AuthRequest,
+  res: Response
+): Promise<Response> =>{
+  try{
+     const id_acc = req.user?.id_acc;
+    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
+
+    const role = req.user?.vai_tro;
+    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
+
+    const addBook = await addBookService(req.body);
+    console.log(addBook.message);
+    return res.status(addBook.success ? 200 : 500).json(addBook);
+  }catch (err) {
+    console.error("Lỗi Thêm sách Controller:", err);
+    return res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+}
+
+export const addBanSaoController = async(
+   req: AuthRequest,
+  res: Response
+): Promise<Response> =>{
+   try{
+     const id_acc = req.user?.id_acc;
+    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
+
+    const role = req.user?.vai_tro;
+    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
+
+    const add = await addBanSaoService(req.body);
+    console.log(add.message);
+     return res.status(add.success ? 200 : 500).json(add);
+}catch (err) {
+    console.error("Lỗi Thêm bản sao Controller:", err);
+    return res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+}
+
+// Kích hoạt tài khoản
+export const activateAccController = async(req : AuthRequest, res : Response)
+: Promise<Response> =>{
+    try{
+       const id_acc = req.user?.id_acc;
+    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
+
+    const role = req.user?.vai_tro;
+    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
+
+    const id = req.body.id;
+    const result = await activeAccService(id);
+    console.log(result.message + " Controller");
+    return res.status(result.success ? 200 : 500).json(result);
+    }catch (err) {
+    console.error("Lỗi kích hoạt tài khoản Controller:", err);
+    return res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+}
+
+//Khóa tài khoản
+export const lockAccController = async(req : AuthRequest, res : Response)
+: Promise<Response> =>{
+    try{
+       const id_acc = req.user?.id_acc;
+    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
+
+    const role = req.user?.vai_tro;
+    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
+
+    const id = req.body.id;
+    const result = await lockAccService(id);
+    console.log(result.message + " Controller");
+    return res.status(result.success ? 200 : 500).json(result);
+    }catch (err) {
+    console.error("Lỗi khóa tài khoản Controller:", err);
+    return res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+}

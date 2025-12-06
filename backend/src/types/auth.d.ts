@@ -23,6 +23,7 @@ export interface AccountData {
   vai_tro: string;
   failed_attempt: number;
   locked_until: Date | null;
+  trang_thai : string;
 }
 
 export interface OTPRecord {

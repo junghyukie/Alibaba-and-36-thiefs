@@ -4,7 +4,7 @@ import { UserInformation } from "../types/auth";
 
 export const Account = async (email: string): Promise<AccountData[]> => {
   const sql = `
-    SELECT id, email, mat_khau_hash, vai_tro, failed_attempt, locked_until
+    SELECT id, email, mat_khau_hash, vai_tro, failed_attempt, locked_until,trang_thai
     FROM tai_khoan
     WHERE email = $1
   `;

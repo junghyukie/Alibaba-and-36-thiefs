@@ -1,5 +1,6 @@
 import pool from "../config/db";
 import { cartItems, insertBook } from "../types/userService";
+import { Pool, QueryResult } from "pg";
 export const insertBookModel = async(id_acc : number,data : insertBook) : Promise<any> =>{
     const sql = `
         INSERT INTO gio_hang_chi_tiet(id_account, id_sach , so_luong)
@@ -11,6 +12,28 @@ export const insertBookModel = async(id_acc : number,data : insertBook) : Promis
     return result.rows;
 
 }
+
+export const deleteBookFromCartModel = async (id_acc: number, id_sach: number): Promise<any> => {
+    // SQL statement using DELETE.
+    // The WHERE clause is crucial: it targets only the row matching the account ID AND the book ID.
+    const sql = `
+        DELETE FROM gio_hang_chi_tiet
+        WHERE id_account = $1 AND id_sach = $2
+        RETURNING *; -- RETURNING * allows us to see what was deleted
+    `;
+
+    try {
+        // Execute the query with the account ID and book ID as parameters.
+        const result: QueryResult = await pool.query(sql, [id_acc, id_sach]);
+
+        // Returns the rows that were deleted.
+        return result.rows;
+
+    } catch (error) {
+        console.error("Error deleting book from cart:", error);
+        throw new Error("Failed to delete book from cart due to a database error.");
+    }
+};
 
 export const checkCart = async (id_acc : number) : Promise<any> => {
     const sql =

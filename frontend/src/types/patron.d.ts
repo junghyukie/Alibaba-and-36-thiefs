@@ -1,4 +1,4 @@
-export interface listAccount{
+export interface Patron {
   id: number;
   email: string;
   ho_ten: string;
@@ -9,17 +9,7 @@ export interface listAccount{
   gioi_han_muon: number;
 }
 
-export interface ListAccountResult {
-  success: boolean;
-  data?: listAccount[];
-  page?: number;
-  pageSize?: number;
-  totalPages?: number;
-  totalRecords?: number;
-  message?: string;
-}
-
-export interface LateRecord {
+export interface LatePatron {
   id: number;
   ten_doc_gia: string;
   ngay_sinh: string;
@@ -29,9 +19,18 @@ export interface LateRecord {
   so_ngay_tre: number;
 }
 
-
-export interface LateServiceResult {
+export interface ListPatronResult {
   success: boolean;
-  data?: LateRecord[];
+  data?: Patron[];
+  page?: number;
+  pageSize?: number;
+  totalPages?: number;
+  totalRecords?: number;
+  message?: string;
+}
+
+export interface LatePatronResult {
+  success: boolean;
+  data?: LatePatron[];
   message?: string;
 }
