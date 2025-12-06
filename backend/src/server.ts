@@ -1,3 +1,4 @@
+import "./config/env";
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -15,8 +16,6 @@ import { errorHandler } from "./middleware/errorHandler";
 // server.ts
 import './controllers/queueCron';
 // Khi server chạy, cron sẽ tự chạy
-
-dotenv.config();
 
 const app: Application = express();
 const port = process.env.PORT || 3001;
