@@ -19,7 +19,7 @@ export const listAccountModel = async (
 ): Promise<listAccount[]> => {
   const offset = (page - 1) * pageSize;
   const sql = `
-    SELECT email, ho_ten, vai_tro, gioi_han_muon
+    SELECT id,email, ho_ten,ngay_sinh, dien_thoai,dia_chi,vai_tro, gioi_han_muon
     FROM tai_khoan
     ORDER BY id
     LIMIT $1 OFFSET $2;
