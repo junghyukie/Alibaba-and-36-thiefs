@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import bcrypt from "bcrypt";
 import { Account, Lock, getUserInfo } from "../models/accountModel";
 import { existing_email, updateOTP, checkOTP, resetPass } from "../models/forgetPasswdModel";
 import { Check_email, Register } from "../models/registerAccModel";
@@ -22,7 +23,10 @@ export const loginService = async (email: string, password: string): Promise<Log
     return { status: 403, message: "Tài khoản đang bị khóa, vui lòng thử lại sau." };
   }
 
-  if (acc.mat_khau_hash !== password) {
+  // Use bcrypt to compare password
+  const isPasswordValid = await bcrypt.compare(password, acc.mat_khau_hash);
+  
+  if (!isPasswordValid) {
     const fail = acc.failed_attempt + 1;
 
     if (fail >= 5) {

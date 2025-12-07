@@ -7,9 +7,10 @@ const pool = new Pool({
     database: process.env.PG_DATABASE,
     password: process.env.PG_PASSWORD,
     port: Number(process.env.PG_PORT),
-    ssl: {
+    // Chỉ bật SSL khi NODE_ENV là production
+    ssl: process.env.NODE_ENV === 'production' ? {
         rejectUnauthorized: false,
-    }
+    } : false
 });
 
 export default pool;
