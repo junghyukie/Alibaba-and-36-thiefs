@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode"; 
+const API_URL = import.meta.env.VITE_API_URL;
 
 // 1. Định nghĩa Interface cho dữ liệu User (Đã đồng bộ với Backend)
 interface UserInfo {
@@ -43,7 +44,7 @@ export const useUser = () => {
 
             try {
                 // BƯỚC 1: Gọi API
-                const res = await fetch("http://localhost:3001/api/auth/user-info", { 
+                const res = await fetch(`${API_URL}/api/auth/user-info`, { 
                     method: "GET",
                     headers: { 
                         "Content-Type": "application/json",

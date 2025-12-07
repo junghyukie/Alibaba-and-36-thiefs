@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL;
 
 // Define cart item type
 type CartItem = {
@@ -47,7 +48,7 @@ export default function Component() {
     if (selectedCats.length > 0) {
       params.append("the_loai", selectedCats.join(","));
     }
-    const res = await fetch(`http://localhost:3001/api/book?${params}&limit=6`);
+    const res = await fetch(`${API_URL}/api/book?${params}&limit=6`);
     const data = await res.json();
 
     setBooks(data.data);
@@ -72,7 +73,7 @@ export default function Component() {
   }, [page, query, selectedCats]);
 
   const fetchCategories = async () => {
-    const res = await fetch("http://localhost:3001/api/category");
+    const res = await fetch(`${API_URL}/api/category`);
     const data = await res.json();
     setCategories(data);
   };
@@ -162,7 +163,7 @@ export default function Component() {
     try {
       console.log("📦 GỬI YÊU CẦU THÊM VÀO GIỎ HÀNG:", formData);
 
-      const res = await fetch("http://localhost:3001/user/service/insert-book", {
+      const res = await fetch(`${API_URL}/user/service/insert-book`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -214,7 +215,7 @@ export default function Component() {
         }
 
         try {
-          const res = await fetch("http://localhost:3001/user/service/cart-items", {
+          const res = await fetch(`${API_URL}/user/service/cart-items`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -268,7 +269,7 @@ export default function Component() {
       // Coerce ID to string for URL
       const idStr = String(bookId);
       // Construct the DELETE endpoint URL
-      const url = `http://localhost:3001/user/service/delete-book/${encodeURIComponent(idStr)}`;
+      const url = `${API_URL}/user/service/delete-book/${encodeURIComponent(idStr)}`;
 
       console.log(`📤 Deleting book from cart: ${url}`);
 
@@ -361,7 +362,7 @@ const handleBorrow = async (book : any) => {
   try {
     console.log("📤 Gửi yêu cầu mượn sách:", formData);
 
-    const res = await fetch("http://localhost:3001/user/service/borrow-book", {
+    const res = await fetch(`${API_URL}/user/service/borrow-book`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

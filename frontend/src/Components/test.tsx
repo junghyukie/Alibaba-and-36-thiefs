@@ -361,6 +361,7 @@
 
 
 import React, { useState } from "react";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const LockAccount: React.FC = () => {
   const [accountId, setAccountId] = useState("");
@@ -372,7 +373,7 @@ const LockAccount: React.FC = () => {
     if (!token) return alert("❌ Bạn chưa đăng nhập!");
 
     try {
-      const res = await fetch("http://localhost:3001/staff/service/extend", {
+      const res = await fetch(`${API_URL}/staff/service/extend`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

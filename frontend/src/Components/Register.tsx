@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const IoniconsScripts = () => (
   <>
@@ -19,7 +20,7 @@ const Register: React.FC = () => {
     console.log('Username:', username, 'Email:', email, 'Password:', password);
     // Thêm logic xử lý đăng ký (gọi API, validate, v.v.) ở đây
     try {
-      const res = await fetch("http://localhost:3001/api/auth/register", {  // Giả sử endpoint đăng ký là /register
+      const res = await fetch(`${API_URL}/api/auth/register`, {  // Giả sử endpoint đăng ký là /register
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),

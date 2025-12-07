@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const PersonInfoInsert: React.FC = () => {
   const [hoTen, setHoTen] = useState('');
@@ -26,7 +27,7 @@ const PersonInfoInsert: React.FC = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch("http://localhost:3001/api/auth/update-user", {
+      const res = await fetch(`${API_URL}/api/auth/update-user`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

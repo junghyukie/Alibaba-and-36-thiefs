@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface BorrowRecord {
   tieu_de: string;
@@ -31,7 +32,7 @@ const BorrowHistoryUser: React.FC = () => {
         return;
       }
 
-      const res = await fetch('http://localhost:3001/user/service/log', {
+      const res = await fetch(`${API_URL}/user/service/log`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

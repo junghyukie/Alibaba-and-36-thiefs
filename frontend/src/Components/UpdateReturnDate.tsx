@@ -1,4 +1,5 @@
  import React, { useState } from "react";
+ const API_URL = import.meta.env.VITE_API_URL;
 //import "./style.css";
 
 const UpdateReturnDate: React.FC = () => {
@@ -16,7 +17,7 @@ const UpdateReturnDate: React.FC = () => {
     });
 
     try {
-      const res = await fetch("http://localhost:3001/api/borrowedcard/update-return", {
+      const res = await fetch(`${API_URL}/api/borrowedcard/update-return`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

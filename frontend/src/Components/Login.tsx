@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const IoniconsScripts = () => (
   <>
@@ -20,7 +21,7 @@ const Login: React.FC = () => {
     }
     // Thêm logic xử lý đăng nhập (gọi API, validate, v.v.) ở đây
     try {
-      const res = await fetch("http://localhost:3001/api/auth/login", {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

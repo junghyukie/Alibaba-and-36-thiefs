@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface UserInfo {
   email: string
@@ -63,7 +64,7 @@ const AccountInfo: React.FC = () => {
       
       // BƯỚC QUAN TRỌNG: Gọi API tới Server để lấy dữ liệu profile
       try {
-        const res = await fetch("http://localhost:3001/api/auth/user-info", { 
+        const res = await fetch(`${API_URL}/api/auth/user-info`, { 
           method: "GET",
           headers: { 
             "Content-Type": "application/json",

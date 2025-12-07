@@ -11,6 +11,7 @@ import type { Author } from "@/types/author";
 import type { Publisher } from "@/types/publisher";
 import type { NumCopy } from "@/types/copy";
 import type { Book } from "@/types/book";
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface BookDetailDialogProps {
   book: Book | null;
@@ -38,9 +39,9 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
     const fetchDetails = async () => {
       try {
         const [authorRes, publisherRes, copiesRes] = await Promise.all([
-          fetch(`http://localhost:3001/api/author/${book.tacgia_id}`),
-          fetch(`http://localhost:3001/api/publisher/${book.nxb_id}`),
-          fetch(`http://localhost:3001/api/book/${book.id}/num_copies`),
+          fetch(`${API_URL}/api/author/${book.tacgia_id}`),
+          fetch(`${API_URL}/api/publisher/${book.nxb_id}`),
+          fetch(`${API_URL}/api/book/${book.id}/num_copies`),
         ]);
 
         if (!authorRes.ok || !publisherRes.ok || !copiesRes.ok) {

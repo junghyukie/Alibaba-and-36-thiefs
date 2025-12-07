@@ -1,4 +1,5 @@
 import React, { useState, type FormEvent } from 'react';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const AddBookForm: React.FC = () => {
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
@@ -12,7 +13,7 @@ const AddBookForm: React.FC = () => {
     });
 
     try {
-      const response = await fetch('http://localhost:3001/api/books', {
+      const response = await fetch(`${API_URL}/api/books`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

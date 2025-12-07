@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import type { Patron, LatePatron, ListPatronResult, LatePatronResult } from '../types/patron';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const PatronList: React.FC = () => {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ const PatronList: React.FC = () => {
       }
 
       const res = await fetch(
-        `http://localhost:3001/staff/service/list-account?page=${page}&pageSize=${pageSize}`,
+        `${API_URL}/staff/service/list-account?page=${page}&pageSize=${pageSize}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -79,7 +80,7 @@ const PatronList: React.FC = () => {
         return;
       }
 
-      const res = await fetch('http://localhost:3001/staff/service/late', {
+      const res = await fetch(`${API_URL}/staff/service/late`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -139,7 +140,7 @@ const PatronList: React.FC = () => {
         return;
       }
 
-      const res = await fetch('http://localhost:3001/staff/service/activate', {
+      const res = await fetch(`${API_URL}/staff/service/activate`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -171,7 +172,7 @@ const PatronList: React.FC = () => {
         return;
       }
 
-      const res = await fetch('http://localhost:3001/staff/service/lock', {
+      const res = await fetch(`${API_URL}/staff/service/lock`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
