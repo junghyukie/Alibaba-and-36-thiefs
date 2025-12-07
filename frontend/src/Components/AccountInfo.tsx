@@ -34,8 +34,31 @@ const AccountInfo: React.FC = () => {
       
       if (!token) {
         alert("Bạn chưa đăng nhập. Đang chuyển hướng...");
-        navigate("/login"); // Chuyển hướng về trang đăng nhập
+        navigate("/login");
         return;
+      }
+
+      // Kiểm tra xem có đang xem thông tin độc giả khác không
+      const viewingPatronData = localStorage.getItem('viewingPatron');
+      if (viewingPatronData) {
+        try {
+          const patronInfo = JSON.parse(viewingPatronData);
+          setForm({
+            email: patronInfo.email || "",
+            ho_ten: patronInfo.ho_ten || "",
+            ngay_sinh: patronInfo.ngay_sinh || "",
+            dien_thoai: patronInfo.dien_thoai || "",
+            dia_chi: patronInfo.dia_chi || "",
+            gioi_tinh: patronInfo.gioi_tinh || ""
+          });
+          setLoading(false);
+          // Xóa dữ liệu sau khi đã load
+          localStorage.removeItem('viewingPatron');
+          return;
+        } catch (err) {
+          console.error("Lỗi parse dữ liệu độc giả:", err);
+          localStorage.removeItem('viewingPatron');
+        }
       }
       
       // BƯỚC QUAN TRỌNG: Gọi API tới Server để lấy dữ liệu profile

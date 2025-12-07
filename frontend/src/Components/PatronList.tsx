@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -8,15 +9,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import type { Patron, LatePatron, ListPatronResult, LatePatronResult } from '../types/patron';
 
 const PatronList: React.FC = () => {
+  const navigate = useNavigate();
   const [patrons, setPatrons] = useState<Patron[]>([]);
   const [latePatrons, setLatePatron] = useState<LatePatron[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPatron, setSelectedPatron] = useState<Patron | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedPatron, setSelectedPatron] = useState<Patron | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const pageSize = 20;
 
   // Dummy search handler for Header component
@@ -32,6 +34,7 @@ const PatronList: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token) {
         setError('Vui lòng đăng nhập để xem danh sách độc giả');
+        setLoading(false);
         return;
       }
 
@@ -46,6 +49,8 @@ const PatronList: React.FC = () => {
       );
 
       const data: ListPatronResult = await res.json();
+      
+      console.log('Patron list response:', data);
       
       if (data.success && data.data) {
         setPatrons(data.data);
@@ -70,6 +75,7 @@ const PatronList: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token) {
         setError('Vui lòng đăng nhập để xem danh sách độc giả trễ hạn');
+        setLoading(false);
         return;
       }
 
@@ -79,8 +85,10 @@ const PatronList: React.FC = () => {
           'Content-Type': 'application/json',
         },
       });
-
+      
       const data: LatePatronResult = await res.json();
+      
+      console.log('Late patrons response:', data);
       
       if (data.success && data.data) {
         setLatePatron(data.data);
@@ -96,9 +104,15 @@ const PatronList: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log('PatronList component mounted');
     fetchPatrons(1);
     fetchLatePatrons();
   }, []);
+
+  useEffect(() => {
+    console.log('Dialog state changed:', isDialogOpen);
+    console.log('Selected patron:', selectedPatron);
+  }, [isDialogOpen, selectedPatron]);
 
   // Filter patrons by search term
   const filteredPatrons = patrons.filter((patron: Patron) =>
@@ -106,8 +120,79 @@ const PatronList: React.FC = () => {
   );
 
   const handleViewDetails = (patron: Patron) => {
+    console.log('Opening dialog for patron:', patron);
     setSelectedPatron(patron);
     setIsDialogOpen(true);
+    console.log('Dialog state set to true');
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedPatron(null);
+  };
+
+  const handleActivateAccount = async (id: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Vui lòng đăng nhập');
+        return;
+      }
+
+      const res = await fetch('http://localhost:3001/staff/service/activate', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id })
+      });
+
+      const data = await res.json();
+      
+      if (data.success) {
+        alert('Kích hoạt tài khoản thành công!');
+        setIsDialogOpen(false);
+        fetchPatrons(currentPage);
+      } else {
+        alert(data.message || 'Không thể kích hoạt tài khoản');
+      }
+    } catch (err) {
+      console.error('Error activating account:', err);
+      alert('Lỗi kết nối đến server');
+    }
+  };
+
+  const handleLockAccount = async (id: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Vui lòng đăng nhập');
+        return;
+      }
+
+      const res = await fetch('http://localhost:3001/staff/service/lock', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id })
+      });
+
+      const data = await res.json();
+      
+      if (data.success) {
+        alert('Khóa tài khoản thành công!');
+        setIsDialogOpen(false);
+        fetchPatrons(currentPage);
+      } else {
+        alert(data.message || 'Không thể khóa tài khoản');
+      }
+    } catch (err) {
+      console.error('Error locking account:', err);
+      alert('Lỗi kết nối đến server');
+    }
   };
 
   const formatDate = (dateString: string | null | undefined) => {
@@ -123,16 +208,150 @@ const PatronList: React.FC = () => {
   };
 
   return (
-    <div id="webcrumbs">
-      <Header onSearch={handleSearch} />
-      
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="border-b bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-6">
-              <h1 className="text-3xl font-bold text-gray-800">Quản lý Độc giả</h1>
+    <>
+      {/* Test Dialog - Simple version */}
+      {isDialogOpen && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          onClick={() => setIsDialogOpen(false)}
+        >
+          <div 
+            style={{
+              backgroundColor: 'white',
+              padding: '2rem',
+              borderRadius: '8px',
+              maxWidth: '500px',
+              width: '90%',
+              maxHeight: '80vh',
+              overflow: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+              Thông tin chi tiết độc giả
+            </h2>
+            {selectedPatron && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <strong>ID:</strong> {selectedPatron.id}
+                </div>
+                <div>
+                  <strong>Trạng thái:</strong> {selectedPatron.trang_thai}
+                </div>
+                <div style={{ gridColumn: 'span 2' }}>
+                  <strong>Họ tên:</strong> {selectedPatron.ho_ten}
+                </div>
+                <div>
+                  <strong>Email:</strong> {selectedPatron.email}
+                </div>
+                <div>
+                  <strong>SĐT:</strong> {selectedPatron.dien_thoai || 'Chưa cập nhật'}
+                </div>
+                <div>
+                  <strong>Ngày sinh:</strong> {formatDate(selectedPatron.ngay_sinh)}
+                </div>
+                <div>
+                  <strong>Giới tính:</strong> {selectedPatron.gioi_tinh || 'Chưa cập nhật'}
+                </div>
+                <div style={{ gridColumn: 'span 2' }}>
+                  <strong>Địa chỉ:</strong> {selectedPatron.dia_chi || 'Chưa cập nhật'}
+                </div>
+                <div>
+                  <strong>Vai trò:</strong> {selectedPatron.vai_tro}
+                </div>
+                <div>
+                  <strong>Giới hạn mượn:</strong> {selectedPatron.gioi_han_muon} cuốn
+                </div>
+              </div>
+            )}
+            <div style={{ 
+              display: 'flex', 
+              gap: '0.5rem', 
+              marginTop: '1.5rem',
+              paddingTop: '1rem',
+              borderTop: '1px solid #e5e7eb'
+            }}>
+              {selectedPatron?.trang_thai === 'PENDING' && (
+                <button
+                  onClick={() => selectedPatron && handleActivateAccount(selectedPatron.id)}
+                  style={{
+                    flex: 1,
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#10b981',
+                    color: 'white',
+                    borderRadius: '4px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: '600'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#059669'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#10b981'}
+                >
+                  Kích hoạt tài khoản
+                </button>
+              )}
+              {selectedPatron?.trang_thai === 'ACTIVE' && (
+                <button
+                  onClick={() => selectedPatron && handleLockAccount(selectedPatron.id)}
+                  style={{
+                    flex: 1,
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#ef4444',
+                    color: 'white',
+                    borderRadius: '4px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: '600'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ef4444'}
+                >
+                  Khóa tài khoản
+                </button>
+              )}
+              <button
+                onClick={() => setIsDialogOpen(false)}
+                style={{
+                  flex: 1,
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: '600'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
+              >
+                Đóng
+              </button>
             </div>
-            <div className="p-6">
+          </div>
+        </div>
+      )}
+      
+      <div id="webcrumbs">
+        <Header onSearch={handleSearch} />
+        
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="bg-white rounded-xl shadow-md overflow-hidden">
+              <div className="border-b bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-6">
+                <h1 className="text-3xl font-bold text-gray-800">Quản lý Độc giả</h1>
+              </div>
+              <div className="p-6">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
                 {error}
@@ -290,71 +509,10 @@ const PatronList: React.FC = () => {
             </Tabs>
           </div>
         </div>
-        </main>
+          </main>
+        </div>
       </div>
-
-      {/* Dialog for Patron Details */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-blue-900">
-              Thông tin chi tiết độc giả
-            </DialogTitle>
-            <DialogDescription>
-              Thông tin đầy đủ về độc giả
-            </DialogDescription>
-          </DialogHeader>
-          
-          {selectedPatron && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="font-semibold text-right">ID:</span>
-                <span className="col-span-3">{selectedPatron.id}</span>
-              </div>
-              
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="font-semibold text-right">Họ và tên:</span>
-                <span className="col-span-3">{selectedPatron.ho_ten}</span>
-              </div>
-              
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="font-semibold text-right">Email:</span>
-                <span className="col-span-3">{selectedPatron.email}</span>
-              </div>
-              
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="font-semibold text-right">Số điện thoại:</span>
-                <span className="col-span-3">{selectedPatron.dien_thoai || 'N/A'}</span>
-              </div>
-              
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="font-semibold text-right">Ngày sinh:</span>
-                <span className="col-span-3">{formatDate(selectedPatron.ngay_sinh)}</span>
-              </div>
-              
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="font-semibold text-right">Địa chỉ:</span>
-                <span className="col-span-3">{selectedPatron.dia_chi || 'N/A'}</span>
-              </div>
-              
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="font-semibold text-right">Vai trò:</span>
-                <span className="col-span-3">
-                  <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                    {selectedPatron.vai_tro}
-                  </span>
-                </span>
-              </div>
-              
-              <div className="grid grid-cols-4 items-center gap-4">
-                <span className="font-semibold text-right">Giới hạn mượn:</span>
-                <span className="col-span-3">{selectedPatron.gioi_han_muon} cuốn</span>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+    </>
   );
 };
 

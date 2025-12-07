@@ -5,8 +5,10 @@ export interface Patron {
   ngay_sinh: string;
   dien_thoai: string;
   dia_chi: string;
+  gioi_tinh: string;
   vai_tro: string;
   gioi_han_muon: number;
+  trang_thai: string;
 }
 
 export interface LatePatron {
