@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
-import { Button } from "@/Components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { SearchBar } from './SearchBar';
 import { Home, Bell, BookOpen, LogOut, User } from "lucide-react";
 

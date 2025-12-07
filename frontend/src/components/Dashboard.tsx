@@ -3,10 +3,13 @@ import Header from "./Header";
 
 export default function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const handleSearch = () => {
+    // Not used in this component, but required by Header
+  };
 
   return (
     <div id="webcrumbs"> 
-      <Header />
+      <Header onSearch={handleSearch} />
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
         
         {/* Main Page - Book List */}

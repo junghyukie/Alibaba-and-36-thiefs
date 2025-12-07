@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import type { Patron, LatePatron, ListPatronResult, LatePatronResult } from '../types/patron';
 const API_URL = import.meta.env.VITE_API_URL;
 
 const PatronList: React.FC = () => {
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const [patrons, setPatrons] = useState<Patron[]>([]);
   const [latePatrons, setLatePatron] = useState<LatePatron[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -127,10 +126,10 @@ const PatronList: React.FC = () => {
     console.log('Dialog state set to true');
   };
 
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-    setSelectedPatron(null);
-  };
+  //const handleCloseDialog = () => {
+  //  setIsDialogOpen(false);
+  //  setSelectedPatron(null);
+  //};
 
   const handleActivateAccount = async (id: number) => {
     try {

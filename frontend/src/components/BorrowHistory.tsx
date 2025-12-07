@@ -15,6 +15,9 @@ const GetBorrowBooks = () => [
 const BorrowHistory: React.FC = () => {
   const userName = GetUserName();
   const borrowBooks = GetBorrowBooks();
+  const handleSearch = () => {
+    // Not used in this component, but required by Header
+  };
 
   return (
     <>
@@ -105,7 +108,7 @@ const BorrowHistory: React.FC = () => {
         }
       `}</style>
 
-      <Header />
+      <Header onSearch={handleSearch} />
 
       <section className="borrow-bg">
         <div className="borrow-container">

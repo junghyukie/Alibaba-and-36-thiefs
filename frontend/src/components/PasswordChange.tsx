@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
+import { IonIcon } from '@ionic/react';  // nếu bạn cài @ionic/react
+import { lockClosed } from 'ionicons/icons';
 
 const IoniconsScripts = () => (
   <>
@@ -12,6 +14,9 @@ const IoniconsScripts = () => (
 const PasswordChange: React.FC = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ current: '', password: '', confirm: '' });
+  const handleSearch = () => {
+    // Not used in this component, but required by Header
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -28,8 +33,8 @@ const PasswordChange: React.FC = () => {
 
   return (
     <>
-      <Header />
-      <style jsx>{`
+      <Header onSearch={handleSearch} />
+      <style>{`
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
         section { display:flex; justify-content:center; align-items:center; min-height:calc(100vh - 64px); width:100%; padding:20px; background:url('https://images2.alphacoders.com/104/1042582.jpg') no-repeat center/cover; }
         .box { width:420px; max-width:95vw; height:85vh; max-height:750px; background:rgba(255,255,255,0.96); border-radius:24px; border:2px solid rgba(255,255,255,0.6); box-shadow:0 20px 50px rgba(0,0,0,0.3); overflow:hidden; display:flex; flex-direction:column; }
@@ -59,19 +64,19 @@ const PasswordChange: React.FC = () => {
           <div className="scroll-area">
             <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
               <div className="input-box">
-                <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                <span className="icon"><IonIcon icon={lockClosed} /></span>
                 <input type="password" name="current" value={form.current} onChange={handleChange} required />
                 <label>Mật khẩu hiện tại</label>
               </div>
 
               <div className="input-box">
-                <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                <span className="icon"><IonIcon icon={lockClosed} /></span>
                 <input type="password" name="password" value={form.password} onChange={handleChange} required />
                 <label>Mật khẩu mới</label>
               </div>
 
               <div className="input-box">
-                <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                <span className="icon"><IonIcon icon={lockClosed} /></span>
                 <input type="password" name="confirm" value={form.confirm} onChange={handleChange} required />
                 <label>Xác nhận mật khẩu</label>
               </div>

@@ -21,6 +21,10 @@ const IoniconsScripts = () => (
 
 // Giả lập dữ liệu (exported so other components can import)
 const AccountInfo: React.FC = () => {
+  // Dummy search handler for Header component
+  const handleSearch = () => {
+    // Not used in this component, but required by Header
+  };
   const navigate = useNavigate();
   // Khởi tạo state với giá trị rỗng
   const [form, setForm] = useState<UserInfo>({
@@ -119,9 +123,10 @@ const AccountInfo: React.FC = () => {
 
   return (
     <>
-      <Header />
+      <Header
+      onSearch={handleSearch} />
       {/* ==================== CSS ==================== */}
-      <style jsx>{`
+      <style>{`
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
         section {
           display:flex; justify-content:center; align-items:center;

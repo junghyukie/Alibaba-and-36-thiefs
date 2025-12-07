@@ -1,5 +1,4 @@
 // src/types/auth.ts
-import { jwtDecode } from "jwt-decode";
 
 export interface User {
   id: number;

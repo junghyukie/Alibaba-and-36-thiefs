@@ -322,18 +322,18 @@ export default function Component() {
     setIsDialogOpen(true);
   };
 
- const handleLogout = () => {
-    localStorage.removeItem("token");       // Xoá token
-    localStorage.removeItem("cartItems");   // Xoá giỏ hàng trong localStorage
-    setCartItems([]);                       // Xoá giỏ hàng trong state
-    setIsLoggedIn(false);
-    setIsDropdownOpen(false);
-  };
+  //const handleLogout = () => {
+  //  localStorage.removeItem("token");       // Xoá token
+  //  localStorage.removeItem("cartItems");   // Xoá giỏ hàng trong localStorage
+  //  setCartItems([]);                       // Xoá giỏ hàng trong state
+  //  setIsLoggedIn(false);
+  //  setIsDropdownOpen(false);
+  //};
 
-  const handleLogin = () => {
-    // This would navigate to Login.tsx file
-    navigate('/login');
-  };
+  //const handleLogin = () => {
+  //  // This would navigate to Login.tsx file
+  //  navigate('/login');
+  //};
 
   
 const handleBorrow = async (book : any) => {

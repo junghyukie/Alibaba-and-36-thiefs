@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 
 // Placeholder data functions
@@ -11,6 +11,7 @@ const getDebtAmount = () => '500.000 đồng';
 
 // Tính phí gia hạn (hiện tại mặc định 500k)
 const CalculateFee = (date: string) => {
+  date; // dùng để ko báo lỗi
   return '500.000 VNĐ';
 };
 
@@ -18,7 +19,7 @@ const CalculateFee = (date: string) => {
 export const InDebt = true;
 
 const LibraryCard: React.FC = () => {
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const SoonExpired = true;
 
   const [showModal, setShowModal] = useState(false);
@@ -30,6 +31,9 @@ const LibraryCard: React.FC = () => {
   const cardId = getCardId();
   const cardType = getCardType();
   const validity = getValidity();
+  const handleSearch = () => {
+    // Not used in this component, but required by Header
+  };
 
   const handleRenewClick = () => {
     if (InDebt) {
@@ -226,7 +230,7 @@ const LibraryCard: React.FC = () => {
         }
       `}</style>
 
-      <Header />
+      <Header onSearch={handleSearch} />
 
       <div className="library-card-page">
         <section className="lib-bg">

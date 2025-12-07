@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from "jwt-decode"; 
+//import { jwtDecode } from "jwt-decode"; 
 const API_URL = import.meta.env.VITE_API_URL;
 
 // 1. Định nghĩa Interface cho dữ liệu User (Đã đồng bộ với Backend)
@@ -16,12 +16,12 @@ interface UserInfo {
 }
 
 // Định nghĩa Interface cho Payload của Token
-interface DecodedToken {
-    id_acc: number;
-    vai_tro: string;
-    // ... các trường khác (iat, exp)
-    [key: string]: any;
-}
+//interface DecodedToken {
+//    id_acc: number;
+//    vai_tro: string;
+//    // ... các trường khác (iat, exp)
+//    [key: string]: any;
+//}
 
 // 2. Định nghĩa Custom Hook
 export const useUser = () => {

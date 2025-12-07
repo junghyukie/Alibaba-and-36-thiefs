@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IonIcon } from '@ionic/react';
+import { lockClosed, mail, person } from 'ionicons/icons';
 const API_URL = import.meta.env.VITE_API_URL;
 
 const IoniconsScripts = () => (
@@ -203,7 +205,7 @@ const Register: React.FC = () => {
             <h2>Register</h2>
 
             <div className="input-box">
-              <span className="icon"><ion-icon name="person"></ion-icon></span>
+              <span className="icon"><IonIcon icon={person} /></span>
               <input 
                 type="text" 
                 required 
@@ -214,7 +216,7 @@ const Register: React.FC = () => {
             </div>
 
             <div className="input-box">
-              <span className="icon"><ion-icon name="mail"></ion-icon></span>
+              <span className="icon"><IonIcon icon={mail} /></span>
               <input 
                 type="email" 
                 required 
@@ -225,7 +227,7 @@ const Register: React.FC = () => {
             </div>
 
             <div className="input-box">
-              <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
+              <span className="icon"><IonIcon icon={lockClosed} /></span>
               <input 
                 type="password" 
                 required 

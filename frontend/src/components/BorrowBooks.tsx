@@ -12,6 +12,10 @@ type CartItem = {
 const BorrowBooks: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
 
+  const handleSearch = () => {
+    // Not used in this component, but required by Header
+  };
+
   useEffect(() => {
     try {
       const raw = localStorage.getItem('cartItems');
@@ -70,7 +74,7 @@ const BorrowBooks: React.FC = () => {
         }
       `}</style>
 
-      <Header />
+      <Header onSearch={handleSearch} />
 
       <section className="borrow-bg">
         <div className="panel" role="region" aria-label="Borrow Books">

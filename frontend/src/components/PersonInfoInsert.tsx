@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IonIcon } from '@ionic/react';
+import { call, person, location } from 'ionicons/icons';
 const API_URL = import.meta.env.VITE_API_URL;
 
 const PersonInfoInsert: React.FC = () => {
@@ -216,7 +218,7 @@ const PersonInfoInsert: React.FC = () => {
 
             {/* Họ và tên */}
             <div className="input-box">
-              <span className="icon"><ion-icon name="person"></ion-icon></span>
+              <span className="icon"><IonIcon icon={person} /></span>
               <input
                 type="text"
                 value={hoTen}
@@ -241,7 +243,7 @@ const PersonInfoInsert: React.FC = () => {
 
             {/* Số điện thoại */}
             <div className="input-box">
-              <span className="icon"><ion-icon name="call"></ion-icon></span>
+              <span className="icon"><IonIcon icon={call} /></span>
               <input
                 type="text"
                 value={dienThoai}
@@ -258,7 +260,7 @@ const PersonInfoInsert: React.FC = () => {
 
             {/* Địa chỉ */}
             <div className="input-box">
-              <span className="icon"><ion-icon name="location"></ion-icon></span>
+              <span className="icon"><IonIcon icon={location} /></span>
               <input
                 type="text"
                 value={diaChi}

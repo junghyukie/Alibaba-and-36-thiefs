@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { lockClosed, mail } from 'ionicons/icons';
+import { IonIcon } from '@ionic/react';  // nếu bạn cài @ionic/react
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const IoniconsScripts = () => (
@@ -206,7 +209,7 @@ return (
           <h2>Login</h2>
 
           <div className="input-box">
-            <span className="icon"><ion-icon name="mail"></ion-icon></span>
+            <span className="icon"><IonIcon icon={mail} /></span>
             <input
               type="email"
               required
@@ -217,7 +220,7 @@ return (
           </div>
 
           <div className="input-box">
-            <span className="icon"><ion-icon name="lock-closed"></ion-icon></span>
+            <span className="icon"><IonIcon icon={lockClosed} /></span>
             <input
               type="password"
               required
