@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthRequest } from "../types/auth";
 import { activeAccService, addBanSaoService, addBookService, addTheService, extendTheService, lateService, listAccountService, lockAccService, upgradeTheService } from "../services/staffService";
 import { LateServiceResult, ListAccountResult } from "../types/staffService";
+import { theExistingModel } from "../models/CardModel";
 
 // Controller lấy danh sách đọc giả quá hạn
 export const lateController = async (
@@ -99,9 +100,12 @@ export const activateAccController = async(req : AuthRequest, res : Response)
 
     const id = req.body.id;
     const result = await activeAccService(id);
-    const add = await addTheService(id);
+    const check = await theExistingModel(id);
+    if(check.rows.length == 0){
+        const add = await addTheService(id);
+        console.log(add.message + " Controller");
+    }
     console.log(result.message + " Controller");
-    console.log(add.message + " Controller");
     return res.status(result.success ? 200 : 500).json(result);
     }catch (err) {
     console.error("Lỗi kích hoạt tài khoản Controller:", err);
