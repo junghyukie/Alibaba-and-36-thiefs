@@ -372,7 +372,7 @@ const LockAccount: React.FC = () => {
     if (!token) return alert("❌ Bạn chưa đăng nhập!");
 
     try {
-      const res = await fetch("http://localhost:3001/staff/service/extend", {
+      const res = await fetch("http://localhost:3001/staff/service/activate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -68,3 +68,11 @@ export const theConHanModel = async()
   const result = await pool.query(sql,[]);
  return result.rows.map(r => r.tai_khoan_id);
 }
+
+export const theExistingModel = async(id_acc : number)
+: Promise<any> =>{
+  const sql = `SELECT * FROM the
+             where tai_khoan_id = $1`
+  const result = await pool.query(sql,[id_acc]);
+ return result;
+}
