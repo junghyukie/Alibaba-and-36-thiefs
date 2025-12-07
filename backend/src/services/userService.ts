@@ -3,6 +3,8 @@ import { insertBook, borrowBook, logServiceResult } from "../types/userService";
 import { checkBook_Cart, checkCart, inforBookinCart, insertBookModel, deleteBookFromCartModel } from "../models/insertBookintoCartModel";
 import { borrowBookModel, checkBorrowedBook, checkSoLuongDaMuon, insertPhieuMuonModel, updateBanSao } from "../models/borrowBookModel";
 import { LogModel } from "../models/logModel";
+import { theInforResult } from "../types/the";
+import { inforTheModel } from "../models/CardModel";
 import e from "express";
 
 
@@ -72,6 +74,16 @@ export const logService = async(id_acc : number) : Promise<logServiceResult> => 
   }catch (err) {
     console.error("Lỗi SQL logService:", err);
     return { success: false, message: "Lỗi server" };
+  }
+}
+
+export const theInforService = async(id_acc : number) : Promise<any> => {
+  try{
+    const results = await inforTheModel(id_acc);
+    return {success : true , data : results};
+  }catch (err) {
+    console.error("Lỗi SQL theInforService:", err);
+    return {success : false};
   }
 }
 
