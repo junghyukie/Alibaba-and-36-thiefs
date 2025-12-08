@@ -55,21 +55,31 @@ export const loginService = async (email: string, password: string): Promise<Log
   //return { status: 200, message: "Đăng nhập thành công", success: true, id_role: acc.id_role };
 };
 
-export const registerService = async (data: RegisterData): Promise<string> => {
+export const registerService = async (data: RegisterData): Promise<LoginResult> => {
   const {username, email, password  } = data;
 
   if (!email || !password || !username) {
-    throw new Error("Thiếu thông tin");
+    return { status: 400, message: "Thiếu thông tin" };
   }
 
   const existing = await Check_email(email);
   if (existing.length > 0) {
-    throw new Error("Email đã tồn tại");
+    return { status: 400, message: "Email đã tồn tại" };
   }
 
-  const id_acc = await Register(username,email, password);
+  const id_acc = await Register(username, email, password);
   
-  return "Đăng ký thành công";
+  const secret = process.env.JWT_SECRET || "super_secret_key";
+  const payload = { id_acc: id_acc, vai_tro: "DOC_GIA" };
+  const token = jwt.sign(payload, secret, { expiresIn: "1h" });
+
+  return {
+    status: 200,
+    message: "Đăng ký thành công",
+    success: true,
+    vai_tro: "DOC_GIA",
+    token,
+  };
 };
 
 export const forgotPasswordService = async (email: string): Promise<void> => {

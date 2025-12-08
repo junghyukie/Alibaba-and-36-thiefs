@@ -20,28 +20,45 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Username:', username, 'Email:', email, 'Password:', password);
-    // Thêm logic xử lý đăng ký (gọi API, validate, v.v.) ở đây
+    
     try {
-      const res = await fetch(`${API_URL}/api/auth/register`, {  // Giả sử endpoint đăng ký là /register
+      const res = await fetch(`${API_URL}/api/auth/register`, { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
       });
 
       const data = await res.json();
-      // alert(data.message); // thông báo từ server
-      if (data.success) {   
-        alert("Đăng ký thành công! Vui lòng điền thông tin cá nhân.");     
-        navigate('/personal-info-insert');  
+      
+      if (data.success) {
+        // 🔑 BƯỚC MỚI: Tự động lưu Token và điều hướng
+        
+        // 1. Lưu Token nhận được từ server vào LocalStorage
+        localStorage.setItem("token", data.token);
+        
+        // 2. Xử lý điều hướng dựa trên vai trò nhận được từ server (luôn là DOC_GIA)
+        if (data.vai_tro === "DOC_GIA") {
+            // Hiển thị thông báo chào mừng cho vai trò DOC_GIA
+            alert("Đăng ký thành công! Chào mừng User."); 
+            // Điều hướng về trang PersonalnfoInsert
+            navigate("/personal-info-insert"); 
+        } 
+        // Thêm các trường hợp khác nếu có (mặc dù đăng ký luôn là DOC_GIA)
+        else {
+             // Dành cho các vai trò khác nếu logic Backend thay đổi sau này
+             alert(`Đăng ký thành công! Vai trò: ${data.vai_tro}`);
+             navigate('/');
+        }
+        
       } else {
-        alert("failed:" + data.message);
+        alert("Đăng ký thất bại: " + data.message);
       }
+      
     } catch (err) {
       alert("Lỗi kết nối server");
       console.error(err);
     }
-  };
-
+};
   return (
     <>
       <style>{`
