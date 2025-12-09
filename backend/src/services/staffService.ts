@@ -11,6 +11,8 @@ import { addBanSaoInput } from "../types/addBanSao";
 import { addBanSao } from "../models/addBanSaoModel";
 import { activateAccModel, lockAccModel } from "../models/changeStateAccModel";
 import { addTheModel, extendTheModel, upgradeTheModel } from "../models/CardModel";
+import { LogModelforStaff } from "../models/logModel";
+import { logServiceResult } from "../types/userService";
 
 // Đọc giả quá hạn
 export const lateService = async (): Promise<LateServiceResult> => {
@@ -179,4 +181,14 @@ export const activeAccService = async (id_acc: number)
     console.error("Nâng cấp error:", err);
     return { success: false, message: "Lỗi server khi nâng cấp thẻ" };
   }
+ }
+
+ export const logServiceforStaff = async() : Promise<logServiceResult> => {
+   try{
+     const results = await LogModelforStaff();
+     return {success : true, data : results}
+   }catch (err) {
+     console.error("Lỗi SQL logService:", err);
+     return { success: false, message: "Lỗi server" };
+   }
  }

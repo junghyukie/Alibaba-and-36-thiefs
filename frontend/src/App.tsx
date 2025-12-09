@@ -17,6 +17,7 @@ import AddBookForm from "./Components/AddBook";
 import AccInfo from "./Components/AccountInfo"; 
 import PatronList from "./Components/PatronList";
 import LockAccount from "./Components/test";
+import BorrowHistoryUser from "./Components/BorrowHistoryUser";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 //import type UpdateReturnDate from "./Components/test";
 
@@ -48,6 +49,7 @@ function App() {
         <Route path="/add-ban-sao" element={<AddBanSao />} />
          <Route path="/lock" element={<LockAccount />} />
         <Route path="/patronlist" element={<PatronList />} />
+        <Route path="/history-user" element={<BorrowHistoryUser />} />
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
       </Routes>
