@@ -158,3 +158,6 @@ export const getUserInfoService = async (id_acc: number): Promise<UserInformatio
         throw new Error("Service failed to fetch user info.");
     }
 };
+
+///////
+console.log("test");

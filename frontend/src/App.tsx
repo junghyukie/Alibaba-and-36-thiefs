@@ -1,19 +1,23 @@
-import  Dashboard  from "./components/Dashboard";
-import Component from "./components/Component";
-import Login from "./components/Login";
-import BorrowBooks from "./components/BorrowBooks"
-import Register from "./components/Register"
-import PersonalInfoInsert from "./components/PersonInfoInsert"
-import LibraryCard from "./components/LibraryCard";
-import AddBookForm from "./components/AddBook";
-import AccInfo from "./components/AccountInfo"; 
-import PatronList from "./components/PatronList";
-import LockAccount from "./components/test";
-import BorrowHistory from "./components/BorrowHistory";
-import BorrowHistoryUser from "./components/BorrowHistoryUser";
-import PasswordChange from "./components/PasswordChange";
-import ExtendCard from "./components/ExtendCard";
-import UpdateReturnDate from "./components/UpdateReturnDate";
+import  Dashboard  from "./Components/Dashboard";
+import Component from "./Components/Component";
+import Login from "./Components/Login";
+import ForgetPassword from "./Components/test"
+import UpdateUserForm from "./Components/test"
+import BorrowBookForm from "./Components/test";
+import BorrowBooks from "./Components/BorrowBooks"
+import Register from "./Components/Register"
+import HistoryButton from "./Components/test";
+import ListAccountPage from "./Components/test";
+import AddBook from "./Components/test";
+import AddBanSao from "./Components/test";
+import LateListPage from "./Components/test";
+import PersonalInfoInsert from "./Components/PersonInfoInsert"
+import LibraryCard from "./Components/LibraryCard";
+import AddBookForm from "./Components/AddBook";
+import AccInfo from "./Components/AccountInfo"; 
+import PatronList from "./Components/PatronList";
+import LockAccount from "./Components/test";
+import BorrowHistoryUser from "./Components/BorrowHistoryUser";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 //import type UpdateReturnDate from "./Components/test";
 
@@ -38,6 +42,12 @@ function App() {
         <Route path="/borrowhistoryuser" element={<BorrowHistoryUser />} />
         <Route path="/borrowbooks" element={<BorrowBooks />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/add" element={<AddBook />} />
+        <Route path="/add-ban-sao" element={<AddBanSao />} />
+         <Route path="/lock" element={<LockAccount />} />
+        <Route path="/patronlist" element={<PatronList />} />
+        <Route path="/history-user" element={<BorrowHistoryUser />} />
+        <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
         <Route path="/lock" element={<LockAccount />} />
         <Route path="/patronlist" element={<PatronList />} />
