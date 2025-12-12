@@ -1,26 +1,30 @@
-import  Dashboard  from "./Components/Dashboard";
-import Component from "./Components/Component";
-import Login from "./Components/Login";
-import ForgetPassword from "./Components/test"
-import UpdateUserForm from "./Components/test"
-import BorrowBookForm from "./Components/test";
-import BorrowBooks from "./Components/BorrowBooks"
-import Register from "./Components/Register"
-import HistoryButton from "./Components/test";
-import ListAccountPage from "./Components/test";
-import AddBook from "./Components/test";
-import AddBanSao from "./Components/test";
-import LateListPage from "./Components/test";
-import PersonalInfoInsert from "./Components/PersonInfoInsert"
-import LibraryCard from "./Components/LibraryCard";
-import AddBookForm from "./Components/AddBook";
-import AccInfo from "./Components/AccountInfo"; 
-import PatronList from "./Components/PatronList";
-import LockAccount from "./Components/test";
-import BorrowHistoryUser from "./Components/BorrowHistoryUser";
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import  Dashboard  from "./components/Dashboard";
+import Component from "./components/Component";
+import Login from "./components/Login";
+//import ForgetPassword from "./components/test"
+//import UpdateUserForm from "./components/test"
+//import BorrowBookForm from "./components/test";
+import BorrowBooks from "./components/BorrowBooks"
+import Register from "./components/Register"
+//import HistoryButton from "./components/test";
+//import ListAccountPage from "./components/test";
+import AddBook from "./components/test";
+import AddBanSao from "./components/test";
+//import LateListPage from "./components/test";
+import PersonalInfoInsert from "./components/PersonInfoInsert"
+import LibraryCard from "./components/LibraryCard";
+import AddBookForm from "./components/AddBook";
+import AccInfo from "./components/AccountInfo"; 
+import PatronList from "./components/PatronList";
+import LockAccount from "./components/test";
+import BorrowHistoryUser from "./components/BorrowHistoryUser";
+import UpdateReturnDate from "./components/UpdateReturnDate";
+import PasswordChange from "./components/PasswordChange";
+import ExtendCard from "./components/ExtendCard";
+import BorrowHistory from "./components/BorrowHistory";
 //import type UpdateReturnDate from "./Components/test";
 
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 
 
