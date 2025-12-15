@@ -7,6 +7,7 @@ export interface listAccount{
   dia_chi: string;
   vai_tro: string;
   gioi_han_muon: number;
+  trang_thai: string;
 }
 
 export interface ListAccountResult {
