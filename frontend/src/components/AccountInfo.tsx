@@ -21,10 +21,7 @@ const IoniconsScripts = () => (
 
 // Giả lập dữ liệu (exported so other components can import)
 const AccountInfo: React.FC = () => {
-  // Dummy search handler for Header component
-  const handleSearch = () => {
-    // Not used in this component, but required by Header
-  };
+
   const navigate = useNavigate();
   // Khởi tạo state với giá trị rỗng
   const [form, setForm] = useState<UserInfo>({

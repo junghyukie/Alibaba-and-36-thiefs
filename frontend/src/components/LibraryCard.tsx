@@ -23,8 +23,9 @@ const LibraryCard: React.FC = () => {
     ngay_het_han: ""
   });
   const [loading, setLoading] = useState(true);
-  const [debtAmount, setDebtAmount] = useState<string>("");
-  const [inDebt, setInDebt] = useState<boolean>(false);
+  // Chưa dùng?
+  // const [debtAmount, setDebtAmount] = useState<string>("");
+  // const [inDebt, setInDebt] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchCardInfo = async () => {
@@ -97,11 +98,12 @@ const LibraryCard: React.FC = () => {
   };
 
   // Export functions (để các component khác sử dụng)
-  const getName = () => cardInfo.ho_ten;
-  const getCardId = () => cardInfo.id.toString();
-  const getCardType = () => cardInfo.loai_the;
-  const getExpiryDate = () => cardInfo.ngay_het_han
-  const getValidity = () => formatValidity();
+  // Chưa dùng? tạm thời không xóa nhưng chuyển sang comment để build
+  // const getName = () => cardInfo.ho_ten;
+  // const getCardId = () => cardInfo.id.toString();
+  // const getCardType = () => cardInfo.loai_the;
+  // const getExpiryDate = () => cardInfo.ngay_het_han
+  // const getValidity = () => formatValidity();
 
   if (loading) {
     return <div>Đang tải thông tin thẻ...</div>;
