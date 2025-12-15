@@ -119,7 +119,8 @@ export const theInforController = async(req: AuthRequest, res: Response): Promis
         } else {
             console.log("Đang chạy controller log");
             console.log(result.data);
-            return res.status(200).json(result.data);
+            // ✅ Trả về cả object result (có success và data)
+            return res.status(200).json(result);
         }
     } catch (err) {
         console.error(err);

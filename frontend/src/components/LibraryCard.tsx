@@ -1,26 +1,111 @@
-import React, { useState } from 'react';
-//import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HomeButton from './HomeButton';
 
-// Placeholder data functions
-const getName = () => 'Nguyễn Văn A';
-export const getCardId = () => 'ABC123';
-const getCardType = () => 'Thẻ thường';
-const getValidity = () => '01/01/2025 - 31/12/2025';
-const getDebtAmount = () => '500.000 đồng';
+const API_URL = import.meta.env.VITE_API_URL;
 
-// Tính phí gia hạn (hiện tại mặc định 500k)
-
-// Export debt flag so other components (e.g., BorrowBooks) can read it
-export const InDebt = true;
+interface TheInfo {
+  ho_ten: string;
+  id: number;
+  loai_the: string;
+  ngay_cap: string;
+  ngay_het_han: string;
+}
 
 const LibraryCard: React.FC = () => {
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
+  
+  const [cardInfo, setCardInfo] = useState<TheInfo>({
+    ho_ten: "",
+    id: 0,
+    loai_the: "",
+    ngay_cap: "",
+    ngay_het_han: ""
+  });
+  const [loading, setLoading] = useState(true);
+  const [debtAmount, setDebtAmount] = useState<string>("");
+  const [inDebt, setInDebt] = useState<boolean>(false);
 
-  const name = getName();
-  const cardId = getCardId();
-  const cardType = getCardType();
-  const validity = getValidity();
+  useEffect(() => {
+    const fetchCardInfo = async () => {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        alert("Bạn chưa đăng nhập. Đang chuyển hướng...");
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/user/service/the-infor`, { 
+          method: "GET",
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` 
+          },
+        });
+
+        if (res.status === 401) {
+          alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+          localStorage.removeItem("token");
+          navigate("/login");
+          return;
+        }
+
+        if (!res.ok) {
+          throw new Error("Lỗi khi tải thông tin thẻ.");
+        }
+
+        const dataWrapper = await res.json(); 
+        const data = dataWrapper.data;
+        
+        if (dataWrapper.success && data) {
+          setCardInfo({
+            ho_ten: data.ho_ten || "",
+            id: data.id || 0,
+            loai_the: data.loai_the || "",
+            ngay_cap: data.ngay_cap || "",
+            ngay_het_han: data.ngay_het_han || ""
+          });
+          
+          // Nếu backend trả về thông tin nợ, xử lý ở đây
+          // setDebtAmount(data.tien_no || "0");
+          // setInDebt(data.tien_no && parseFloat(data.tien_no) > 0);
+          
+        } else {
+          throw new Error("Dữ liệu thẻ không hợp lệ hoặc rỗng.");
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert("Không thể kết nối hoặc tải dữ liệu thẻ.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCardInfo();
+  }, [navigate]);
+
+  // Helper functions để format dữ liệu
+  const formatValidity = () => {
+    if (!cardInfo.ngay_cap || !cardInfo.ngay_het_han) return "";
+    const ngayCap = new Date(cardInfo.ngay_cap).toLocaleDateString('vi-VN');
+    const ngayHetHan = new Date(cardInfo.ngay_het_han).toLocaleDateString('vi-VN');
+    return `${ngayCap} - ${ngayHetHan}`;
+  };
+
+  // Export functions (để các component khác sử dụng)
+  const getName = () => cardInfo.ho_ten;
+  const getCardId = () => cardInfo.id.toString();
+  const getCardType = () => cardInfo.loai_the;
+  const getExpiryDate = () => cardInfo.ngay_het_han
+  const getValidity = () => formatValidity();
+
+  if (loading) {
+    return <div>Đang tải thông tin thẻ...</div>;
+  }
 
   return (
     <>
@@ -201,32 +286,32 @@ const LibraryCard: React.FC = () => {
       <HomeButton/>
 
       <div className="library-card-page">
-        <section className="lib-bg">
-          <div className="card">
-            <div className="card-header">Thẻ thư viện</div>
+      <section className="lib-bg">
+        <div className="card">
+          <div className="card-header">Thẻ thư viện</div>
 
-            <div className="data-row">
-              <div className="data-label">Họ và tên:</div>
-              <div className="data-value" aria-readonly>{name}</div>
-            </div>
-
-            <div className="data-row">
-              <div className="data-label">Mã thẻ:</div>
-              <div className="data-value" aria-readonly>{cardId}</div>
-            </div>
-
-            <div className="data-row">
-              <div className="data-label">Loại thẻ:</div>
-              <div className="data-value" aria-readonly>{cardType}</div>
-            </div>
-
-            <div className="data-row">
-              <div className="data-label">Hạn dùng thẻ:</div>
-              <div className="data-value validity" aria-readonly>{validity}</div>
-            </div>
+          <div className="data-row">
+            <div className="data-label">Họ và tên:</div>
+            <div className="data-value" aria-readonly>{cardInfo.ho_ten}</div>
           </div>
-        </section>
-      </div>
+
+          <div className="data-row">
+            <div className="data-label">Mã thẻ:</div>
+            <div className="data-value" aria-readonly>{cardInfo.id}</div>
+          </div>
+
+          <div className="data-row">
+            <div className="data-label">Loại thẻ:</div>
+            <div className="data-value" aria-readonly>{cardInfo.loai_the}</div>
+          </div>
+
+          <div className="data-row">
+            <div className="data-label">Hạn dùng thẻ:</div>
+            <div className="data-value validity" aria-readonly>{formatValidity()}</div>
+          </div>
+        </div>
+      </section>
+    </div>
     </>
   );
 };

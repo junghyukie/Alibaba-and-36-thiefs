@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import useUser from '../hooks/useUser';
-import { getCardId, InDebt } from './LibraryCard';
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 type CartItem = {
   id: string;
@@ -10,12 +12,16 @@ type CartItem = {
 };
 
 const BorrowBooks: React.FC = () => {
+  const navigate = useNavigate();
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [cardId, setCardId] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
 
   const handleSearch = () => {
     // Not used in this component, but required by Header
   };
 
+  // Fetch cart từ localStorage
   useEffect(() => {
     try {
       const raw = localStorage.getItem('cartItems');
@@ -25,21 +31,79 @@ const BorrowBooks: React.FC = () => {
     }
   }, []);
 
+  // Fetch cardId từ backend
+  useEffect(() => {
+    const fetchCardId = async () => {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        alert("Bạn chưa đăng nhập. Đang chuyển hướng...");
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/user/service/the-infor`, { 
+          method: "GET",
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` 
+          },
+        });
+
+        if (res.status === 401) {
+          alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+          localStorage.removeItem("token");
+          navigate("/login");
+          return;
+        }
+
+        if (!res.ok) {
+          throw new Error("Lỗi khi tải thông tin thẻ.");
+        }
+
+        const dataWrapper = await res.json(); 
+        const data = dataWrapper.data;
+        
+        if (dataWrapper.success && data) {
+          setCardId(data.id || 0);
+        } else {
+          throw new Error("Dữ liệu thẻ không hợp lệ hoặc rỗng.");
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert("Không thể kết nối hoặc tải dữ liệu thẻ.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCardId();
+  }, [navigate]);
+
   const fullname = useUser().userInfo?.ho_ten || 'Bạn chưa cập nhật thông tin';
-  const cardId = getCardId();
 
   const handleConfirm = () => {
-    if (InDebt) {
-      alert('Vui lòng thanh toán hết công nợ trước khi mượn sách');
-    } else {
       alert('Mượn sách thành công');
       // Optionally clear cart
       try {
         localStorage.removeItem('cartItems');
         setCart([]);
       } catch (e) {}
-    }
   };
+
+  if (loading) {
+    return (
+      <>
+        <Header onSearch={handleSearch} />
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+          Đang tải thông tin...
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

@@ -10,6 +10,6 @@ router.post("/cart-items", verifyToken,inforBookinCartController);
 router.post("/log", verifyToken,LogController);
 router.post("/reserve-book", verifyToken,reserveController);
 router.delete("/delete-book/:id_sach", verifyToken,deleteBookFromCartController);
-router.post("/the-infor", verifyToken,theInforController);
+router.get("/the-infor", verifyToken,theInforController);
 
 export default router;
