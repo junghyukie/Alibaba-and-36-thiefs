@@ -21,7 +21,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await registerService(req.body);
-    res.status(result.status).json(result);
+    res.status(200).json({success: true, message: result});
   } catch (error: any) {
     console.error("Lỗi đăng ký:", error);
     res.status(500).json({ message: error.message || "Lỗi server" });

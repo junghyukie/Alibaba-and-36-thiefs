@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 //import { useNavigate } from 'react-router-dom';
-import Header from './Header';
+import HomeButton from './HomeButton';
 
 // Placeholder data functions
 const getName = () => 'Nguyễn Văn A';
@@ -10,49 +10,17 @@ const getValidity = () => '01/01/2025 - 31/12/2025';
 const getDebtAmount = () => '500.000 đồng';
 
 // Tính phí gia hạn (hiện tại mặc định 500k)
-const CalculateFee = (date: string) => {
-  date; // dùng để ko báo lỗi
-  return '500.000 VNĐ';
-};
 
 // Export debt flag so other components (e.g., BorrowBooks) can read it
 export const InDebt = true;
 
 const LibraryCard: React.FC = () => {
   //const navigate = useNavigate();
-  const SoonExpired = true;
-
-  const [showModal, setShowModal] = useState(false);
-  const [renewDate, setRenewDate] = useState('');
-  const [showDebtModal, setShowDebtModal] = useState(false);
-  const [fee, setFee] = useState('');
 
   const name = getName();
   const cardId = getCardId();
   const cardType = getCardType();
   const validity = getValidity();
-  const handleSearch = () => {
-    // Not used in this component, but required by Header
-  };
-
-  const handleRenewClick = () => {
-    if (InDebt) {
-      setShowDebtModal(true);
-    } else {
-      setShowModal(true);
-    }
-  };
-
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = e.target.value;
-    setRenewDate(date);
-    setFee(CalculateFee(date));
-  };
-
-  const handleConfirmRenew = () => {
-    alert(`Gia hạn đến ${renewDate} với phí ${fee}`);
-    setShowModal(false);
-  };
 
   return (
     <>
@@ -230,25 +198,12 @@ const LibraryCard: React.FC = () => {
         }
       `}</style>
 
-      <Header onSearch={handleSearch} />
+      <HomeButton/>
 
       <div className="library-card-page">
         <section className="lib-bg">
           <div className="card">
             <div className="card-header">Thẻ thư viện</div>
-
-            {SoonExpired && (
-              <div className="soon-expire">
-                Thẻ sắp hết hạn,{' '}
-                <button
-                  className="renew-link"
-                  onClick={handleRenewClick}
-                  aria-label="Gia hạn thẻ"
-                >
-                  gia hạn thẻ?
-                </button>
-              </div>
-            )}
 
             <div className="data-row">
               <div className="data-label">Họ và tên:</div>
@@ -272,32 +227,6 @@ const LibraryCard: React.FC = () => {
           </div>
         </section>
       </div>
-
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <button className="close-button" onClick={() => setShowModal(false)} aria-label="Đóng cửa sổ">×</button>
-            <h2>Gia hạn thẻ</h2>
-            <label>Gia hạn đến ngày:</label>
-            <input type="date" value={renewDate} onChange={handleDateChange} />
-            <label>Phí gia hạn:</label>
-            <div className="readonly-box">{fee || '---'}</div>
-            <button onClick={handleConfirmRenew}>Gia hạn</button>
-          </div>
-        </div>
-      )}
-
-      {showDebtModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <button className="close-button" onClick={() => setShowDebtModal(false)} aria-label="Đóng cửa sổ">×</button>
-            <h2>Tài khoản còn công nợ</h2>
-            <label>Số tiền nợ:</label>
-            <div className="readonly-box">{getDebtAmount()}</div>
-            <button onClick={() => alert('Chuyển đến trang thanh toán')}>Thanh toán nợ</button>
-          </div>
-        </div>
-      )}
     </>
   );
 };

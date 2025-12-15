@@ -336,7 +336,7 @@ export default function Component() {
   //};
 
   
-const handleBorrow = async (book : any) => {
+const handleBorrow = async (book: any) => {
   if (!book) return;
 
   const token = localStorage.getItem("token");
@@ -349,7 +349,7 @@ const handleBorrow = async (book : any) => {
   const ngayMuon = now.toISOString().split("T")[0];
 
   const ngayHetHan = new Date();
-  ngayHetHan.setMonth(ngayHetHan.getMonth() + 1); // 1 tháng sau
+  ngayHetHan.setMonth(ngayHetHan.getMonth() + 1);
   const ngayHetHanStr = ngayHetHan.toISOString().split("T")[0];
 
   const formData = {
@@ -374,16 +374,68 @@ const handleBorrow = async (book : any) => {
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.message);
-    }
-    else {
-      alert("✅ " + (data.message || "Đã thêm vào giỏ hàng!"));
+      const errorMsg = data.message || "Lỗi không xác định";
+      
+      // Check if the error is "Không còn bản sao khả dụng"
+      if (errorMsg.includes("Không còn bản sao khả dụng") || errorMsg.includes("không còn") || errorMsg.includes("hết")) {
+        console.log("📚 Sách không khả dụng, mở dialog đặt sách");
+        // Trigger the reservation dialog by setting state
+        // We need to pass this event back to the parent - use a callback or state
+        // For now, alert and suggest reservation
+        const reserveNow = confirm(
+          `${errorMsg}\n\nBạn có muốn đặt sách để được thông báo khi có bản sao sẵn sàng không?`
+        );
+        if (reserveNow) {
+          await reserveBook(book);
+        }
+      } else {
+        alert("❌ Lỗi: " + errorMsg);
+      }
+      return;
     }
 
-   // postMessage("✅ Mượn sách thành công!");
+    alert("✅ " + (data.message || "Mượn sách thành công!"));
   } catch (err: any) {
     console.error("❌ Lỗi khi gửi dữ liệu:", err);
-    //postMessage("❌ Có lỗi xảy ra: " + (err.message || "Lỗi không xác định"));
+    alert("Có lỗi xảy ra khi mượn sách!");
+  }
+};
+
+// Helper function to reserve a book
+const reserveBook = async (book: any) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Vui lòng đăng nhập!");
+    return;
+  }
+
+  const formData = {
+    sach_id: book.id,
+  };
+
+  try {
+    console.log("📤 Gửi yêu cầu đặt sách:", formData);
+
+    const res = await fetch(`${API_URL}/user/service/reserve-book`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert("❌ Lỗi: " + (data.message || "Không thể đặt sách"));
+      return;
+    }
+
+    alert("✅ " + (data.message || "Đặt sách thành công!"));
+  } catch (err: any) {
+    console.error("❌ Lỗi khi gửi yêu cầu đặt sách:", err);
+    alert("Có lỗi xảy ra khi đặt sách!");
   }
 };
 

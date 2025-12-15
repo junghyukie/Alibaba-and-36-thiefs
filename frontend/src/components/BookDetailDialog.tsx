@@ -28,6 +28,7 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
   const [author, setAuthor] = useState<Author | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [copies, setCopies] = useState<NumCopy | null>(null);
+  const [showReservationDialog, setShowReservationDialog] = useState(false);
 
     // 🔥 Khi book thay đổi => gọi API
   useEffect(() => {
@@ -64,6 +65,48 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
 
     fetchDetails();
   }, [book]);
+
+  // Function to reserve a book when unavailable
+  const handleReserveBook = async () => {
+    if (!book) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Vui lòng đăng nhập để đặt sách!');
+      return;
+    }
+
+    const formData = {
+      id_sach: book.id,
+    };
+
+    try {
+      console.log('📤 Gửi yêu cầu đặt sách:', formData);
+
+      const res = await fetch(`${API_URL}/user/service/reserve-book`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert('❌ Lỗi: ' + (data.message || 'Không thể đặt sách'));
+        return;
+      }
+
+      alert('✅ ' + (data.message || 'Đặt sách thành công!'));
+      setShowReservationDialog(false);
+      onOpenChange(false);
+    } catch (err: any) {
+      console.error('❌ Lỗi khi gửi yêu cầu đặt sách:', err);
+      alert('Có lỗi xảy ra khi đặt sách!');
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -226,6 +269,35 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
         </Button>
       </div>
       </div>
+
+            {/* Reservation Dialog */}
+      {showReservationDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowReservationDialog(false)} />
+          <div className="relative z-50 w-full max-w-md bg-white rounded-lg shadow-xl p-8 text-center">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Sách không còn bản sao khả dụng</h2>
+            <p className="text-gray-600 mb-6">
+              Sách <strong>{book.tieu_de}</strong> hiện không còn bản sao khả dụng. Bạn có muốn đặt sách để được thông báo khi có bản sao sẵn sàng không?
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowReservationDialog(false)}
+                className="px-6"
+              >
+                Hủy
+              </Button>
+              <Button
+                className="px-6 bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={handleReserveBook}
+              >
+                Đặt sách
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

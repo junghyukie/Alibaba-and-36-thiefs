@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from './Header';
+import HomeButton from './HomeButton';
 const API_URL = import.meta.env.VITE_API_URL;
 
 interface UserInfo {
@@ -123,8 +123,6 @@ const AccountInfo: React.FC = () => {
 
   return (
     <>
-      <Header
-      onSearch={handleSearch} />
       {/* ==================== CSS ==================== */}
       <style>{`
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
@@ -214,6 +212,8 @@ const AccountInfo: React.FC = () => {
           .header h2 { font-size:1.9em; }
         }
       `}</style>
+
+      <HomeButton/>
 
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
 

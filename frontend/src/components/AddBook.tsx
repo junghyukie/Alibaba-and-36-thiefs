@@ -6,6 +6,15 @@ const AddBookForm: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // 1. Lấy Token từ localStorage (hoặc nơi bạn lưu trữ)
+    const token = localStorage.getItem("token"); 
+    
+    if (!token) {
+        setMessage({ text: 'Lỗi: Vui lòng đăng nhập để thực hiện chức năng này.', type: 'error' });
+        return; // Dừng lại nếu không có token
+    }
+
     const formData = new FormData(e.currentTarget);
     const data: Record<string, string | number> = {};
     formData.forEach((value, key) => {
@@ -13,9 +22,13 @@ const AddBookForm: React.FC = () => {
     });
 
     try {
-      const response = await fetch(`${API_URL}/api/books`, {
+      const response = await fetch(`${API_URL}/staff/service/add-book`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          // 2. THÊM HEADER AUTHORIZATION
+          'Authorization': `Bearer ${token}`, 
+        },
         body: JSON.stringify(data),
       });
       const result = await response.json();
@@ -24,7 +37,14 @@ const AddBookForm: React.FC = () => {
         setMessage({ text: result.message || 'Thêm sách thành công!', type: 'success' });
         e.currentTarget?.reset?.();
       } else {
-        setMessage({ text: result.error || 'Có lỗi xảy ra', type: 'error' });
+        // Xử lý lỗi 401/403 cụ thể nếu cần
+        if (response.status === 401) {
+            setMessage({ text: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.', type: 'error' });
+        } else if (response.status === 403) {
+            setMessage({ text: 'Bạn không có quyền thêm sách.', type: 'error' });
+        } else {
+            setMessage({ text: result.error || 'Có lỗi xảy ra', type: 'error' });
+        }
       }
     } catch (error: any) {
       setMessage({ text: `Lỗi kết nối: ${error.message}`, type: 'error' });
@@ -107,7 +127,7 @@ const AddBookForm: React.FC = () => {
           text-align:center;
         }
         .message.success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
-        .message.error   { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
+        .message.error   { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
 
         @media (max-width:480px) {
           .box { border-radius:18px; }
@@ -125,12 +145,14 @@ const AddBookForm: React.FC = () => {
             <form onSubmit={handleSubmit} id="addBookForm">
               {[
                 { label: 'Tên sách', name: 'tieu_de', required: true },
-                { label: 'Tên tác giả', name: 'ten_tac_gia', required: true },
-                { label: 'Tên NXB', name: 'ten_nxb', required: true },
+                { label: 'Tên tác giả', name: 'ten_tg', required: true },
+                { label: 'Tên NXB', name: 'nxb', required: true },
                 { label: 'ISBN', name: 'isbn' },
                 { label: 'Tóm tắt', name: 'tom_tat', textarea: true },
                 { label: 'Năm xuất bản', name: 'nam_xb', type: 'number' },
                 { label: 'Ngôn ngữ', name: 'ngon_ngu' },
+                // Thêm trường Thể loại sách vào cuối
+                { label: 'Thể loại', name: 'the_loai', required: true }, 
               ].map((field) => (
                 <div className="input-group" key={field.name}>
                   {field.textarea ? (
