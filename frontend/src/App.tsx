@@ -21,6 +21,8 @@ import BorrowHistoryUser from "./components/BorrowHistoryUser";
 import UpdateReturnDate from "./components/UpdateReturnDate";
 import PasswordChange from "./components/PasswordChange";
 import ExtendCard from "./components/ExtendCard";
+import TopBook from "./components/test";
+import CopyListTest from "./components/test";
 import BorrowHistory from "./components/BorrowHistory";
 //import type UpdateReturnDate from "./Components/test";
 
@@ -54,6 +56,8 @@ function App() {
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
         <Route path="/lock" element={<LockAccount />} />
+           <Route path="/copies" element={<CopyListTest />} />
+         <Route path="/top-book" element={<TopBook />} />
         <Route path="/patronlist" element={<PatronList />} />
       </Routes>
     </BrowserRouter>

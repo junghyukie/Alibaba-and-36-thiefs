@@ -1,4 +1,4 @@
-export interface listAccount{
+export interface listAccount {
   id: number;
   email: string;
   ho_ten: string;
@@ -35,4 +35,26 @@ export interface LateServiceResult {
   success: boolean;
   data?: LateRecord[];
   message?: string;
+}
+
+
+
+//Quản lý bản sao
+export interface copiesInfor {
+  id: number;
+  tieu_de: string;
+  trang_thai: string;
+  ngay_mua: Date;
+  gia_tri: number;
+  ke_sach: string;
+}
+
+export interface copiesInforService {
+  success: boolean;
+  data?: copiesInfor[];
+  message?: string;
+  page?: number;
+  pageSize?: number;
+  totalPages?: number;
+  totalRecords?: number;
 }

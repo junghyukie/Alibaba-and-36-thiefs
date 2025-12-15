@@ -6,6 +6,8 @@ import { LogModel } from "../models/logModel";
 import { theInforResult } from "../types/the";
 import { inforTheModel } from "../models/CardModel";
 import e from "express";
+import { TopBookResponse } from "../types/topBook";
+import { topBookModel } from "../models/topBookModel";
 
 
 export const insertBookService = async (id_acc: number, data: insertBook): Promise<any> => {
@@ -87,6 +89,17 @@ export const theInforService = async(id_acc : number) : Promise<any> => {
   }
 }
 
+//Top 3 sách đang được mượn
+
+export const topBookService = async() : Promise<TopBookResponse> => {
+  try{
+    const results = await topBookModel();
+    return {success : true , data : results };
+  }catch (err) {
+    console.error("Lỗi SQL theInforService:", err);
+    return {success : false , data : null };
+  }
+}
 
 
 

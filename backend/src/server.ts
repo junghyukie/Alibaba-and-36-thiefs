@@ -1,7 +1,8 @@
 import "./config/env";
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
-import dotenv from "dotenv";
+
+
 import authRoute from "./routes/authRoute"; // import đúng cú pháp ESModule
 import staffserviceRoute from "./routes/staffRoute";
 // import authRoute from "./routes/authRoute";

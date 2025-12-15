@@ -360,58 +360,276 @@
 // export default AddBanSao;
 
 
-import React, { useState } from "react";
-//const API_URL = import.meta.env.VITE_API_URL;
+// import React, { useState } from "react";
+// //const API_URL = import.meta.env.VITE_API_URL;
 
-const LockAccount: React.FC = () => {
-  const [accountId, setAccountId] = useState("");
+// const LockAccount: React.FC = () => {
+//   const [accountId, setAccountId] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
 
+//     const token = localStorage.getItem("token");
+//     if (!token) return alert("❌ Bạn chưa đăng nhập!");
+
+//     try {
+//       const res = await fetch("http://localhost:3001/staff/service/activate", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify({ id: Number(accountId) }),
+//       });
+
+//       const data = await res.json();
+//       if (!res.ok || !data.success) return alert(data.message || "❌ Có lỗi xảy ra");
+
+//       alert("🔒 Khóa tài khoản thành công!");
+//     } catch (err) {
+//       console.error(err);
+//       alert("❌ Không thể kết nối server!");
+//     }
+//   };
+
+//   return (
+//     <div className="container">
+//       <div className="box">
+//         <h2>Khóa Tài Khoản</h2>
+//         <form onSubmit={handleSubmit}>
+//           <div className="input-field">
+//             <label>ID tài khoản</label>
+//             <input
+//               type="number"
+//               value={accountId}
+//               onChange={(e) => setAccountId(e.target.value)}
+//               required
+//             />
+//           </div>
+
+//           <button type="submit">Khóa</button>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default LockAccount;
+// import React, { useEffect, useState } from "react";
+
+// interface TopBook {
+//   tieu_de: string;
+//   tac_gia: string;
+//   so_luot_dang_muon: number;
+// }
+
+// const TopBook: React.FC = () => {
+//   const [books, setBooks] = useState<TopBook[]>([]);
+//   const [loading, setLoading] = useState(true);
+
+//   const fetchTopBooks = async () => {
+//   const token = localStorage.getItem("token");
+
+//   if (!token) {
+//     alert("❌ Bạn chưa đăng nhập!");
+//     return;
+//   }
+
+//   try {
+//     const res = await fetch("http://localhost:3001/user/service/top-book", {
+//       method: "GET",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+
+//     const data = await res.json();
+
+//     if (!res.ok || !data.success) {
+//       return alert(data.message || "❌ Không lấy được top sách");
+//     }
+
+//     setBooks(data.data);
+//   } catch (err) {
+//     console.error(err);
+//     alert("❌ Không thể kết nối server!");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+
+//   useEffect(() => {
+//     fetchTopBooks();
+//   }, []);
+
+//   return (
+//     <div className="container">
+//       <div className="box">
+//         <h2>📚 Top 3 Sách Được Mượn Nhiều Nhất</h2>
+
+//         {loading ? (
+//           <p>Đang tải dữ liệu...</p>
+//         ) : (
+//           <table border={1} cellPadding={10} width="100%">
+//             <thead>
+//               <tr>
+//                 <th>#</th>
+//                 <th>Tiêu đề</th>
+//                 <th>Tác giả</th>
+//                 <th>Số lượt đang mượn</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {books.map((book, index) => (
+//                 <tr key={index}>
+//                   <td>{index + 1}</td>
+//                   <td>{book.tieu_de}</td>
+//                   <td>{book.tac_gia}</td>
+//                   <td>{book.so_luot_dang_muon}</td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default TopBook;
+
+import React, { useEffect, useState } from "react";
+
+interface copiesInfor {
+  id: number;
+  tieu_de: string;
+  trang_thai: string;
+  ngay_mua: string; // Date từ backend về là string
+  gia_tri: number;
+  ke_sach: string;
+}
+
+interface copiesInforService {
+  success: boolean;
+  data?: copiesInfor[];
+  message?: string;
+  page?: number;
+  pageSize?: number;
+  totalPages?: number;
+  totalRecords?: number;
+}
+
+const CopyListTest: React.FC = () => {
+  const [copies, setCopies] = useState<copiesInfor[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+
+  const fetchCopies = async (pageNumber: number) => {
     const token = localStorage.getItem("token");
-    if (!token) return alert("❌ Bạn chưa đăng nhập!");
+    if (!token) {
+      alert("❌ Bạn chưa đăng nhập!");
+      return;
+    }
 
     try {
-      const res = await fetch("http://localhost:3001/staff/service/activate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ id: Number(accountId) }),
-      });
+      setLoading(true);
 
-      const data = await res.json();
-      if (!res.ok || !data.success) return alert(data.message || "❌ Có lỗi xảy ra");
+      // 🔴 SỬA URL nếu backend bạn khác
+      const res = await fetch(
+        `http://localhost:3001/staff/service/list-copies?page=${pageNumber}&pageSize=${pageSize}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      alert("🔒 Khóa tài khoản thành công!");
+      const data: copiesInforService = await res.json();
+
+      if (!res.ok || !data.success) {
+        return alert(data.message || "❌ Không lấy được danh sách bản sao");
+      }
+
+      setCopies(data.data || []);
+      setPage(data.page || 1);
+      setTotalPages(data.totalPages || 1);
     } catch (err) {
       console.error(err);
       alert("❌ Không thể kết nối server!");
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchCopies(page);
+  }, [page]);
 
   return (
     <div className="container">
       <div className="box">
-        <h2>Khóa Tài Khoản</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="input-field">
-            <label>ID tài khoản</label>
-            <input
-              type="number"
-              value={accountId}
-              onChange={(e) => setAccountId(e.target.value)}
-              required
-            />
-          </div>
+        <h2>📦 Danh sách bản sao sách</h2>
 
-          <button type="submit">Khóa</button>
-        </form>
+        {loading ? (
+          <p>Đang tải dữ liệu...</p>
+        ) : (
+          <>
+            <table border={1} cellPadding={10} width="100%">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tiêu đề</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày mua</th>
+                  <th>Giá trị</th>
+                  <th>Kệ sách</th>
+                </tr>
+              </thead>
+              <tbody>
+                {copies.map((c) => (
+                  <tr key={c.id}>
+                    <td>{c.id}</td>
+                    <td>{c.tieu_de}</td>
+                    <td>{c.trang_thai}</td>
+                    <td>{new Date(c.ngay_mua).toLocaleDateString()}</td>
+                    <td>{c.gia_tri.toLocaleString()} đ</td>
+                    <td>{c.ke_sach}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* PAGINATION */}
+            <div style={{ marginTop: 15, textAlign: "center" }}>
+              <button
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
+              >
+                ◀ Trang trước
+              </button>
+
+              <span style={{ margin: "0 10px" }}>
+                Trang {page} / {totalPages}
+              </span>
+
+              <button
+                disabled={page === totalPages}
+                onClick={() => setPage(page + 1)}
+              >
+                Trang sau ▶
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
 };
 
-export default LockAccount;
+export default CopyListTest;

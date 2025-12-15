@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../types/auth";
-import { activeAccService, addBanSaoService, addBookService, addTheService, extendTheService, lateService, listAccountService, lockAccService, logServiceforStaff, upgradeTheService } from "../services/staffService";
-import { LateServiceResult, ListAccountResult } from "../types/staffService";
+import { activeAccService, addBanSaoService, addBookService, addTheService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, upgradeTheService } from "../services/staffService";
+import { copiesInfor, copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
 import { theExistingModel } from "../models/CardModel";
 
 // Controller lấy danh sách đọc giả quá hạn
@@ -194,4 +194,27 @@ export const LogControllerforStaff = async(req: AuthRequest, res: Response): Pro
         console.error(err);
         return res.status(500).json({ message: "Lỗi server" }); 
     }
+};
+
+
+export const listCopiesController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    const id_acc = req.user?.id_acc;
+    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
+
+    const role = req.user?.vai_tro;
+    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
+
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 20;
+
+    const result: copiesInforService = await listCopiesService(page, pageSize);
+    return res.status(result.success ? 200 : 500).json(result);
+  } catch (err) {
+    console.error("Lỗi listCopiesController:", err);
+    return res.status(500).json({ success: false, message: "Lỗi server" });
+  }
 };

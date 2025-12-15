@@ -1,7 +1,7 @@
-import env from 'dotenv';
+// import env from 'dotenv';
 import { Pool } from 'pg'
 
-env.config({path: "./src/.env"});
+// env.config({path: "./src/.env"});
 
 const pool = new Pool({
     user: process.env.PG_USER,
@@ -14,6 +14,7 @@ const pool = new Pool({
         rejectUnauthorized: false,
     } : false
 });
+// console.log("DB_PASSWORD =", process.env.DB_PASSWORD);
 
 export default pool;
 

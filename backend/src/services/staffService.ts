@@ -1,6 +1,6 @@
 import { LateModel } from "../models/listLateModel";
 import { listAccountModel, totalRecord } from "../models/listAccountModel";
-import { LateServiceResult, ListAccountResult } from "../types/staffService";
+import { copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
 import { addBookInput } from "../types/addBook";
 import {
   addAuthor, AddBookModel, addNXB,
@@ -13,6 +13,7 @@ import { activateAccModel, lockAccModel } from "../models/changeStateAccModel";
 import { addTheModel, extendTheModel, upgradeTheModel } from "../models/CardModel";
 import { LogModelforStaff } from "../models/logModel";
 import { logServiceResult } from "../types/userService";
+import { listCopies, totalRecordCopies } from "../models/copiesInforModel";
 
 // Đọc giả quá hạn
 export const lateService = async (): Promise<LateServiceResult> => {
@@ -192,3 +193,25 @@ export const activeAccService = async (id_acc: number)
      return { success: false, message: "Lỗi server" };
    }
  }
+
+
+ export const listCopiesService = async (
+  page: number = 1,
+  pageSize: number = 20
+): Promise<copiesInforService> => {
+  try {
+    const { totalRecords, totalPages } = await totalRecordCopies(pageSize);
+    const copies = await listCopies(page, pageSize);
+    return {
+      success: true,
+      data: copies,
+      page,
+      pageSize,
+      totalPages,
+      totalRecords,
+    };
+  } catch (err) {
+    console.error("Lỗi listCopiesService:", err);
+    return { success: false, message: "Lỗi server" };
+  }
+};
