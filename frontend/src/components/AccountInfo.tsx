@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import HomeButton from './HomeButton';
+import Header from './Header';
 const API_URL = import.meta.env.VITE_API_URL;
 
 interface UserInfo {
@@ -223,7 +223,7 @@ const AccountInfo: React.FC = () => {
         }
       `}</style>
 
-      <HomeButton/>
+      <Header onSearch={() => {}} />
 
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
