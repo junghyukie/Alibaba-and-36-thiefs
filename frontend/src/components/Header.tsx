@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Home, Bell, BookOpen, LogOut, User } from "lucide-react";
 
-const Header = ({ onSearch }: { onSearch?: (query: string) => void }) => {
+const Header = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -34,7 +34,7 @@ const Header = ({ onSearch }: { onSearch?: (query: string) => void }) => {
   };
 
   const handleBorrowHistory = () => {
-    navigate('/borrowhistoryuser');
+    navigate('/history-user');
     setIsDropdownOpen(false);
   }
 
@@ -101,8 +101,6 @@ const Header = ({ onSearch }: { onSearch?: (query: string) => void }) => {
               Alibaba and 36 Thieves
             </h1>
           </div>
-
-          {/* Search Bar intentionally removed — rendered inside cart modal per design */}
 
           {/* Right Section - Notifications & User */}
           <div 

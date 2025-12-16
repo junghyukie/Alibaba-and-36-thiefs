@@ -17,10 +17,6 @@ const BorrowBooks: React.FC = () => {
   const [cardId, setCardId] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
-  const handleSearch = () => {
-    // Not used in this component, but required by Header
-  };
-
   // Fetch cart từ localStorage
   useEffect(() => {
     try {
@@ -97,7 +93,7 @@ const BorrowBooks: React.FC = () => {
   if (loading) {
     return (
       <>
-        <Header onSearch={handleSearch} />
+        <Header />
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
           Đang tải thông tin...
         </div>
@@ -138,7 +134,7 @@ const BorrowBooks: React.FC = () => {
         }
       `}</style>
 
-      <Header onSearch={handleSearch} />
+      <Header/>
 
       <section className="borrow-bg">
         <div className="panel" role="region" aria-label="Borrow Books">
