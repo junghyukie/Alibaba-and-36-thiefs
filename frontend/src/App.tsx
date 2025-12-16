@@ -20,7 +20,6 @@ import BorrowHistoryUser from "./components/BorrowHistoryUser";
 import UpdateReturnDate from "./components/UpdateReturnDate";
 import PasswordChange from "./components/PasswordChange";
 import ExtendCard from "./components/ExtendCard";
-import BorrowHistory from "./components/BorrowHistory";
 import BookList from "./components/BookList";
 //import type UpdateReturnDate from "./Components/test";
 

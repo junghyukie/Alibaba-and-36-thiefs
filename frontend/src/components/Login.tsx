@@ -40,7 +40,7 @@ const Login: React.FC = () => {
           navigate("/");
         } else if (data.vai_tro === "NHAN_VIEN") {
           alert("Chao mung Staff");
-          // navigate("/staff");
+          navigate("/patronlist");
         } else if (data.vai_tro === "ADMIN") {
           alert("Chao mung admin");
           // navigate("/admin");

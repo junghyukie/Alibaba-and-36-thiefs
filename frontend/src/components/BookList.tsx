@@ -39,9 +39,6 @@ export default function BookList(): JSX.Element {
   const [selectedCopy, setSelectedCopy] = useState<Copy | null>(null);
 
   const navigate = useNavigate();
-  const GotoAddbook = () => {
-    navigate('/addbook');
-  }
 
   const formatDate = (d?: string) => (d ? new Date(d).toLocaleDateString('vi-VN') : 'N/A');
 
