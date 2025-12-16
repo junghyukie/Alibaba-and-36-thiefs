@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import HomeButton from './HomeButton';
+import Header from './Header';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -285,7 +285,7 @@ const LibraryCard: React.FC = () => {
         }
       `}</style>
 
-      <HomeButton/>
+      <Header onSearch={() => {}} />
 
       <div className="library-card-page">
       <section className="lib-bg">

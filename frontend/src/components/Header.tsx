@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { SearchBar } from './SearchBar';
 import { Home, Bell, BookOpen, LogOut, User } from "lucide-react";
 
-const Header = ({ onSearch }: { onSearch: (query: string) => void }) => {
+const Header = ({ onSearch }: { onSearch?: (query: string) => void }) => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -103,8 +102,7 @@ const Header = ({ onSearch }: { onSearch: (query: string) => void }) => {
             </h1>
           </div>
 
-          {/* Search Bar */}
-          <SearchBar onSearch={onSearch}/>
+          {/* Search Bar intentionally removed — rendered inside cart modal per design */}
 
           {/* Right Section - Notifications & User */}
           <div 

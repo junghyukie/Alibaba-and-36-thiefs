@@ -26,6 +26,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Heart, ShoppingCart } from "lucide-react";
 import BookDetailDialog from "./BookDetailDialog";
 import Header from "./Header";
+import { SearchBar } from './SearchBar';
 import type { Book } from "@/types/book";
 import CategorySelector from "./CategorySelector";
 import type { Category } from "@/types/category";
@@ -489,6 +490,11 @@ const borrowSelected = async () => {
           selected={selectedCats}
           onChange={handleToggleCat}
         />
+
+        <div className="mt-4 mb-8 flex justify-center">
+          <SearchBar onSearch={handleSearch} />
+        </div>
+
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {books.map((book) => (
