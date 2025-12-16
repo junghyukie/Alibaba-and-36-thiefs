@@ -22,6 +22,19 @@ const IoniconsScripts = () => (
 // Giả lập dữ liệu (exported so other components can import)
 const AccountInfo: React.FC = () => {
 
+  const formatDateToVN = (isoDate?: string) => {
+  if (!isoDate) return "";
+
+  const date = new Date(isoDate);
+
+  // Lấy ngày theo timezone Việt Nam (trình duyệt tự xử lý)
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
   const navigate = useNavigate();
   // Khởi tạo state với giá trị rỗng
   const [form, setForm] = useState<UserInfo>({
@@ -93,7 +106,7 @@ const AccountInfo: React.FC = () => {
             setForm({
                 email: data.email || "",
                 ho_ten: data.ho_ten || "",
-                ngay_sinh: data.ngay_sinh || "",
+                ngay_sinh: formatDateToVN(data.ngay_sinh) || "",
                 dien_thoai: data.dien_thoai || "",
                 dia_chi: data.dia_chi || "",
                 gioi_tinh: data.gioi_tinh || ""
