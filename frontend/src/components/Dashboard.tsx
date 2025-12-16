@@ -484,11 +484,9 @@ const borrowSelected = async () => {
             </p>
           </div>
           <SearchBar
-          onSearch={handleSearch}
+            onSearch={handleSearch}
           />
         </div>
-
-
 
         <CategorySelector
           categories={categories}

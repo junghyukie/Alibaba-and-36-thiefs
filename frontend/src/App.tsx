@@ -25,6 +25,7 @@ import ExtendCard from "./components/ExtendCard";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
+
   return (
     <BrowserRouter>
       <Routes>
@@ -46,6 +47,7 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
+
 }
 
 export default App;
