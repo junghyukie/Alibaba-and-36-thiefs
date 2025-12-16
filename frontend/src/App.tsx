@@ -22,6 +22,7 @@ import UpdateReturnDate from "./components/UpdateReturnDate";
 import PasswordChange from "./components/PasswordChange";
 import ExtendCard from "./components/ExtendCard";
 import BorrowHistory from "./components/BorrowHistory";
+import BookList from "./components/BookList";
 //import type UpdateReturnDate from "./Components/test";
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -55,6 +56,7 @@ function App() {
         <Route path="/addbook" element={<AddBookForm />} />
         <Route path="/lock" element={<LockAccount />} />
         <Route path="/patronlist" element={<PatronList />} />
+        <Route path="/booklist" element={<BookList />} />
       </Routes>
     </BrowserRouter>
   );
