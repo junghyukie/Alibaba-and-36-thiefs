@@ -52,6 +52,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 
 import { updateUserService } from "../services/authService";
 import { AuthRequest } from "../types/auth";
+import { changePassWordService } from "../services/changePasswordService";
 
 export const updateUserController = async (req: AuthRequest, res: Response) => {
   console.log("Received update request:", req.body);
@@ -106,3 +107,26 @@ export const getUserInfoController = async (req: Request, res: Response) => {
         });
     }
 };
+
+
+export const changePassWordController = async(req : AuthRequest, res : Response)
+: Promise<Response> =>{
+    try{
+        const id_acc = req.user?.id_acc;
+        if (!id_acc) return res.status(401).json({ message: "Xin hãy đăng nhập" });
+        const data = req.body;
+        const result = await changePassWordService(id_acc,data);
+        if(result.success === true){
+          return res.status(201).json(result)
+        }
+        else{
+          return res.status(401).json(result);
+        }
+    }catch(error){
+        console.error("Lỗi đổi mật khẩu Controller:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Lỗi Server"
+        });
+    }
+}

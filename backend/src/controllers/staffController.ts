@@ -1,8 +1,10 @@
 import { Response } from "express";
 import { AuthRequest } from "../types/auth";
-import { activeAccService, addBanSaoService, addBookService, addTheService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, upgradeTheService } from "../services/staffService";
+import { activeAccService, addBanSaoService, addBookService, addTheService, deleteBookService, deleteCopiesService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, upgradeTheService } from "../services/staffService";
 import { copiesInfor, copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
 import { theExistingModel } from "../models/CardModel";
+import { deleteBookModel } from "../models/deleteBookModel";
+import { deleteCopiesModel } from "../models/deleteCopies";
 
 // Controller lấy danh sách đọc giả quá hạn
 export const lateController = async (
@@ -215,6 +217,68 @@ export const listCopiesController = async (
     return res.status(result.success ? 200 : 500).json(result);
   } catch (err) {
     console.error("Lỗi listCopiesController:", err);
+    return res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+};
+
+export const deleteCopiesController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    const id_acc = req.user?.id_acc;
+    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
+
+    const role = req.user?.vai_tro;
+    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
+
+    const id = req.params.id;
+    if (!id) {
+        return res.status(400).json({ success: false, message: "Thiếu ID sách cần xóa" });
+    }
+    // Chuyển đổi id sang kiểu số nếu cần thiết
+    const copyId = parseInt(id as string, 10);
+    
+    const result = await deleteCopiesService(copyId);
+    if(result.success === true){
+      return res.status(201).json(result);
+    }
+    else{
+      return res.status(401).json(result);
+    }
+  } catch (err) {
+    console.error("Lỗi deleteCopiesController:", err);
+    return res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+};
+
+
+export const deleteBookController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<Response> => {
+  try {
+    const id_acc = req.user?.id_acc;
+    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
+
+    const role = req.user?.vai_tro;
+    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
+
+    const id = req.params.id;
+    if (!id) {
+        return res.status(400).json({ success: false, message: "Thiếu ID sách cần xóa" });
+    }
+    // Chuyển đổi id sang kiểu số nếu cần thiết
+    const bookId = parseInt(id as string, 10);
+    const result = await deleteBookService(bookId);
+    if(result.success === true){
+      return res.status(201).json(result);
+    }
+    else{
+      return res.status(401).json(result);
+    }
+  } catch (err) {
+    console.error("Lỗi deleteCopiesController:", err);
     return res.status(500).json({ success: false, message: "Lỗi server" });
   }
 };

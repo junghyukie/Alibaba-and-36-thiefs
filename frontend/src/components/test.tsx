@@ -360,61 +360,6 @@
 // export default AddBanSao;
 
 
-// import React, { useState } from "react";
-// //const API_URL = import.meta.env.VITE_API_URL;
-
-// const LockAccount: React.FC = () => {
-//   const [accountId, setAccountId] = useState("");
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-
-//     const token = localStorage.getItem("token");
-//     if (!token) return alert("❌ Bạn chưa đăng nhập!");
-
-//     try {
-//       const res = await fetch("http://localhost:3001/staff/service/activate", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${token}`,
-//         },
-//         body: JSON.stringify({ id: Number(accountId) }),
-//       });
-
-//       const data = await res.json();
-//       if (!res.ok || !data.success) return alert(data.message || "❌ Có lỗi xảy ra");
-
-//       alert("🔒 Khóa tài khoản thành công!");
-//     } catch (err) {
-//       console.error(err);
-//       alert("❌ Không thể kết nối server!");
-//     }
-//   };
-
-//   return (
-//     <div className="container">
-//       <div className="box">
-//         <h2>Khóa Tài Khoản</h2>
-//         <form onSubmit={handleSubmit}>
-//           <div className="input-field">
-//             <label>ID tài khoản</label>
-//             <input
-//               type="number"
-//               value={accountId}
-//               onChange={(e) => setAccountId(e.target.value)}
-//               required
-//             />
-//           </div>
-
-//           <button type="submit">Khóa</button>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default LockAccount;
 // import React, { useEffect, useState } from "react";
 
 // interface TopBook {
@@ -500,136 +445,272 @@
 
 // export default TopBook;
 
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 
-interface copiesInfor {
-  id: number;
-  tieu_de: string;
-  trang_thai: string;
-  ngay_mua: string; // Date từ backend về là string
-  gia_tri: number;
-  ke_sach: string;
-}
+// interface copiesInfor {
+//   id: number;
+//   tieu_de: string;
+//   trang_thai: string;
+//   ngay_mua: string; // Date từ backend về là string
+//   gia_tri: number;
+//   ke_sach: string;
+// }
 
-interface copiesInforService {
-  success: boolean;
-  data?: copiesInfor[];
-  message?: string;
-  page?: number;
-  pageSize?: number;
-  totalPages?: number;
-  totalRecords?: number;
-}
+// interface copiesInforService {
+//   success: boolean;
+//   data?: copiesInfor[];
+//   message?: string;
+//   page?: number;
+//   pageSize?: number;
+//   totalPages?: number;
+//   totalRecords?: number;
+// }
 
-const CopyListTest: React.FC = () => {
-  const [copies, setCopies] = useState<copiesInfor[]>([]);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(20);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
+// const CopyListTest: React.FC = () => {
+//   const [copies, setCopies] = useState<copiesInfor[]>([]);
+//   const [page, setPage] = useState(1);
+//   const [pageSize] = useState(20);
+//   const [totalPages, setTotalPages] = useState(1);
+//   const [loading, setLoading] = useState(true);
 
-  const fetchCopies = async (pageNumber: number) => {
+//   const fetchCopies = async (pageNumber: number) => {
+//     const token = localStorage.getItem("token");
+//     if (!token) {
+//       alert("❌ Bạn chưa đăng nhập!");
+//       return;
+//     }
+
+//     try {
+//       setLoading(true);
+
+//       // 🔴 SỬA URL nếu backend bạn khác
+//       const res = await fetch(
+//         `http://localhost:3001/staff/service/list-copies?page=${pageNumber}&pageSize=${pageSize}`,
+//         {
+//           method: "GET",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       );
+
+//       const data: copiesInforService = await res.json();
+
+//       if (!res.ok || !data.success) {
+//         return alert(data.message || "❌ Không lấy được danh sách bản sao");
+//       }
+
+//       setCopies(data.data || []);
+//       setPage(data.page || 1);
+//       setTotalPages(data.totalPages || 1);
+//     } catch (err) {
+//       console.error(err);
+//       alert("❌ Không thể kết nối server!");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchCopies(page);
+//   }, [page]);
+
+//   return (
+//     <div className="container">
+//       <div className="box">
+//         <h2>📦 Danh sách bản sao sách</h2>
+
+//         {loading ? (
+//           <p>Đang tải dữ liệu...</p>
+//         ) : (
+//           <>
+//             <table border={1} cellPadding={10} width="100%">
+//               <thead>
+//                 <tr>
+//                   <th>ID</th>
+//                   <th>Tiêu đề</th>
+//                   <th>Trạng thái</th>
+//                   <th>Ngày mua</th>
+//                   <th>Giá trị</th>
+//                   <th>Kệ sách</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {copies.map((c) => (
+//                   <tr key={c.id}>
+//                     <td>{c.id}</td>
+//                     <td>{c.tieu_de}</td>
+//                     <td>{c.trang_thai}</td>
+//                     <td>{new Date(c.ngay_mua).toLocaleDateString()}</td>
+//                     <td>{c.gia_tri.toLocaleString()} đ</td>
+//                     <td>{c.ke_sach}</td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+
+//             {/* PAGINATION */}
+//             <div style={{ marginTop: 15, textAlign: "center" }}>
+//               <button
+//                 disabled={page === 1}
+//                 onClick={() => setPage(page - 1)}
+//               >
+//                 ◀ Trang trước
+//               </button>
+
+//               <span style={{ margin: "0 10px" }}>
+//                 Trang {page} / {totalPages}
+//               </span>
+
+//               <button
+//                 disabled={page === totalPages}
+//                 onClick={() => setPage(page + 1)}
+//               >
+//                 Trang sau ▶
+//               </button>
+//             </div>
+//           </>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default CopyListTest;
+
+
+
+import React, { useState } from "react";
+//const API_URL = import.meta.env.VITE_API_URL;
+
+const LockAccount: React.FC = () => {
+  const [accountId, setAccountId] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     const token = localStorage.getItem("token");
-    if (!token) {
-      alert("❌ Bạn chưa đăng nhập!");
-      return;
-    }
+    if (!token) return alert("❌ Bạn chưa đăng nhập!");
 
     try {
-      setLoading(true);
+      const res = await fetch("http://localhost:3001/user/service/extend-book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ id: Number(accountId) }),
+      });
 
-      // 🔴 SỬA URL nếu backend bạn khác
-      const res = await fetch(
-        `http://localhost:3001/staff/service/list-copies?page=${pageNumber}&pageSize=${pageSize}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const data = await res.json();
+      if (!res.ok || !data.success) return alert(data.message || "❌ Có lỗi xảy ra");
 
-      const data: copiesInforService = await res.json();
-
-      if (!res.ok || !data.success) {
-        return alert(data.message || "❌ Không lấy được danh sách bản sao");
-      }
-
-      setCopies(data.data || []);
-      setPage(data.page || 1);
-      setTotalPages(data.totalPages || 1);
+      alert(data.message);
     } catch (err) {
       console.error(err);
       alert("❌ Không thể kết nối server!");
-    } finally {
-      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchCopies(page);
-  }, [page]);
 
   return (
     <div className="container">
       <div className="box">
-        <h2>📦 Danh sách bản sao sách</h2>
+        <h2>Khóa Tài Khoản</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="input-field">
+            <label>ID tài khoản</label>
+            <input
+              type="number"
+              value={accountId}
+              onChange={(e) => setAccountId(e.target.value)}
+              required
+            />
+          </div>
 
-        {loading ? (
-          <p>Đang tải dữ liệu...</p>
-        ) : (
-          <>
-            <table border={1} cellPadding={10} width="100%">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Tiêu đề</th>
-                  <th>Trạng thái</th>
-                  <th>Ngày mua</th>
-                  <th>Giá trị</th>
-                  <th>Kệ sách</th>
-                </tr>
-              </thead>
-              <tbody>
-                {copies.map((c) => (
-                  <tr key={c.id}>
-                    <td>{c.id}</td>
-                    <td>{c.tieu_de}</td>
-                    <td>{c.trang_thai}</td>
-                    <td>{new Date(c.ngay_mua).toLocaleDateString()}</td>
-                    <td>{c.gia_tri.toLocaleString()} đ</td>
-                    <td>{c.ke_sach}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* PAGINATION */}
-            <div style={{ marginTop: 15, textAlign: "center" }}>
-              <button
-                disabled={page === 1}
-                onClick={() => setPage(page - 1)}
-              >
-                ◀ Trang trước
-              </button>
-
-              <span style={{ margin: "0 10px" }}>
-                Trang {page} / {totalPages}
-              </span>
-
-              <button
-                disabled={page === totalPages}
-                onClick={() => setPage(page + 1)}
-              >
-                Trang sau ▶
-              </button>
-            </div>
-          </>
-        )}
+          <button type="submit">Khóa</button>
+        </form>
       </div>
     </div>
   );
 };
 
-export default CopyListTest;
+export default LockAccount;
+
+// import React, { useState } from "react";
+// // Giả định API_URL được định nghĩa trong môi trường
+// const API_URL = "http://localhost:3001"; 
+
+// const DeleteBook: React.FC = () => {
+//   const [bookId, setBookId] = useState("");
+
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+
+//     const token = localStorage.getItem("token");
+//     if (!token) return alert("❌ Bạn chưa đăng nhập!");
+
+//     if (!bookId) return alert("❌ Vui lòng nhập ID sách!");
+
+//     try {
+//       // *** THAY ĐỔI QUAN TRỌNG ***
+//       // 1. Sử dụng phương thức DELETE
+//       // 2. Nối ID sách vào URL: /staff/service/delete-book/123
+//       const res = await fetch(API_URL + `/staff/service/delete-book/${bookId}`, {
+//         method: "DELETE", // Đã đổi sang DELETE
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//         // KHÔNG CẦN body khi dùng DELETE và truyền ID qua URL
+//       });
+
+//       const data = await res.json();
+      
+//       if (res.status === 204) {
+//           // Mã 204 No Content là phản hồi phổ biến cho DELETE thành công 
+//           // (nếu backend không trả về body). 
+//           alert(`✅ Xóa sách ID ${bookId} thành công!`);
+//           setBookId("");
+//           return;
+//       }
+      
+//       if (!res.ok || !data.success) {
+//         // Xử lý các lỗi khác (401, 403, 404)
+//         return alert(data.message || `❌ Xóa sách ID ${bookId} thất bại!`);
+//       }
+      
+//       // Xử lý trường hợp backend trả về 200/202 có thông báo thành công
+//       alert(`✅ Xóa sách ID ${bookId} thành công!`);
+//       setBookId("");
+      
+//     } catch (err) {
+//       console.error(err);
+//       alert("❌ Không thể kết nối server!");
+//     }
+//   };
+
+//   return (
+//     <div className="container">
+//       <div className="box">
+//         <h2>Xóa Sách (DELETE Method)</h2>
+//         <form onSubmit={handleSubmit}>
+//           <div className="input-field">
+//             <label>ID Sách</label>
+//             <input
+//               type="number"
+//               value={bookId}
+//               onChange={(e) => setBookId(e.target.value)}
+//               placeholder="Nhập ID sách cần xóa"
+//               required
+//             />
+//           </div>
+
+//           <button type="submit">Xóa Sách</button>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default DeleteBook;

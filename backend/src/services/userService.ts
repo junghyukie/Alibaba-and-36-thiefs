@@ -8,6 +8,7 @@ import { inforTheModel } from "../models/CardModel";
 import e from "express";
 import { TopBookResponse } from "../types/topBook";
 import { topBookModel } from "../models/topBookModel";
+import { checkBook, extendBookModel } from "../models/extendBookModel";
 
 
 export const insertBookService = async (id_acc: number, data: insertBook): Promise<any> => {
@@ -90,7 +91,6 @@ export const theInforService = async(id_acc : number) : Promise<any> => {
 }
 
 //Top 3 sách đang được mượn
-
 export const topBookService = async() : Promise<TopBookResponse> => {
   try{
     const results = await topBookModel();
@@ -99,6 +99,23 @@ export const topBookService = async() : Promise<TopBookResponse> => {
     console.error("Lỗi SQL theInforService:", err);
     return {success : false , data : null };
   }
+}
+
+
+export const extendBookService = async(id_acc : number , id_sach : number)
+: Promise<{success : boolean , message : string}> =>{
+  try{
+      const check = await checkBook(id_acc,id_sach);
+      if(check.success === false){
+        return {success : false , message : "Không thể gia hạn sách đã hết hạn!" }
+      }
+        const result = await extendBookModel(id_acc,id_sach);
+        return {success : result.success , message : result.message};
+  }catch (err) {
+    console.error("Lỗi SQL extendBookService:", err);
+    return {success : false , message : "Lỗi Server" };
+  }
+
 }
 
 
