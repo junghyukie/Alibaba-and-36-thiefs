@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import type { Book } from '../types/book';
 import type { Copy } from '../types/copy';
+import { AddCopyDialog } from './AddCopyDialog';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const PAGE_SIZE = 20;
@@ -34,6 +35,7 @@ export default function BookList(): JSX.Element {
   const [copies, setCopies] = useState<Copy[]>([]);
   const [copiesLoading, setCopiesLoading] = useState(false);
   const [copiesError, setCopiesError] = useState<string | null>(null);
+  const [showAddCopy, setShowAddCopy] = useState(false);
 
   // Copy details modal
   const [selectedCopy, setSelectedCopy] = useState<Copy | null>(null);
@@ -354,7 +356,17 @@ export default function BookList(): JSX.Element {
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-semibold mb-3">Danh sách bản sao</h3>
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-lg font-semibold">Danh sách bản sao</h3>
+                                                  
+                          <Button
+                            size="sm"
+                            className="bg-green-600 text-white hover:bg-green-700 border-none"
+                            onClick={() => setShowAddCopy(true)}
+                          >
+                            + Thêm bản sao
+                          </Button>
+                        </div>
 
                         {copiesLoading ? (
                           <div className="text-center py-8">Đang tải danh sách bản sao...</div>
@@ -470,6 +482,17 @@ export default function BookList(): JSX.Element {
 
                   </div>
                 </div>
+              )}
+
+              {selectedBook && (
+                <AddCopyDialog
+                  open={showAddCopy}
+                  onOpenChange={setShowAddCopy}
+                  sachId={selectedBook.id}
+                  onCreated={(newCopy) =>
+                    setCopies(prev => [...prev, newCopy])
+                  }
+                />
               )}
             </div>
           </div>

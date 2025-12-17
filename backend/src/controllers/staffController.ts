@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { AuthRequest } from "../types/auth";
-import { activeAccService, addBanSaoService, addBookService, addTheService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, upgradeTheService } from "../services/staffService";
+import { activeAccService, addBookService, addTheService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, upgradeTheService } from "../services/staffService";
 import { copiesInfor, copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
 import { theExistingModel } from "../models/CardModel";
 
@@ -46,20 +46,6 @@ export const addBookController = async(
     return res.status(addBook.success ? 200 : 500).json(addBook);
   }catch (err) {
     console.error("Lỗi Thêm sách Controller:", err);
-    return res.status(500).json({ success: false, message: "Lỗi server" });
-  }
-}
-
-export const addBanSaoController = async(
-   req: AuthRequest,
-  res: Response
-): Promise<Response> =>{
-   try{
-    const add = await addBanSaoService(req.body);
-    console.log(add.message);
-     return res.status(add.success ? 200 : 500).json(add);
-}catch (err) {
-    console.error("Lỗi Thêm bản sao Controller:", err);
     return res.status(500).json({ success: false, message: "Lỗi server" });
   }
 }

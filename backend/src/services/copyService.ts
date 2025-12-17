@@ -1,4 +1,5 @@
 import * as CopyModel from "../models/copyModel";
+import * as BookModel from "../models/bookModel";
 import { Copy } from "../types/copy";
 import { AppError } from "../utils/appError";
 
@@ -22,6 +23,12 @@ export class CopyService {
   static async create(data: Omit<Copy, "id">) {
     if (!data.sach_id || !data.ma_vach || !data.trang_thai || !data.ngay_mua)
       throw new AppError("Missing required fields: sach_id, ma_vach, trang_thai, ngay_mua", 400);
+
+    const bookExists = await BookModel.getBookById(data.sach_id);
+    if (!bookExists) {
+      throw new AppError("Book not found", 404);
+    }
+
     const existing = await CopyModel.getCopyByBarcode(data.ma_vach);
 
     if (existing) {
