@@ -456,7 +456,13 @@ const borrowSelected = async () => {
 
 
   return (
-    <div id="webcrumbs" className="bg-muted/40 min-h-screen">
+    <div 
+      id="webcrumbs" 
+      className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
+      style={{ 
+        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('/src/img/background.jpg')` 
+      }}
+    >
       <Header/>
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
