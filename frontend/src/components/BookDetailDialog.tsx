@@ -141,15 +141,6 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
               <button className="py-2 px-1 border-b-2 border-blue-500 text-blue-600 font-medium text-sm">
                 Thông tin
               </button>
-              <button className="py-2 px-1 text-gray-500 hover:text-gray-700 font-medium text-sm">
-                Phiếu mượn
-              </button>
-              <button className="py-2 px-1 text-gray-500 hover:text-gray-700 font-medium text-sm">
-                Đặt sách
-              </button>
-              <button className="py-2 px-1 text-gray-500 hover:text-gray-700 font-medium text-sm">
-                Khiếu nại
-              </button>
             </nav>
           </div>
 
@@ -184,14 +175,6 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-gray-600 text-sm font-medium">Tổng số bản sao</Label>
-                    <p className="font-medium text-gray-900">{copies?.total_copies} bản</p>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-gray-600 text-sm font-medium">Bản sao khả dụng</Label>
-                    <p className="font-medium text-green-600">{copies?.available_copies} bản</p>
-                  </div>
-                  <div className="space-y-2">
                     <Label className="text-gray-600 text-sm font-medium">Trạng thái</Label>
                     <div>
                       {copies?.available_copies && copies.available_copies > 0 ? (
@@ -210,31 +193,6 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
                 <div className="border-t border-gray-200 pt-6 mt-6">
                   <Label className="text-gray-600 text-sm font-medium">Mô tả</Label>
                   <p className="mt-2 text-sm leading-relaxed text-gray-700">{book.tom_tat}</p>
-                </div>
-
-                <div className="border-t border-gray-200 pt-6 mt-6 space-y-4">
-                  <Label className="text-gray-900 font-medium">Cài đặt sách</Label>
-                  <div className="flex items-center justify-between py-3">
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-normal text-gray-900">Cho phép mượn</Label>
-                      <p className="text-xs text-gray-600">Độc giả có thể mượn sách này</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <div className="flex items-center justify-between py-3">
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-normal text-gray-900">Cho phép đặt trước</Label>
-                      <p className="text-xs text-gray-600">Độc giả có thể đặt trước sách này</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <div className="flex items-center justify-between py-3">
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-normal text-gray-900">Hiển thị công khai</Label>
-                      <p className="text-xs text-gray-600">Hiển thị trong danh mục tìm kiếm</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
                 </div>
               </CardContent>
             </Card>

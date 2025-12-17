@@ -323,20 +323,6 @@ export default function Component() {
     setIsDialogOpen(true);
   };
 
-  //const handleLogout = () => {
-  //  localStorage.removeItem("token");       // Xoá token
-  //  localStorage.removeItem("cartItems");   // Xoá giỏ hàng trong localStorage
-  //  setCartItems([]);                       // Xoá giỏ hàng trong state
-  //  setIsLoggedIn(false);
-  //  setIsDropdownOpen(false);
-  //};
-
-  //const handleLogin = () => {
-  //  // This would navigate to Login.tsx file
-  //  navigate('/login');
-  //};
-
-  
 const handleBorrow = async (book: any) => {
   if (!book) return;
 
@@ -496,31 +482,56 @@ const borrowSelected = async () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {books.map((book) => (
-            <Card key={book.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className={`relative h-48 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center`}>
-                <span className="text-6xl">📚</span>
-                <Button variant="secondary" size="icon" className="absolute top-2 right-2 h-8 w-8 rounded-full">
+            <Card key={book.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300">
+              <div className="relative h-64 overflow-hidden bg-slate-100">
+                {/* Book Image */}
+                <img
+                  src={`/src/img/${book.id}.webp`}
+                  alt={book.tieu_de}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  // Fallback if image doesn't exist
+                  onError={(e) => {
+                    e.currentTarget.src = "https://placehold.co/400x600?text=No+Cover";
+                  }}
+                />
+
+                {/* Wishlist Button Overlay */}
+                <Button 
+                  variant="secondary" 
+                  size="icon" 
+                  className="absolute top-2 right-2 h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                >
                   <Heart className="h-4 w-4" />
                 </Button>
               </div>
+
               <CardHeader>
-                <div className="flex justify-between items-start">
-                  <CardTitle>{book.tieu_de}</CardTitle>
-                </div>
+                <CardTitle className="line-clamp-1">{book.tieu_de}</CardTitle>
               </CardHeader>
+
               <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {book.the_loai?.map(c => <Badge key={c.id} variant="outline">{c.ten}</Badge>)}
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {book.the_loai?.map(c => (
+                    <Badge key={c.id} variant="secondary" className="bg-emerald-50 text-emerald-700 border-none">
+                      {c.ten}
+                    </Badge>
+                  ))}
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between items-center">
-                <Button size="sm" onClick={() => { setSelectedBook(book); setIsDialogOpen(true); }}>
+
+              <CardFooter>
+                <Button 
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 transition-colors text-white shadow-sm" 
+                  size="sm" 
+                  onClick={() => { setSelectedBook(book); setIsDialogOpen(true); }}
+                >
                   View Details
                 </Button>
               </CardFooter>
             </Card>
           ))}
         </div>
+
       </main>
       <BookDetailDialog
         book={selectedBook}
