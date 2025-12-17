@@ -22,7 +22,7 @@ const PasswordChange: React.FC = () => {
     if (!form.current) { alert('Vui lòng nhập mật khẩu hiện tại'); return; }
     if (!form.password) { alert('Vui lòng nhập mật khẩu mới'); return; }
     if (form.password !== form.confirm) { alert('Mật khẩu mới không khớp'); return; }
-    // TODO: call API to change password
+    // TODO: call API to change password---
     alert('Mật khẩu đã được thay đổi thành công');
     navigate('/accinfo');
   };

@@ -48,3 +48,10 @@ export interface AuthRequest extends Request {
     vai_tro : string;
   };
 }
+
+
+export interface changePassWordInput{
+    mat_khau_cu : string;
+    mat_khau_moi : string;
+    xac_thuc_mat_khau : string;
+}

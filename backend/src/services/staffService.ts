@@ -1,6 +1,6 @@
 import { LateModel } from "../models/listLateModel";
 import { listAccountModel, totalRecord } from "../models/listAccountModel";
-import { LateServiceResult, ListAccountResult } from "../types/staffService";
+import { copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
 import { addBookInput } from "../types/addBook";
 import {
   addAuthor, AddBookModel, addNXB,
@@ -13,6 +13,9 @@ import { activateAccModel, lockAccModel } from "../models/changeStateAccModel";
 import { addTheModel, extendTheModel, upgradeTheModel } from "../models/CardModel";
 import { LogModelforStaff } from "../models/logModel";
 import { logServiceResult } from "../types/userService";
+import { listCopies, totalRecordCopies } from "../models/copiesInforModel";
+import { deleteCopiesByIdBook, deleteCopiesModel } from "../models/deleteCopies";
+import { deleteBookModel } from "../models/deleteBookModel";
 
 // Đọc giả quá hạn
 export const lateService = async (): Promise<LateServiceResult> => {
@@ -192,3 +195,60 @@ export const activeAccService = async (id_acc: number)
      return { success: false, message: "Lỗi server" };
    }
  }
+
+
+ export const listCopiesService = async (
+  page: number = 1,
+  pageSize: number = 20
+): Promise<copiesInforService> => {
+  try {
+    const { totalRecords, totalPages } = await totalRecordCopies(pageSize);
+    const copies = await listCopies(page, pageSize);
+    return {
+      success: true,
+      data: copies,
+      page,
+      pageSize,
+      totalPages,
+      totalRecords,
+    };
+  } catch (err) {
+    console.error("Lỗi listCopiesService:", err);
+    return { success: false, message: "Lỗi server" };
+  }
+};
+
+
+
+export const deleteCopiesService = async(id_ban_sao : number)
+: Promise<{success : boolean , message : string}> =>{
+    try{
+        const result = await deleteCopiesModel(id_ban_sao);
+        if(result.success === true){
+          return {success : true, message : "Xóa bản sao thành công!"};
+        }
+        else{
+          return {success : false, message : "Xóa bản sao thất bại!"};
+        }
+    }catch(err){
+        console.error("Lỗi DeleteCopiesService:", err);
+        return { success: false, message: "Lỗi server" };
+  } ``
+}
+
+export const deleteBookService = async(id_sach : number)
+: Promise<{success : boolean , message : string}> =>{
+    try{
+        const check = await deleteCopiesByIdBook(id_sach); // xóa hết các bản sao của sách hiện tại
+        const result = await deleteBookModel(id_sach);
+        if(result.success === true){
+          return {success : true, message : "Xóa sách thành công!"};
+        }
+        else{
+          return {success : false, message : "Xóa sách thất bại!"};
+        }
+    }catch(err){
+        console.error("Lỗi DeleteBookService:", err);
+        return { success: false, message: "Lỗi server" };
+  } 
+}

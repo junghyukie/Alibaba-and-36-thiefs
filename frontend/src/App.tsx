@@ -20,7 +20,11 @@ import BorrowHistoryUser from "./components/BorrowHistoryUser";
 import UpdateReturnDate from "./components/UpdateReturnDate";
 import PasswordChange from "./components/PasswordChange";
 import ExtendCard from "./components/ExtendCard";
+import TopBook from "./components/test";
+import CopyListTest from "./components/test";
+import BorrowHistory from "./components/BorrowHistory";
 import BookList from "./components/BookList";
+import DeleteBook from "./components/test";
 //import type UpdateReturnDate from "./Components/test";
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -45,7 +49,9 @@ function App() {
         <Route path="/history-user" element={<BorrowHistoryUser />} />
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
-        <Route path="/lock" element={<LockAccount />} />
+        <Route path="/delete" element={<DeleteBook />} />
+           <Route path="/copies" element={<CopyListTest />} />
+         <Route path="/top-book" element={<TopBook />} />
         <Route path="/patronlist" element={<PatronList />} />
         <Route path="/booklist" element={<BookList />} />
       </Routes>

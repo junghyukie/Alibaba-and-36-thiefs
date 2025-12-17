@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../types/auth"
-import { borrowBookService, deleteBookFromCartService, inforBookinCartService, insertBookService, logService, theInforService } from "../services/userService";
+import { borrowBookService, deleteBookFromCartService, extendBookService, inforBookinCartService, insertBookService, logService, theInforService } from "../services/userService";
 //import { promises } from "nodemailer/lib/xoauth2";
 export const insertBookController = async (req: AuthRequest, res: Response): Promise<any> => {
     try {
@@ -120,6 +120,26 @@ export const theInforController = async(req: AuthRequest, res: Response): Promis
             console.log("Đang chạy controller log");
             console.log(result.data);
             // ✅ Trả về cả object result (có success và data)
+            return res.status(200).json(result);
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Lỗi server" }); 
+    }
+};
+
+//Ra hạn sách
+export const extendBookController = async(req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+        const id_acc = req.user?.id_acc;
+        if (!id_acc) return res.status(401).json({ message: "Xin hãy đăng nhập" });
+
+        const id_sach = req.body.id;
+        const result = await extendBookService(id_acc,id_sach);
+        if (result.success === false) {
+            //console.log("Lỗi controller extendBook");
+            return res.status(400).json(result);
+        } else {
             return res.status(200).json(result);
         }
     } catch (err) {
