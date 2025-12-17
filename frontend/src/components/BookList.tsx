@@ -85,35 +85,63 @@ export default function BookList(): JSX.Element {
     fetchBooks(page);
   };
 
-const handleDeleteBook = async (bookId: number) => {
-  const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa sách này?");
-  if (!confirmDelete) return;
+  const handleDeleteBook = async (bookId: number) => {
+    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa sách này?");
+    if (!confirmDelete) return;
 
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    const response = await fetch(`${API_URL}/api/book/${bookId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const response = await fetch(`${API_URL}/api/book/${bookId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    // 🔥 BẮT BUỘC kiểm tra
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || "Xóa sách thất bại");
+      // 🔥 BẮT BUỘC kiểm tra
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Xóa sách thất bại");
+      }
+
+      // OK
+      setBooks(prev => prev.filter(b => b.id !== bookId));
+      alert("Xóa sách thành công");
+
+    } catch (err: any) {
+      alert(err.message || "Có lỗi xảy ra khi xóa sách");
     }
+  };
 
-    // OK
-    setBooks(prev => prev.filter(b => b.id !== bookId));
-    alert("Xóa sách thành công");
-
-  } catch (err: any) {
-    alert(err.message || "Không thể xóa sách");
-  }
-};
-
+    const handleDeleteCopy = async (copyId: number) => {
+    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa bản sao này?");
+    if (!confirmDelete) return;
+  
+    try {
+      const token = localStorage.getItem("token");
+    
+      const response = await fetch(`${API_URL}/api/copy/${copyId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    
+      // 🔥 BẮT BUỘC kiểm tra
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Xóa bản sao thất bại");
+      }
+    
+      // OK
+      setCopies(prev => prev.filter(c => c.id !== copyId));
+      alert("Xóa bản sao thành công");
+    
+    } catch (err: any) {
+      alert(err.message || "Có lỗi xảy ra khi xóa bản sao");
+    }
+  };
 
   // Open detail view for a book (fetch full book and its copies)
   const openBookDetails = async (bookId: number) => {
@@ -358,7 +386,20 @@ const handleDeleteBook = async (bookId: number) => {
                                       <TableCell>{formatDate(c.ngay_mua)}</TableCell>
                                       <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
-                                          <Button size="sm" className="bg-blue-600 text-white hover:bg-blue-700 border-none" onClick={() => setSelectedCopy(c)}>Xem chi tiết</Button>
+                                          <Button 
+                                            size="sm" 
+                                            className="bg-blue-600 text-white hover:bg-blue-700 border-none" 
+                                            onClick={() => setSelectedCopy(c)}
+                                          >
+                                            Xem chi tiết
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            onClick={() => handleDeleteCopy(c.id)}
+                                            className="bg-red-600 text-white hover:bg-red-700 border-none"
+                                          >
+                                            Xóa
+                                          </Button>
                                         </div>
                                       </TableCell>
                                     </TableRow>

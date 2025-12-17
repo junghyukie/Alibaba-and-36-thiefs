@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { staffOnly, verifyToken } from "../middleware/authMiddleware";
-import { activateAccController, addBanSaoController, addBookController, deleteCopiesController, extendTheController, lateController, listAccountController, listCopiesController, lockAccController, LogControllerforStaff } from "../controllers/staffController";
+import { activateAccController, addBanSaoController, addBookController, extendTheController, lateController, listAccountController, listCopiesController, lockAccController, LogControllerforStaff } from "../controllers/staffController";
 
 const router = Router();
 
@@ -16,5 +16,4 @@ router.post("/lock", lockAccController);
 router.post("/extend", extendTheController);
 router.post("/log", LogControllerforStaff);
 
-router.delete('/delete-copy/:id', deleteCopiesController);
 export default router;

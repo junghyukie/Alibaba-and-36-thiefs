@@ -14,7 +14,6 @@ import { addTheModel, extendTheModel, upgradeTheModel } from "../models/CardMode
 import { LogModelforStaff } from "../models/logModel";
 import { logServiceResult } from "../types/userService";
 import { listCopies, totalRecordCopies } from "../models/copiesInforModel";
-import { deleteCopiesByIdBook, deleteCopiesModel } from "../models/deleteCopies";
 
 // Đọc giả quá hạn
 export const lateService = async (): Promise<LateServiceResult> => {
@@ -216,21 +215,3 @@ export const activeAccService = async (id_acc: number)
     return { success: false, message: "Lỗi server" };
   }
 };
-
-
-
-export const deleteCopiesService = async(id_ban_sao : number)
-: Promise<{success : boolean , message : string}> =>{
-    try{
-        const result = await deleteCopiesModel(id_ban_sao);
-        if(result.success === true){
-          return {success : true, message : "Xóa bản sao thành công!"};
-        }
-        else{
-          return {success : false, message : "Xóa bản sao thất bại!"};
-        }
-    }catch(err){
-        console.error("Lỗi DeleteCopiesService:", err);
-        return { success: false, message: "Lỗi server" };
-  } ``
-}

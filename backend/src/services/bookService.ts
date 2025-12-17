@@ -29,11 +29,9 @@ export class BookService {
   static async delete(id: number) {
     // Chú ý việc kiểm tra điều kiện xóa thực hiện trong database
     const deleted = await BookModel.deleteBook(id);
-
     if (!deleted) {
       throw new AppError("Book not found", 404);
     }
-
     return { message: "Book deleted successfully" };
   }
 

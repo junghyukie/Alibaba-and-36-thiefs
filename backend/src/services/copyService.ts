@@ -70,9 +70,10 @@ export class CopyService {
   }
 
   static async delete(id: number) {
+    // Việc kiểm tra điều kiện xóa thực hiện ở database
     const deleted = await CopyModel.deleteCopy(id);
     if (!deleted) throw new AppError("Copy not found", 404);
-    return { message: "Book deleted successfully" };
+    return { message: "Copies deleted successfully" };
   }
 
 }
