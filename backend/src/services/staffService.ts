@@ -15,7 +15,6 @@ import { LogModelforStaff } from "../models/logModel";
 import { logServiceResult } from "../types/userService";
 import { listCopies, totalRecordCopies } from "../models/copiesInforModel";
 import { deleteCopiesByIdBook, deleteCopiesModel } from "../models/deleteCopies";
-import { deleteBookModel } from "../models/deleteBookModel";
 
 // Đọc giả quá hạn
 export const lateService = async (): Promise<LateServiceResult> => {
@@ -234,21 +233,4 @@ export const deleteCopiesService = async(id_ban_sao : number)
         console.error("Lỗi DeleteCopiesService:", err);
         return { success: false, message: "Lỗi server" };
   } ``
-}
-
-export const deleteBookService = async(id_sach : number)
-: Promise<{success : boolean , message : string}> =>{
-    try{
-        const check = await deleteCopiesByIdBook(id_sach); // xóa hết các bản sao của sách hiện tại
-        const result = await deleteBookModel(id_sach);
-        if(result.success === true){
-          return {success : true, message : "Xóa sách thành công!"};
-        }
-        else{
-          return {success : false, message : "Xóa sách thất bại!"};
-        }
-    }catch(err){
-        console.error("Lỗi DeleteBookService:", err);
-        return { success: false, message: "Lỗi server" };
-  } 
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, type JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -85,6 +85,36 @@ export default function BookList(): JSX.Element {
     fetchBooks(page);
   };
 
+const handleDeleteBook = async (bookId: number) => {
+  const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa sách này?");
+  if (!confirmDelete) return;
+
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/api/book/${bookId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // 🔥 BẮT BUỘC kiểm tra
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "Xóa sách thất bại");
+    }
+
+    // OK
+    setBooks(prev => prev.filter(b => b.id !== bookId));
+    alert("Xóa sách thành công");
+
+  } catch (err: any) {
+    alert(err.message || "Không thể xóa sách");
+  }
+};
+
+
   // Open detail view for a book (fetch full book and its copies)
   const openBookDetails = async (bookId: number) => {
     setSelectedBook(null);
@@ -140,7 +170,7 @@ export default function BookList(): JSX.Element {
 
   return (
     <div id="webcrumbs">
-      <Header onSearch={handleSearch} />
+      <Header/>
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-white rounded-xl shadow-md overflow-hidden">
@@ -209,8 +239,19 @@ export default function BookList(): JSX.Element {
                                   <TableCell>{b.nxb_id}</TableCell>
                                   <TableCell className="text-right">
                                     <div className="flex justify-end gap-2">
-                                      <Button size="sm" onClick={() => openBookDetails(b.id)} className="bg-blue-600 text-white hover:bg-blue-700 border-none">
+                                      <Button 
+                                        size="sm" 
+                                        onClick={() => openBookDetails(b.id)} 
+                                        className="bg-blue-600 text-white hover:bg-blue-700 border-none"
+                                      >
                                         Xem chi tiết
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        onClick={() => handleDeleteBook(b.id)}
+                                        className="bg-red-600 text-white hover:bg-red-700 border-none"
+                                      >
+                                        Xóa
                                       </Button>
                                     </div>
                                   </TableCell>
@@ -389,7 +430,6 @@ export default function BookList(): JSX.Element {
                   </div>
                 </div>
               )}
-
             </div>
           </div>
         </main>

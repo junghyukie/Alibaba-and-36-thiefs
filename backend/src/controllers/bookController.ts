@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { BookService } from "../services/bookService";
+import { AppError } from "../utils/appError";
 
 export class BookController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
@@ -53,9 +54,16 @@ export class BookController {
   static async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const id = Number(req.params.id);
-      const result = await BookService.delete(id);
-      res.status(204).json(result);
-    } catch (err) {
+      await BookService.delete(id);
+
+      res.status(200).json({
+        success: true,
+        message: "Xóa sách thành công"
+      });
+    } catch (err: any) {
+      if (err.code === "P0001") {
+        return next(new AppError(err.message, 400));
+      }
       next(err);
     }
   }
