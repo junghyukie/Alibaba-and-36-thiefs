@@ -75,8 +75,11 @@ export const updateCopy = async (id: number, data: Partial<Copy>): Promise<Copy 
   return result.rows[0];
 }
 
-export const deleteCopy = async (id: Number): Promise<boolean> => {
-  const result = await pool.query("DELETE FROM ban_sao WHERE id = $1", [id]);
-  if (!result) return false;
-  else return true;
+export const deleteCopy = async (id: number): Promise<boolean> => {
+  const result = await pool.query(
+    "DELETE FROM ban_sao WHERE id = $1",
+    [id]
+  );
+
+  return (result.rowCount ?? 0) > 0;
 }

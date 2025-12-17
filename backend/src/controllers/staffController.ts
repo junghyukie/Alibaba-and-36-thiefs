@@ -1,10 +1,8 @@
 import { Response } from "express";
 import { AuthRequest } from "../types/auth";
-import { activeAccService, addBanSaoService, addBookService, addTheService, deleteBookService, deleteCopiesService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, upgradeTheService } from "../services/staffService";
+import { activeAccService, addBanSaoService, addBookService, addTheService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, upgradeTheService } from "../services/staffService";
 import { copiesInfor, copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
 import { theExistingModel } from "../models/CardModel";
-import { deleteBookModel } from "../models/deleteBookModel";
-import { deleteCopiesModel } from "../models/deleteCopies";
 
 // Controller lấy danh sách đọc giả quá hạn
 export const lateController = async (
@@ -12,12 +10,6 @@ export const lateController = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const id_acc = req.user?.id_acc;
-    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
-
-    const role = req.user?.vai_tro;
-    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
     const results: LateServiceResult = await lateService();
     console.log(results)
     return res.status(results.success ? 200 : 400).json(results);
@@ -33,12 +25,6 @@ export const listAccountController = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const id_acc = req.user?.id_acc;
-    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
-
-    const role = req.user?.vai_tro;
-    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 20;
 
@@ -55,12 +41,6 @@ export const addBookController = async(
   res: Response
 ): Promise<Response> =>{
   try{
-     const id_acc = req.user?.id_acc;
-    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
-
-    const role = req.user?.vai_tro;
-    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
     const addBook = await addBookService(req.body);
     console.log(addBook.message);
     return res.status(addBook.success ? 200 : 500).json(addBook);
@@ -75,12 +55,6 @@ export const addBanSaoController = async(
   res: Response
 ): Promise<Response> =>{
    try{
-     const id_acc = req.user?.id_acc;
-    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
-
-    const role = req.user?.vai_tro;
-    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
     const add = await addBanSaoService(req.body);
     console.log(add.message);
      return res.status(add.success ? 200 : 500).json(add);
@@ -94,12 +68,6 @@ export const addBanSaoController = async(
 export const activateAccController = async(req : AuthRequest, res : Response)
 : Promise<Response> =>{
     try{
-       const id_acc = req.user?.id_acc;
-    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
-
-    const role = req.user?.vai_tro;
-    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
     const id = req.body.id;
     const result = await activeAccService(id);
     const check = await theExistingModel(id);
@@ -119,12 +87,6 @@ export const activateAccController = async(req : AuthRequest, res : Response)
 export const lockAccController = async(req : AuthRequest, res : Response)
 : Promise<Response> =>{
     try{
-       const id_acc = req.user?.id_acc;
-    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
-
-    const role = req.user?.vai_tro;
-    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
     const id = req.body.id;
     const result = await lockAccService(id);
     console.log(result.message + " Controller");
@@ -138,12 +100,6 @@ export const lockAccController = async(req : AuthRequest, res : Response)
 export const extendTheController = async(req : AuthRequest, res : Response)
 : Promise<Response> =>{
     try{
-       const id_acc = req.user?.id_acc;
-    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
-
-    const role = req.user?.vai_tro;
-    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
     const id = req.body.id;
     const result = await extendTheService(id);
     console.log(result.message + " Controller");
@@ -157,12 +113,6 @@ export const extendTheController = async(req : AuthRequest, res : Response)
 export const upgradeTheController = async(req : AuthRequest, res : Response)
 : Promise<Response> =>{
     try{
-       const id_acc = req.user?.id_acc;
-    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
-
-    const role = req.user?.vai_tro;
-    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
     const id = req.body.id;
     const loai_the = req.body.loai_the;
     const result = await upgradeTheService(id, loai_the);
@@ -177,21 +127,15 @@ export const upgradeTheController = async(req : AuthRequest, res : Response)
 
 export const LogControllerforStaff = async(req: AuthRequest, res: Response): Promise<Response> => {
     try {
-        const id_acc = req.user?.id_acc;
-        if (!id_acc) return res.status(401).json({ message: "Xin hãy đăng nhập" });
-
-         const role = req.user?.vai_tro;
-        if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
-        const result = await logServiceforStaff();
-        if (result.success === false) {
-            console.log("Lỗi controller log");
-            return res.status(400).json(result);
-        } else {
-            console.log("Đang chạy controller log");
-            console.log(result.data);
-            return res.status(200).json(result);
-        }
+      const result = await logServiceforStaff();
+      if (result.success === false) {
+          console.log("Lỗi controller log");
+          return res.status(400).json(result);
+      } else {
+          console.log("Đang chạy controller log");
+          console.log(result.data);
+          return res.status(200).json(result);
+      }
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Lỗi server" }); 
@@ -204,12 +148,6 @@ export const listCopiesController = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const id_acc = req.user?.id_acc;
-    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
-
-    const role = req.user?.vai_tro;
-    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 20;
 
@@ -217,68 +155,6 @@ export const listCopiesController = async (
     return res.status(result.success ? 200 : 500).json(result);
   } catch (err) {
     console.error("Lỗi listCopiesController:", err);
-    return res.status(500).json({ success: false, message: "Lỗi server" });
-  }
-};
-
-export const deleteCopiesController = async (
-  req: AuthRequest,
-  res: Response
-): Promise<Response> => {
-  try {
-    const id_acc = req.user?.id_acc;
-    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
-
-    const role = req.user?.vai_tro;
-    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
-    const id = req.params.id;
-    if (!id) {
-        return res.status(400).json({ success: false, message: "Thiếu ID sách cần xóa" });
-    }
-    // Chuyển đổi id sang kiểu số nếu cần thiết
-    const copyId = parseInt(id as string, 10);
-    
-    const result = await deleteCopiesService(copyId);
-    if(result.success === true){
-      return res.status(201).json(result);
-    }
-    else{
-      return res.status(401).json(result);
-    }
-  } catch (err) {
-    console.error("Lỗi deleteCopiesController:", err);
-    return res.status(500).json({ success: false, message: "Lỗi server" });
-  }
-};
-
-
-export const deleteBookController = async (
-  req: AuthRequest,
-  res: Response
-): Promise<Response> => {
-  try {
-    const id_acc = req.user?.id_acc;
-    if (!id_acc) return res.status(401).json({ success: false, message: "Xin hãy đăng nhập" });
-
-    const role = req.user?.vai_tro;
-    if (role === "DOC_GIA") return res.status(403).json({ success: false, message: "Không đủ quyền hạn" });
-
-    const id = req.params.id;
-    if (!id) {
-        return res.status(400).json({ success: false, message: "Thiếu ID sách cần xóa" });
-    }
-    // Chuyển đổi id sang kiểu số nếu cần thiết
-    const bookId = parseInt(id as string, 10);
-    const result = await deleteBookService(bookId);
-    if(result.success === true){
-      return res.status(201).json(result);
-    }
-    else{
-      return res.status(401).json(result);
-    }
-  } catch (err) {
-    console.error("Lỗi deleteCopiesController:", err);
     return res.status(500).json({ success: false, message: "Lỗi server" });
   }
 };

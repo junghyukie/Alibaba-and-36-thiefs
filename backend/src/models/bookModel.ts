@@ -132,8 +132,11 @@ export const updateBook = async (id: number, data: Partial<Book>): Promise<Book 
   return result.rows[0];
 }
 
-export const deleteBook = async (id: Number): Promise<boolean> => {
-  const result = await pool.query("DELETE FROM sach WHERE id = $1", [id]);
-  if (!result) return false;
-  else return true;
-}
+export const deleteBook = async (id: number): Promise<boolean> => {
+  const result = await pool.query(
+    "DELETE FROM sach WHERE id = $1",
+    [id]
+  );
+
+  return (result.rowCount ?? 0) > 0;
+};

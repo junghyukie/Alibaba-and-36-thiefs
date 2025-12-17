@@ -49,8 +49,8 @@ function App() {
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
         <Route path="/delete" element={<DeleteBook />} />
-           <Route path="/copies" element={<CopyListTest />} />
-         <Route path="/top-book" element={<TopBook />} />
+        <Route path="/copies" element={<CopyListTest />} />
+        <Route path="/top-book" element={<TopBook />} />
         <Route path="/patronlist" element={<PatronList />} />
         <Route path="/booklist" element={<BookList />} />
       </Routes>
