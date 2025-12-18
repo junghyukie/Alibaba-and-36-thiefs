@@ -14,10 +14,6 @@ const IoniconsScripts = () => (
 const PasswordChange: React.FC = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ current: '', password: '', confirm: '' });
-  const handleSearch = () => {
-    // Not used in this component, but required by Header
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -33,7 +29,7 @@ const PasswordChange: React.FC = () => {
 
   return (
     <>
-      <Header onSearch={handleSearch} />
+      <Header/>
       <style>{`
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
         section { display:flex; justify-content:center; align-items:center; min-height:calc(100vh - 64px); width:100%; padding:20px; background:url('https://images2.alphacoders.com/104/1042582.jpg') no-repeat center/cover; }

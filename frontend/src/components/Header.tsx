@@ -2,13 +2,39 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { SearchBar } from './SearchBar';
 import { Home, Bell, BookOpen, LogOut, User } from "lucide-react";
+import { jwtDecode } from 'jwt-decode';
 
-const Header = ({ onSearch }: { onSearch: (query: string) => void }) => {
+interface DecodedToken {
+  id_acc: number;
+  vai_tro: string;
+}
+
+const Header = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // State để lưu vai trò đã được giải mã
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        // Giải mã token để lấy payload
+        const decodedToken = jwtDecode<DecodedToken>(token);
+        setUserRole(decodedToken.vai_tro);
+      } catch (error) {
+        console.error("Lỗi giải mã token:", error);
+        // Xử lý nếu token không hợp lệ
+        setUserRole(null);
+      }
+    }
+  }, []); // Chỉ chạy một lần khi component mount
+
+  // Kiểm tra vai trò
+  const isStaff = userRole === 'NHAN_VIEN';
 
   // Check if user is logged in on mount
   useEffect(() => {
@@ -33,6 +59,11 @@ const Header = ({ onSearch }: { onSearch: (query: string) => void }) => {
   const handleLogin = () => {
     navigate('/login');
   };
+
+  const handleBorrowHistory = () => {
+    navigate('/history-user');
+    setIsDropdownOpen(false);
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -81,6 +112,20 @@ const Header = ({ onSearch }: { onSearch: (query: string) => void }) => {
             <Home className="h-6 w-6 text-primary" />
           </button>
 
+          {/* Patron List Button (navigates to '/patronlist') and Book List Button (navigates to '/booklist') that is only visible if token.vai_tro = 'NHAN_VIEN'*/}
+          <div className="flex items-center gap-2">
+            {isStaff && (
+              <>
+                <Button onClick={() => navigate('/patronlist')} className="bg-blue-600 text-white hover:bg-blue-700 border-none">
+                  Quản lý độc giả
+                </Button>
+                <Button onClick={() => navigate('/booklist')} className="bg-blue-600 text-white hover:bg-blue-700 border-none">
+                  Quản lý sách
+                </Button>
+              </>
+            )}
+          </div>
+
           {/* Logo */}
           <div 
             className="flex items-center gap-2"
@@ -97,9 +142,6 @@ const Header = ({ onSearch }: { onSearch: (query: string) => void }) => {
               Alibaba and 36 Thieves
             </h1>
           </div>
-
-          {/* Search Bar */}
-          <SearchBar onSearch={onSearch}/>
 
           {/* Right Section - Notifications & User */}
           <div 
@@ -158,6 +200,18 @@ const Header = ({ onSearch }: { onSearch: (query: string) => void }) => {
                     >
                       <BookOpen className="h-4 w-4" />
                       Library Card
+                    </button>
+
+                    <button
+                      onClick={handleBorrowHistory}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 transition"
+                      style={{
+                        display: 'flex !important' as any,
+                        flexDirection: 'row !important' as any
+                      }}
+                    >
+                      <BookOpen className="h-4 w-4" />
+                      Borrow History
                     </button>
 
                     <button

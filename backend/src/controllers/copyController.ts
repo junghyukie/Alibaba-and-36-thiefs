@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { CopyService } from "../services/copyService";
+import { AppError } from "../utils/appError";
 
 export class CopyController {
 
@@ -45,9 +46,16 @@ export class CopyController {
   static async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const id = Number(req.params.id);
-      const result = await CopyService.delete(id);
-      res.status(204).json(result);
-    } catch (err) {
+      await CopyService.delete(id);
+
+      res.status(200).json({
+        success: true,
+        message: "Xóa bản sao thành công"
+      });
+    } catch (err: any) {
+      if (err.code === "P0001") {
+        return next(new AppError(err.message, 400));
+      }
       next(err);
     }
   }

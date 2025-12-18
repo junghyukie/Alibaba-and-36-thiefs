@@ -5,17 +5,18 @@ import { reserveController } from "../controllers/reserveBookController";
 import { topBookController } from "../controllers/topBookController";
 import { changePassWordController } from "../controllers/authController";
 const router = Router();
+router.use(verifyToken);
 
-router.post("/insert-book" , verifyToken,insertBookController);
-router.post("/borrow-book", verifyToken,borrowBookController);
-router.post("/cart-items", verifyToken,inforBookinCartController);
-router.post("/log", verifyToken,LogController);
-router.post("/reserve-book", verifyToken,reserveController);
-router.post("/change-password", verifyToken,changePassWordController);
-router.post("/extend-book", verifyToken,extendBookController);
+router.post("/insert-book" , insertBookController);
+router.post("/borrow-book", borrowBookController);
+router.post("/cart-items", inforBookinCartController);
+router.post("/log", LogController);
+router.post("/reserve-book", reserveController);
+router.post("/change-password", changePassWordController);
+router.post("/extend-book", extendBookController);
 
-router.delete("/delete-book/:id_sach", verifyToken,deleteBookFromCartController);
-router.get("/the-infor", verifyToken,theInforController);
-router.get("/top-book", verifyToken,topBookController);
+router.delete("/delete-book/:id_sach", deleteBookFromCartController);
+router.get("/the-infor", theInforController);
+router.get("/top-book", topBookController);
 
 export default router;

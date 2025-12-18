@@ -254,3 +254,67 @@ CREATE INDEX IF NOT EXISTS idx_book_unaccent_search
 ON sach (unaccent_immutable(tieu_de) varchar_pattern_ops);
 
 COMMIT;
+
+-- ===========================
+-- 11. TRIGGER CHẶN XÓA BẢN SAO NẾU ĐANG MƯỢN
+-- ===========================
+
+CREATE OR REPLACE FUNCTION prevent_delete_ban_sao_if_borrowed()
+RETURNS trigger AS $$
+BEGIN
+  IF OLD.trang_thai = 'BORROWED' THEN
+    RAISE EXCEPTION
+      'Không thể xóa bản sao vì đang được mượn';
+  END IF;
+
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_prevent_delete_ban_sao
+BEFORE DELETE ON ban_sao
+FOR EACH ROW
+EXECUTE FUNCTION prevent_delete_ban_sao_if_borrowed();
+
+-- ===========================
+-- 12. TRIGGER CHẶN XÓA PHIẾU MƯỢN NẾU CHƯA THANH TOÁN
+-- ===========================
+
+CREATE OR REPLACE FUNCTION prevent_delete_phieu_muon_if_not_returned()
+RETURNS trigger AS $$
+BEGIN
+  IF OLD.tinh_trang = 'CHUA_TRA' THEN
+    RAISE EXCEPTION
+      'Không thể xóa phiếu mượn vì sách chưa được trả';
+  END IF;
+
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_prevent_delete_phieu_muon
+BEFORE DELETE ON phieu_muon
+FOR EACH ROW
+EXECUTE FUNCTION prevent_delete_phieu_muon_if_not_returned();
+
+
+-- ===========================
+-- 13. TRIGGER CHẶN XÓA PHẠT NẾU CHƯA TRẢ
+-- ===========================
+
+CREATE OR REPLACE FUNCTION prevent_delete_phat_if_unpaid()
+RETURNS trigger AS $$
+BEGIN
+  IF OLD.da_thanh_toan = FALSE THEN
+    RAISE EXCEPTION
+      'Không thể xóa phạt vì chưa thanh toán';
+  END IF;
+
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_prevent_delete_phat
+BEFORE DELETE ON phat
+FOR EACH ROW
+EXECUTE FUNCTION prevent_delete_phat_if_unpaid();
