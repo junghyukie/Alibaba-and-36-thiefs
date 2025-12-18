@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { AuthRequest } from "../types/auth";
-import { activeAccService, addBookService, addTheService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, upgradeTheService } from "../services/staffService";
+import { activeAccService, addBookService, addTheService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, notificationStaffService, upgradeTheService } from "../services/staffService";
 import { copiesInfor, copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
 import { theExistingModel } from "../models/CardModel";
 
@@ -143,4 +143,24 @@ export const listCopiesController = async (
     console.error("Lỗi listCopiesController:", err);
     return res.status(500).json({ success: false, message: "Lỗi server" });
   }
+};
+
+
+//Notification
+export const notificationStaffController = async(req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+        const id_acc = req.user?.id_acc;
+        if (!id_acc) return res.status(401).json({ message: "Xin hãy đăng nhập" });
+
+        const result = await notificationStaffService();
+        if (result.success === false) {
+            //console.log("Lỗi controller extendBook");
+            return res.status(400).json(result);
+        } else {
+            return res.status(200).json(result);
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Lỗi server" }); 
+    }
 };

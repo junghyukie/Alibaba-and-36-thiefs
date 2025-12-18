@@ -14,18 +14,18 @@ import LibraryCard from "./components/LibraryCard";
 import AddBookForm from "./components/AddBook";
 import AccInfo from "./components/AccountInfo"; 
 import PatronList from "./components/PatronList";
-import LockAccount from "./components/test";
+// import LockAccount from "./components/test";
 import BorrowHistoryUser from "./components/BorrowHistoryUser";
 import UpdateReturnDate from "./components/UpdateReturnDate";
 import PasswordChange from "./components/PasswordChange";
 import ExtendCard from "./components/ExtendCard";
-import TopBook from "./components/test";
-import CopyListTest from "./components/test";
+// import TopBook from "./components/test";
+// import CopyListTest from "./components/test";
 import BookList from "./components/BookList";
-import DeleteBook from "./components/test";
-import DashBoard from "./components/DashBoard";
+// import DeleteBook from "./components/test";
+import DashBoard from "./components/Dashboard";
 //import type UpdateReturnDate from "./Components/test";
-
+import NotificationList from "./components/test";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -43,16 +43,17 @@ function App() {
         <Route path="/extendcard" element={<ExtendCard />} />
         <Route path="/borrowbooks" element={<BorrowBooks />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/lock" element={<LockAccount />} />
+        {/* <Route path="/lock" element={<LockAccount />} /> */}
         <Route path="/patronlist" element={<PatronList />} />
         <Route path="/history-user" element={<BorrowHistoryUser />} />
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
-        <Route path="/delete" element={<DeleteBook />} />
-        <Route path="/copies" element={<CopyListTest />} />
-        <Route path="/top-book" element={<TopBook />} />
+        {/* <Route path="/delete" element={<DeleteBook />} /> */}
+        {/* <Route path="/copies" element={<CopyListTest />} /> */}
+        {/* <Route path="/top-book" element={<TopBook />} /> */}
         <Route path="/patronlist" element={<PatronList />} />
         <Route path="/booklist" element={<BookList />} />
+        <Route path="/notice" element={<NotificationList />} />
       </Routes>
     </BrowserRouter>
   );
