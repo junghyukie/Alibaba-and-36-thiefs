@@ -581,61 +581,61 @@
 
 
 
-import React, { useState } from "react";
-//const API_URL = import.meta.env.VITE_API_URL;
+// import React, { useState } from "react";
+// //const API_URL = import.meta.env.VITE_API_URL;
 
-const LockAccount: React.FC = () => {
-  const [accountId, setAccountId] = useState("");
+// const LockAccount: React.FC = () => {
+//   const [accountId, setAccountId] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
 
-    const token = localStorage.getItem("token");
-    if (!token) return alert("❌ Bạn chưa đăng nhập!");
+//     const token = localStorage.getItem("token");
+//     if (!token) return alert("❌ Bạn chưa đăng nhập!");
 
-    try {
-      const res = await fetch("http://localhost:3001/user/service/extend-book", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ id: Number(accountId) }),
-      });
+//     try {
+//       const res = await fetch("http://localhost:3001/user/service/extend-book", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify({ id: Number(accountId) }),
+//       });
 
-      const data = await res.json();
-      if (!res.ok || !data.success) return alert(data.message || "❌ Có lỗi xảy ra");
+//       const data = await res.json();
+//       if (!res.ok || !data.success) return alert(data.message || "❌ Có lỗi xảy ra");
 
-      alert(data.message);
-    } catch (err) {
-      console.error(err);
-      alert("❌ Không thể kết nối server!");
-    }
-  };
+//       alert(data.message);
+//     } catch (err) {
+//       console.error(err);
+//       alert("❌ Không thể kết nối server!");
+//     }
+//   };
 
-  return (
-    <div className="container">
-      <div className="box">
-        <h2>Khóa Tài Khoản</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="input-field">
-            <label>ID tài khoản</label>
-            <input
-              type="number"
-              value={accountId}
-              onChange={(e) => setAccountId(e.target.value)}
-              required
-            />
-          </div>
+//   return (
+//     <div className="container">
+//       <div className="box">
+//         <h2>Khóa Tài Khoản</h2>
+//         <form onSubmit={handleSubmit}>
+//           <div className="input-field">
+//             <label>ID tài khoản</label>
+//             <input
+//               type="number"
+//               value={accountId}
+//               onChange={(e) => setAccountId(e.target.value)}
+//               required
+//             />
+//           </div>
 
-          <button type="submit">Khóa</button>
-        </form>
-      </div>
-    </div>
-  );
-};
+//           <button type="submit">Khóa</button>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
 
-export default LockAccount;
+// export default LockAccount;
 
 // import React, { useState } from "react";
 // // Giả định API_URL được định nghĩa trong môi trường
