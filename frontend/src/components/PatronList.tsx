@@ -21,11 +21,6 @@ const PatronList: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const pageSize = 20;
 
-  // Dummy search handler for Header component
-  const handleSearch = () => {
-    // Not used in this component, but required by Header
-  };
-
   // Fetch patrons from API
   const fetchPatrons = async (page: number = 1) => {
     setLoading(true);
@@ -343,7 +338,7 @@ const PatronList: React.FC = () => {
       )}
       
       <div id="webcrumbs">
-        <Header onSearch={handleSearch} />
+        <Header/>
         
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

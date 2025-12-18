@@ -23,7 +23,7 @@ import TopBook from "./components/test";
 import CopyListTest from "./components/test";
 import BookList from "./components/BookList";
 import DeleteBook from "./components/test";
-import DashBoard from "./components/DashBoard";
+import Dashboard from "./components/Dashboard";
 //import type UpdateReturnDate from "./Components/test";
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -33,7 +33,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DashBoard />} />
+        <Route path="/" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/personal-info-insert" element={<PersonalInfoInsert />} />
         <Route path="/update" element={<UpdateReturnDate />} />
