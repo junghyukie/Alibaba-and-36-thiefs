@@ -13,7 +13,7 @@ export const topBookModel = async() : Promise<TopBook[]> =>{
                 JOIN tac_gia tg ON tg.id = s.tacgia_id
                 GROUP BY s.tieu_de, tg.ten
                 ORDER BY so_luot_dang_muon DESC
-                LIMIT 3;    `
+                LIMIT 10;    `
     const results = await pool.query(sql,[]);
     return results.rows as TopBook[];
 
