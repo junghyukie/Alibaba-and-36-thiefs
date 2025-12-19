@@ -1,6 +1,14 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/authMiddleware";
-import { borrowBookController, inforBookinCartController, deleteBookFromCartController, insertBookController, LogController, theInforController, extendBookController } from "../controllers/userController";
+import { borrowBookController,
+         inforBookinCartController,
+         deleteBookFromCartController,
+         insertBookController,
+         LogController,
+         theInforController,
+         extendBookController,
+         getMyFines 
+} from "../controllers/userController";
 import { reserveController } from "../controllers/reserveBookController";
 import { topBookController } from "../controllers/topBookController";
 import { changePassWordController } from "../controllers/authController";
@@ -18,5 +26,6 @@ router.post("/extend-book", extendBookController);
 router.delete("/delete-book/:id_sach", deleteBookFromCartController);
 router.get("/the-infor", theInforController);
 router.get("/top-book", topBookController);
+router.get("/fines", getMyFines);
 
 export default router;

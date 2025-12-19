@@ -12,12 +12,33 @@ export class BorrowController {
     }
   }
 
-  static async returnBook(req: Request, res: Response, next: NextFunction) {
+  static async getActiveBorrowByUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = Number(req.params.userId);
+      const borrows = await BorrowService.getActiveBorrow(userId);
+      return res.status(200).json(borrows);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async returnBook(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const id = Number(req.params.id);
       const { tinh_trang } = req.body;
-      const data = await BorrowService.returnBook(id, tinh_trang);
-      res.status(200).json(data);
+
+      if (Number.isNaN(id)) {
+        return res.status(400).json({ message: "ID không hợp lệ" });
+      }
+
+      await BorrowService.returnBook(id, tinh_trang);
+
+      // ✅ REST chuẩn: không trả body
+      return res.status(204).end();
     } catch (err) {
       next(err);
     }

@@ -65,6 +65,11 @@ const Header = () => {
     setIsDropdownOpen(false);
   }
 
+  const handleFineHistory = () => {
+    navigate('/user/fines');
+    setIsDropdownOpen(false);
+  }
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("cartItems");
@@ -212,6 +217,18 @@ const Header = () => {
                     >
                       <BookOpen className="h-4 w-4" />
                       Borrow History
+                    </button>
+
+                    <button
+                      onClick={handleFineHistory}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 transition"
+                      style={{
+                        display: 'flex !important' as any,
+                        flexDirection: 'row !important' as any
+                      }}
+                    >
+                      <BookOpen className="h-4 w-4" />
+                      Công nợ
                     </button>
 
                     <button

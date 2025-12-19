@@ -27,6 +27,8 @@ import Dashboard from "./components/Dashboard";
 //import type UpdateReturnDate from "./Components/test";
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import PatronBorrowPage from "./components/PatronBorrowPage";
+import FineHistoryUser from "./components/FineHistoryUser";
 
 function App() {
 
@@ -53,6 +55,9 @@ function App() {
         <Route path="/top-book" element={<TopBook />} />
         <Route path="/patronlist" element={<PatronList />} />
         <Route path="/booklist" element={<BookList />} />
+        <Route path="/patron/:userId/borrow" element={<PatronBorrowPage />} />
+        <Route path="/user/fines" element={<FineHistoryUser />} />
+
       </Routes>
     </BrowserRouter>
   );

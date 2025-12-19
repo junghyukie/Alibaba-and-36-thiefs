@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-//import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -9,7 +9,7 @@ import type { Patron, LatePatron, ListPatronResult, LatePatronResult } from '../
 const API_URL = import.meta.env.VITE_API_URL;
 
 const PatronList: React.FC = () => {
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
   const [patrons, setPatrons] = useState<Patron[]>([]);
   const [latePatrons, setLatePatron] = useState<LatePatron[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -201,6 +201,11 @@ const PatronList: React.FC = () => {
       fetchPatrons(newPage);
     }
   };
+
+  const handleViewBorrowDetail = (patronId: number) => {
+    navigate(`/patron/${patronId}/borrow`);
+  };
+
 
   return (
     <>
@@ -406,6 +411,14 @@ const PatronList: React.FC = () => {
                                     className="bg-blue-600 text-white hover:bg-blue-700 border-none"
                                   >
                                     Xem chi tiết
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleViewBorrowDetail(patron.id)}
+                                    className="bg-blue-600 text-white hover:bg-blue-700 border-none"
+                                  >
+                                    Mượn trả
                                   </Button>
                                 </TableCell>
                               </TableRow>
