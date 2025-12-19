@@ -25,7 +25,8 @@ import BookList from "./components/BookList";
 // import DeleteBook from "./components/test";
 import DashBoard from "./components/Dashboard";
 //import type UpdateReturnDate from "./Components/test";
-import NotificationList from "./components/test";
+import NotificationListStaff from "./components/NotificationStaff";
+import NotificationListUser from "./components/NotificationUser";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -48,12 +49,12 @@ function App() {
         <Route path="/history-user" element={<BorrowHistoryUser />} />
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
-        {/* <Route path="/delete" element={<DeleteBook />} /> */}
+        <Route path="/notice-staff" element={<NotificationListStaff />} />
         {/* <Route path="/copies" element={<CopyListTest />} /> */}
         {/* <Route path="/top-book" element={<TopBook />} /> */}
         <Route path="/patronlist" element={<PatronList />} />
         <Route path="/booklist" element={<BookList />} />
-        <Route path="/notice" element={<NotificationList />} />
+        <Route path="/notice-user" element={<NotificationListUser />} />
       </Routes>
     </BrowserRouter>
   );
