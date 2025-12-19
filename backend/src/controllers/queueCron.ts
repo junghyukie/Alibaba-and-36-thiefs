@@ -2,7 +2,7 @@ import pool from "../config/db";
 import { theConHanModel, theQuaHanModel } from "../models/CardModel";
 import { ReservationService } from "../services/reservceBookService";
 import { activeAccService, lockAccService } from "../services/staffService";
-
+import { runNotificationService } from "../services/notificationService";
 /**
  * Cron job: kiểm tra sách TRONG_KHO và queue để gán cho người đầu tiên
  */
@@ -60,6 +60,8 @@ const processQueueCron = async () => {
             await activeAccService(id);
         }
         
+        await runNotificationService();
+
         console.log("✅ Cron job xử lý queue xong");
     } catch (err) {
         console.error("❌ Cron job lỗi:", err);

@@ -1,11 +1,8 @@
 import "./config/env";
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
-
-
-import authRoute from "./routes/authRoute"; // import đúng cú pháp ESModule
+import authRoute from "./routes/authRoute";
 import staffserviceRoute from "./routes/staffRoute";
-// import authRoute from "./routes/authRoute";
 import copyRoute from "./routes/copyRoute"
 import bookRoute from "./routes/bookRoute";
 import categoryRoute from "./routes/categoryRoute";
@@ -13,6 +10,7 @@ import authorRoute from "./routes/authorRoute";
 import publisherRoute from "./routes/publisherRoute";
 import borrowRoute from "./routes/borrowRoute"
 import userService from "./routes/userRoute"
+import fineRoute from "./routes/fineRoute"
 import { errorHandler } from "./middleware/errorHandler";
 // server.ts
 import './controllers/queueCron';
@@ -47,6 +45,7 @@ app.use("/api/author", authorRoute);
 app.use("/api/publisher", publisherRoute);
 app.use("/api/borrow", borrowRoute);
 app.use("/user/service", userService);
+app.use("/api/fine", fineRoute);
 
 app.use(errorHandler); // must come last
 

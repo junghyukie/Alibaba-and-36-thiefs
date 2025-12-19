@@ -9,6 +9,8 @@ import e from "express";
 import { TopBookResponse } from "../types/topBook";
 import { topBookModel } from "../models/topBookModel";
 import { checkBook, extendBookModel } from "../models/extendBookModel";
+import { notificationResultService } from "../types/notification";
+import { notificationForUser } from "../models/notificationModel";
 
 
 export const insertBookService = async (id_acc: number, data: insertBook): Promise<any> => {
@@ -127,7 +129,18 @@ export const extendBookService = async (id_acc: number, id_sach: number): Promis
     console.error("Lỗi SQL extendBookService:", err);
     return { success: false, message: "Lỗi Server" };
   }
-};
+}
+
+export const notificationUserService = async(id_acc : number) 
+: Promise<notificationResultService> =>{
+    try{
+      const results = await notificationForUser(id_acc);
+      return {success : true, data : results, message : "Lấy thông báo thành công!"}
+    }catch (err) {
+    console.error("Lỗi SQL notification:", err);
+    return {success : false , message : "Lỗi Server" };
+  }
+}
 
 
 

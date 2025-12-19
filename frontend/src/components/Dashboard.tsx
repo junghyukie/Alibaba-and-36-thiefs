@@ -460,7 +460,7 @@ const borrowSelected = async () => {
       id="webcrumbs" 
       className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ 
-        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('/src/img/background.jpg')` 
+        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('/img/background.jpg')` 
       }}
     >
       <Header/>
@@ -492,7 +492,7 @@ const borrowSelected = async () => {
               <div className="relative h-64 overflow-hidden bg-slate-100">
                 {/* Book Image */}
                 <img
-                  src={`/src/img/${book.id}.webp`}
+                  src={`/img/${book.id}.webp`}
                   alt={book.tieu_de}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   // Fallback if image doesn't exist

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-//import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -9,7 +9,7 @@ import type { Patron, LatePatron, ListPatronResult, LatePatronResult } from '../
 const API_URL = import.meta.env.VITE_API_URL;
 
 const PatronList: React.FC = () => {
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
   const [patrons, setPatrons] = useState<Patron[]>([]);
   const [latePatrons, setLatePatron] = useState<LatePatron[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,11 +20,6 @@ const PatronList: React.FC = () => {
   const [selectedPatron, setSelectedPatron] = useState<Patron | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const pageSize = 20;
-
-  // Dummy search handler for Header component
-  const handleSearch = () => {
-    // Not used in this component, but required by Header
-  };
 
   // Fetch patrons from API
   const fetchPatrons = async (page: number = 1) => {
@@ -207,6 +202,11 @@ const PatronList: React.FC = () => {
     }
   };
 
+  const handleViewBorrowDetail = (patronId: number) => {
+    navigate(`/patron/${patronId}/borrow`);
+  };
+
+
   return (
     <>
       {/* Test Dialog - Simple version */}
@@ -343,7 +343,7 @@ const PatronList: React.FC = () => {
       )}
       
       <div id="webcrumbs">
-        <Header onSearch={handleSearch} />
+        <Header/>
         
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -411,6 +411,14 @@ const PatronList: React.FC = () => {
                                     className="bg-blue-600 text-white hover:bg-blue-700 border-none"
                                   >
                                     Xem chi tiết
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleViewBorrowDetail(patron.id)}
+                                    className="bg-blue-600 text-white hover:bg-blue-700 border-none"
+                                  >
+                                    Mượn trả
                                   </Button>
                                 </TableCell>
                               </TableRow>

@@ -24,3 +24,15 @@ export const getFineByUserId = async (userId: number) : Promise<Fine[]> => {
   );
   return result.rows;
 }
+
+export const markFineAsPaid = async (fineId: number): Promise<boolean> => {
+  const res = await pool.query(
+    `UPDATE phat
+     SET da_thanh_toan = true
+     WHERE id = $1 AND da_thanh_toan = false
+     RETURNING id`,
+    [fineId]
+  );
+
+  return (res.rowCount ?? 0) > 0;
+}

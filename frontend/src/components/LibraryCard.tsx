@@ -285,7 +285,7 @@ const LibraryCard: React.FC = () => {
         }
       `}</style>
 
-      <Header onSearch={() => {}} />
+      <Header/>
 
       <div className="library-card-page">
       <section className="lib-bg">

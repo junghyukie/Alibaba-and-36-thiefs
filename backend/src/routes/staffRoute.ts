@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { staffOnly, verifyToken } from "../middleware/authMiddleware";
-import { activateAccController, addBanSaoController, addBookController, extendTheController, lateController, listAccountController, listCopiesController, lockAccController, LogControllerforStaff } from "../controllers/staffController";
+import { activateAccController, addBookController, extendTheController, lateController, listAccountController, listCopiesController, lockAccController, LogControllerforStaff, notificationStaffController } from "../controllers/staffController";
 
 const router = Router();
 
@@ -9,8 +9,8 @@ router.use(verifyToken, staffOnly);
 router.get("/late", lateController);
 router.get("/list-account", listAccountController);
 router.get("/list-copies", listCopiesController);
+router.get("/notifications",notificationStaffController)
 router.post("/add-book", addBookController);
-router.post("/add-ban-sao", addBanSaoController);
 router.post("/activate", activateAccController);
 router.post("/lock", lockAccController);
 router.post("/extend", extendTheController);
