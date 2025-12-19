@@ -25,7 +25,7 @@ const NotificationListStaff: React.FC = () => {
         return;
       }
 
-      const res = await fetch(`http://localhost:3001/staff/service/notifications`, {
+      const res = await fetch(`${API_URL}/staff/service/notifications`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -57,7 +57,7 @@ const NotificationListStaff: React.FC = () => {
 
   return (
     <>
-      <Header onSearch={() => {}} />
+      <Header/>
 
       <div className="min-h-screen bg-gray-50 px-6 py-8">
         <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
