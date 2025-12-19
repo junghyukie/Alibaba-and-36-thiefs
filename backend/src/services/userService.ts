@@ -102,21 +102,32 @@ export const topBookService = async() : Promise<TopBookResponse> => {
 }
 
 
-export const extendBookService = async(id_acc : number , id_sach : number)
-: Promise<{success : boolean , message : string}> =>{
-  try{
-      const check = await checkBook(id_acc,id_sach);
-      if(check.success === false){
-        return {success : false , message : "Không thể gia hạn sách đã hết hạn!" }
-      }
-        const result = await extendBookModel(id_acc,id_sach);
-        return {success : result.success , message : result.message};
-  }catch (err) {
-    console.error("Lỗi SQL extendBookService:", err);
-    return {success : false , message : "Lỗi Server" };
-  }
+export const extendBookService = async (id_acc: number, id_sach: number): Promise<{ success: boolean, message: string }> => {
+  try {
+    // 1. Log dữ liệu đầu vào
+    console.log(">>> Kiểm tra đầu vào Service:", { id_acc, id_sach });
 
-}
+    const check = await checkBook(id_acc, id_sach);
+    
+    // 2. Log kết quả của hàm checkBook để xem tại sao nó luôn trả về false
+    console.log(">>> Kết quả checkBook:", check);
+
+    if (check.success === false) {
+      return { success: false, message: "Không thể gia hạn sách đã hết hạn!" };
+    }
+
+    const result = await extendBookModel(id_acc, id_sach);
+    
+    // 3. Log kết quả sau khi gọi model gia hạn
+    console.log(">>> Kết quả extendBookModel:", result);
+
+    return { success: result.success, message: result.message };
+
+  } catch (err) {
+    console.error("Lỗi SQL extendBookService:", err);
+    return { success: false, message: "Lỗi Server" };
+  }
+};
 
 
 

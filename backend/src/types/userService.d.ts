@@ -18,10 +18,11 @@ export interface cartItems{
 }
 
 export interface logResults{
+    sach_id: number;
     tieu_de : string;
-    ngay_muọn : Date;
-    ngay_het_han : Date;
-    ngay_tra : Date;
+    ngay_muon : Date | null;
+    ngay_het_han : Date | null;
+    ngay_tra : Date | null;
 }
 
 export interface logServiceResult{

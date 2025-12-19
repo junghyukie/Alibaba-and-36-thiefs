@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-const API_URL = import.meta.env.VITE_API_URL;
+import { Button } from '@/components/ui/button';
+const API_URL = import.meta.env.VITE_API_URL; 
 
 interface BorrowRecord {
+  sach_id: number;
   tieu_de: string;
-  ngay_muon: string;
-  ngay_het_han: string;
+  ngay_muon: string | null;
+  ngay_het_han: string | null;
   ngay_tra: string | null;
-}
+} 
 
 const BorrowHistoryUser: React.FC = () => {
   const [borrowHistory, setBorrowHistory] = useState<BorrowRecord[]>([]);
@@ -137,6 +139,7 @@ const BorrowHistoryUser: React.FC = () => {
                         <TableHead className="font-bold text-gray-700">Ngày hết hạn</TableHead>
                         <TableHead className="font-bold text-gray-700">Ngày trả</TableHead>
                         <TableHead className="font-bold text-gray-700">Trạng thái</TableHead>
+                        <TableHead className="text-right font-bold text-gray-700">Thao tác</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -148,11 +151,44 @@ const BorrowHistoryUser: React.FC = () => {
                             <TableCell className="text-gray-600">{formatDate(record.ngay_het_han)}</TableCell>
                             <TableCell className="text-gray-600">{formatDate(record.ngay_tra)}</TableCell>
                             <TableCell>{getStatusBadge(record.ngay_het_han, record.ngay_tra)}</TableCell>
+                            <TableCell className="text-right">
+                              {!record.ngay_tra && (
+                                <Button
+                                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded"
+                                  onClick={async () => {
+                                    const token = localStorage.getItem('token');
+                                    if (!token) { alert('Vui lòng đăng nhập'); return; }
+                                    try {
+                                      const res = await fetch(`${API_URL}/user/service/extend-book`, {
+                                        method: 'POST',
+                                        headers: {
+                                          'Authorization': `Bearer ${token}`,
+                                          'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({ id: record.sach_id })
+                                      });
+                                      const data = await res.json();
+                                      if (!res.ok) {
+                                        alert(data.message || 'Gia hạn thất bại');
+                                      } else {
+                                        alert(data.message || 'Gia hạn thành công');
+                                        fetchBorrowHistory();
+                                      }
+                                    } catch (err) {
+                                      console.error('Error extending book:', err);
+                                      alert('Lỗi kết nối khi gửi yêu cầu gia hạn');
+                                    }
+                                  }}
+                                >
+                                  Gia hạn mượn
+                                </Button>
+                              )}
+                            </TableCell>
                           </TableRow>
                         ))
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={5} className="text-center text-gray-500 py-8">
+                          <TableCell colSpan={6} className="text-center text-gray-500 py-8">
                             Không có lịch sử mượn sách
                           </TableCell>
                         </TableRow>

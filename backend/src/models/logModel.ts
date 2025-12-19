@@ -5,7 +5,7 @@ import { logResults } from "../types/userService";
 export const LogModel = async (id_acc : number): Promise<logResults[]> => {
     const sql =
         `
-        SELECT s.tieu_de,pm.ngay_muon, pm.ngay_het_han, pm.ngay_tra
+        SELECT s.id AS sach_id, s.tieu_de, pm.ngay_muon, pm.ngay_het_han, pm.ngay_tra
         FROM phieu_muon pm
         JOIN ban_sao bs ON bs.id = pm.ban_sao_id
         JOIN sach s ON s.id = bs.sach_id
@@ -19,7 +19,7 @@ export const LogModel = async (id_acc : number): Promise<logResults[]> => {
 export const LogModelforStaff = async (): Promise<logResults[]> => {
     const sql =
         `
-        SELECT s.tieu_de,pm.ngay_muon, pm.ngay_het_han, pm.ngay_tra
+        SELECT s.id AS sach_id, s.tieu_de, pm.ngay_muon, pm.ngay_het_han, pm.ngay_tra
         FROM phieu_muon pm
         JOIN ban_sao bs ON bs.id = pm.ban_sao_id
         JOIN sach s ON s.id = bs.sach_id
