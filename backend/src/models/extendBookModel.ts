@@ -12,8 +12,8 @@ export const extendBookModel = async(id_acc : number , id_sach : number)
             RETURNING *;
     `;
     const result = await pool.query(sql, [id_acc,id_sach]);
-    if(result.rows.length > 0) return {success : true, message : "Ra hạn sách thành công!"};
-    else return {success : false, message : "Ra hạn sách thất bại!"};
+    if(result.rows.length > 0) return {success : true, message : "Gia hạn sách thành công!"};
+    else return {success : false, message : "Gia hạn sách thất bại!"};
 }
 
 export const checkBook = async(id_acc : number , id_sach : number)
