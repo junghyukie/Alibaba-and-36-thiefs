@@ -7,6 +7,7 @@ import { borrowBookController,
          LogController,
          theInforController,
          extendBookController,
+         notificationUserController,
          getMyFines 
 } from "../controllers/userController";
 import { reserveController } from "../controllers/reserveBookController";
@@ -28,4 +29,5 @@ router.get("/the-infor", theInforController);
 router.get("/top-book", topBookController);
 router.get("/fines", getMyFines);
 
+router.get("/notifications",notificationUserController)
 export default router;

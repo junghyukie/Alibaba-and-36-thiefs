@@ -225,16 +225,52 @@ CREATE TABLE dat_cho (
 -- 9. THÔNG BÁO
 -- ===========================
 
+CREATE TYPE loai_thong_bao AS ENUM (
+    'SACH_SAP_HET_HAN',
+    'SACH_QUA_HAN',
+    'THE_SAP_HET_HAN',
+    'THE_QUA_HAN',
+    'TAI_KHOAN_CHUA_KICH_HOAT',
+    'DEN_LUOT_DAT_CHO',
+    'QUA_HAN_DAT_CHO'
+);
+
 CREATE TABLE thong_bao (
     id SERIAL PRIMARY KEY,
-    tai_khoan_id INT NOT NULL REFERENCES tai_khoan(id),
-    dat_cho_id INT,
-    book_id INT,
-    loai VARCHAR(50) NOT NULL CHECK (loai IN ('HET_HAN', 'DEN_LUOT')),
+
+    tai_khoan_id INT,
+    loai loai_thong_bao NOT NULL,
+
+    phieu_muon_id INT,
+    the_id INT,
+
     noi_dung TEXT NOT NULL,
+
+      doi_tuong_xem VARCHAR(20) NOT NULL
+        CHECK (doi_tuong_xem IN ('USER', 'STAFF', 'ALL'))
+        DEFAULT 'USER',
+        
     ngay_tao TIMESTAMP DEFAULT NOW(),
-    ngay_het_han TIMESTAMP
+    ngay_het_han TIMESTAMP,
+    da_doc BOOLEAN DEFAULT FALSE,
+
+    CONSTRAINT fk_tb_tai_khoan
+        FOREIGN KEY (tai_khoan_id) REFERENCES tai_khoan(id)
 );
+
+
+CREATE UNIQUE INDEX uniq_tb_muon_sach
+ON thong_bao (loai, phieu_muon_id, doi_tuong_xem)
+WHERE phieu_muon_id IS NOT NULL;
+
+-- Thẻ
+CREATE UNIQUE INDEX uniq_tb_the
+ON thong_bao (loai, the_id, doi_tuong_xem)
+WHERE the_id IS NOT NULL;
+
+CREATE UNIQUE INDEX uniq_tb_tk_pending
+ON thong_bao (loai, noi_dung, doi_tuong_xem)
+WHERE loai = 'TAI_KHOAN_CHUA_KICH_HOAT';
 
 -- ===========================
 -- 10. EXTENSION + INDEX TÌM KIẾM KHÔNG DẤU

@@ -13,6 +13,8 @@ import { addTheModel, extendTheModel, upgradeTheModel } from "../models/CardMode
 import { LogModelforStaff } from "../models/logModel";
 import { logServiceResult } from "../types/userService";
 import { listCopies, totalRecordCopies } from "../models/copiesInforModel";
+import { notificationForStaff } from "../models/notificationModel";
+import { notificationResultService } from "../types/notification";
 
 // Đọc giả quá hạn
 export const lateService = async (): Promise<LateServiceResult> => {
@@ -196,3 +198,16 @@ export const activeAccService = async (id_acc: number)
     return { success: false, message: "Lỗi server" };
   }
 };
+
+
+
+export const notificationStaffService = async() 
+: Promise<notificationResultService> =>{
+    try{
+      const results = await notificationForStaff();
+      return {success : true, data : results, message : "Lấy thông báo thành công!"}
+    }catch (err) {
+    console.error("Lỗi SQL notification:", err);
+    return {success : false , message : "Lỗi Server" };
+  }
+}

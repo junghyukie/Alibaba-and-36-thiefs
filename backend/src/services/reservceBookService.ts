@@ -12,15 +12,15 @@ export class ReservationService {
         const res = await pool.query(sqlStt, [sach_id]);
         const stt = (res.rows[0]?.max_stt ?? 0) + 1;
 
-        const sqlInsert = await insertQueue(tai_khoan_id,sach_id,stt);
-        if(sqlInsert > 0){
+        const sqlInsert = await insertQueue(tai_khoan_id, sach_id, stt);
+        if (sqlInsert > 0) {
             console.log("Thêm vào bảng dat_cho thành công");
-            return {success : true};
-           
+            return { success: true };
+
         }
-        else{
+        else {
             console.log("Thêm vào bảng dat_cho thất bại");
-            return {success : false};
+            return { success: false };
         }
     }
 
@@ -31,11 +31,18 @@ export class ReservationService {
         const firstUser = await moveNextUser(sach_id, ban_sao_id);
         if (!firstUser) return null;
 
+        const resSach = await pool.query(
+            `SELECT tieu_de FROM sach WHERE id = $1`,
+            [sach_id]
+        );
+
+        const tenSach = resSach.rows[0]?.tieu_de || "sách";
+
         // Tạo notification
         await createNotification(
             firstUser.tai_khoan_id,
-            "DEN_LUOT",
-            `Đến lượt bạn mượn sách id ${sach_id}. Thời gian giữ 15 phút.`
+            "DEN_LUOT_DAT_CHO",
+            `Đến lượt bạn mượn sách ${tenSach}. Thời gian giữ 15 phút.`
         );
 
         return firstUser;
@@ -47,6 +54,11 @@ export class ReservationService {
     static async handleExpired(sach_id: number) {
         const expiredUsers = await selectExpired(sach_id);
 
+        const resSach = await pool.query(
+            `SELECT tieu_de FROM sach WHERE id = $1`,
+            [sach_id]
+        );
+        const tenSach = resSach.rows[0]?.tieu_de || "sách";
         for (const user of expiredUsers) {
             // Xóa khỏi queue
             await deleteFromQueue(user.tai_khoan_id, sach_id);
@@ -57,8 +69,8 @@ export class ReservationService {
             // Tạo notification hết hạn
             await createNotification(
                 user.tai_khoan_id,
-                "HET_HAN",
-                `Bạn đã hết hạn giữ sách id ${sach_id}.`
+                "QUA_HAN_DAT_CHO",
+                `Bạn đã hết hạn giữ sách ${tenSach}.`
             );
 
             // Gọi người tiếp theo nếu có bản sao
@@ -68,9 +80,9 @@ export class ReservationService {
         }
     }
 
-    static async convert(){
-      const result =  await convertReservedtoAvailable();
-      const result2 = await convertMaintenancetoAvailable();
+    static async convert() {
+        const result = await convertReservedtoAvailable();
+        const result2 = await convertMaintenancetoAvailable();
     }
 
     /**
@@ -86,5 +98,5 @@ export class ReservationService {
         }
     }
 
-   
+
 }
