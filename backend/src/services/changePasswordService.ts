@@ -9,6 +9,8 @@ export const changePassWordService = async(id_acc : number , data : changePassWo
         }
         const check = await oldPassWord(id_acc);
         if(data.mat_khau_cu != check.data) {
+            console.log("Mật khẩu database:", check.data);
+            console.log("Mật khẩu form:", data.mat_khau_cu);
            return {
            success : false , message :"Mật khẩu không chính xác!"
            }

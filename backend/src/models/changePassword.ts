@@ -12,16 +12,26 @@ export const changePassWordModel = async(id_acc : number, data : changePassWordI
         else return {success : false , message : "Đổi mật khẩu thất bại!"};
 }
 
-export const oldPassWord = async(id_acc : number)
-: Promise<{success : boolean , data : string}> =>{
-    const sql = `SELECT mat_khau_hash
-                FROM tai_khoan
-                WHERE id = $1;`
-    const result = await pool.query(sql,[id_acc]);
-    if(result.rows.length > 0) return{
-        success : true, data : result.rows[0]
-    }
-    else return{
-        success : false, data : ""
-    }
-}
+export const oldPassWord = async (
+  id_acc: number
+): Promise<{ success: boolean; data: string }> => {
+  const sql = `
+    SELECT mat_khau_hash
+    FROM tai_khoan
+    WHERE id = $1
+  `;
+
+  const result = await pool.query(sql, [id_acc]);
+
+  if (result.rows.length === 0) {
+    return {
+      success: false,
+      data: ""
+    };
+  }
+
+  return {
+    success: true,
+    data: result.rows[0].mat_khau_hash
+  };
+};
