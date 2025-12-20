@@ -1,20 +1,22 @@
 import { LateModel } from "../models/listLateModel";
 import { listAccountModel, totalRecord } from "../models/listAccountModel";
-import { copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
+import { borrowForm, copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
 import { addBookInput } from "../types/addBook";
 import {
   addAuthor, AddBookModel, addNXB,
   checkExistingAuthor, checkExistingBook,
   checkExistingNXB, checkExistingTheLoai, addSachTheLoai, addTheLoai
 } from "../models/addBookModel";
-import { addBanSaoInput } from "../types/addBanSao";
 import { activateAccModel, lockAccModel } from "../models/changeStateAccModel";
 import { addTheModel, extendTheModel, upgradeTheModel } from "../models/CardModel";
 import { LogModelforStaff } from "../models/logModel";
-import { logServiceResult } from "../types/userService";
+import { borrowBook, logServiceResult } from "../types/userService";
 import { listCopies, totalRecordCopies } from "../models/copiesInforModel";
 import { notificationForStaff } from "../models/notificationModel";
 import { notificationResultService } from "../types/notification";
+import { borrowBookModel, checkBorrowedBook, checkSoLuongDaMuon, insertPhieuMuonModel, updateBanSao } from "../models/borrowBookModel";
+import { getCopyByBarcode } from "../models/copyModel";
+import { insertBorrow } from "../models/borrowModel";
 
 // Đọc giả quá hạn
 export const lateService = async (): Promise<LateServiceResult> => {
@@ -199,8 +201,6 @@ export const activeAccService = async (id_acc: number)
   }
 };
 
-
-
 export const notificationStaffService = async() 
 : Promise<notificationResultService> =>{
     try{
@@ -211,3 +211,25 @@ export const notificationStaffService = async()
     return {success : false , message : "Lỗi Server" };
   }
 }
+
+export const createBorrowService = async (nhan_vien_id: number, data: borrowForm): Promise<any> => {
+  try {
+    const copy = await getCopyByBarcode(data.ma_vach);
+    if (!copy) return { success: false, message: "Không tìm thấy bản sao tương ứng" };
+    if (copy.trang_thai != "AVAILABLE")
+      return { success: false, message: "Bản sao không khả dụng" };
+
+    const alreadyBorrowed = await checkSoLuongDaMuon(data.doc_gia_id);
+    if (alreadyBorrowed >= 3) return { success: false, message: "Đã hết lượt mượn sách" };
+
+    const phieuMuon = await insertBorrow(nhan_vien_id, copy.id, data);
+    if (!phieuMuon) return { success: false, message: "Tạo phiếu mượn thất bại" };
+
+    const updateBanSaoResult = await updateBanSao(copy.id, "BORROWED");
+    if (!updateBanSaoResult.length) return { success: false, message: "Cập nhật trạng thái bản sao thất bại" };
+    return { success: true, phieuMuon , message: "Mượn sách thành công" };
+  } catch (err) {
+    console.error("Lỗi SQL:", err);
+    return { success: false, message: "Lỗi server" };
+  }
+};

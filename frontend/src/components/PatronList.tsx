@@ -404,22 +404,24 @@ const PatronList: React.FC = () => {
                                 <TableCell className="text-gray-700">{patron.ho_ten}</TableCell>
                                 <TableCell className="text-gray-600">{formatDate(patron.ngay_sinh)}</TableCell>
                                 <TableCell className="text-right">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleViewDetails(patron)}
-                                    className="bg-blue-600 text-white hover:bg-blue-700 border-none"
-                                  >
-                                    Xem chi tiết
-                                  </Button>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleViewBorrowDetail(patron.id)}
-                                    className="bg-blue-600 text-white hover:bg-blue-700 border-none"
-                                  >
-                                    Mượn trả
-                                  </Button>
+                                  <div className="flex justify-end gap-2">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleViewDetails(patron)}
+                                      className="bg-blue-600 text-white hover:bg-blue-700 border-none"
+                                    >
+                                      Xem chi tiết
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleViewBorrowDetail(patron.id)}
+                                      className="bg-green-600 text-white hover:bg-green-700 border-none"
+                                    >
+                                      Mượn trả
+                                    </Button>
+                                  </div>
                                 </TableCell>
                               </TableRow>
                             ))
