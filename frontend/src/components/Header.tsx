@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Home, Bell, BookOpen, LogOut, User } from "lucide-react";
 import { jwtDecode } from 'jwt-decode';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 interface DecodedToken {
   id_acc: number;
   vai_tro: string;
@@ -13,7 +15,10 @@ interface DecodedToken {
 const Header = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [notifications, setNotifications] = useState<Array<{noi_dung: string; ngay_tao: string}>>([]);
+  const [notificationCount, setNotificationCount] = useState(0);
 
   // State để lưu vai trò đã được giải mã
   const [userRole, setUserRole] = useState<string | null>(null);
@@ -77,6 +82,51 @@ const Header = () => {
     setIsDropdownOpen(false);
   };
 
+  const fetchNotifications = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const endpoint = isStaff 
+        ? `${API_URL}/staff/service/notifications`
+        : `${API_URL}/user/service/notifications`;
+
+      const res = await fetch(endpoint, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await res.json();
+      
+      if (data.success && data.data) {
+        setNotifications(data.data);
+        setNotificationCount(data.data.length);
+      }
+    } catch (err) {
+      console.error('Error fetching notifications:', err);
+    }
+  };
+
+  const toggleNotifications = () => {
+    if (!isNotificationOpen && notifications.length === 0) {
+      fetchNotifications();
+    }
+    setIsNotificationOpen(!isNotificationOpen);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <header 
       className="bg-background shadow-sm sticky top-0 z-10 border-b"
@@ -127,6 +177,9 @@ const Header = () => {
                 <Button onClick={() => navigate('/booklist')} className="bg-blue-600 text-white hover:bg-blue-700 border-none">
                   Quản lý sách
                 </Button>
+                <Button onClick={() => navigate('/top-books')} className="bg-purple-600 text-white hover:bg-purple-700 border-none">
+                  📊 Leaderboard
+                </Button>
               </>
             )}
           </div>
@@ -159,9 +212,49 @@ const Header = () => {
               flexShrink: 0
             }}
           >
-            <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5" />
-            </Button>
+            {isLoggedIn && (
+              <div className="relative">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={toggleNotifications}
+                  className="relative"
+                >
+                  <Bell className="h-5 w-5" />
+                  {notificationCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {notificationCount}
+                    </span>
+                  )}
+                </Button>
+
+                {isNotificationOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-96 bg-white border border-gray-200 rounded-md shadow-lg z-20 max-h-96 overflow-y-auto"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="px-4 py-3 border-b bg-gray-50">
+                      <h3 className="font-semibold text-gray-800">Thông báo</h3>
+                    </div>
+                    {notifications.length > 0 ? (
+                      <div className="divide-y">
+                        {notifications.map((notif, index) => (
+                          <div key={index} className="px-4 py-3 hover:bg-gray-50 transition">
+                            <p className="text-sm text-gray-800 mb-1">{notif.noi_dung}</p>
+                            <p className="text-xs text-gray-500">{formatDate(notif.ngay_tao)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="px-4 py-8 text-center text-gray-500">
+                        <Bell className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                        <p>Không có thông báo mới</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
             
             {isLoggedIn ? (
               <div className="relative">

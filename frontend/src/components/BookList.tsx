@@ -39,6 +39,12 @@ export default function BookList(): JSX.Element {
 
   // Copy details modal
   const [selectedCopy, setSelectedCopy] = useState<Copy | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [pendingStatus, setPendingStatus] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [statusUpdating, setStatusUpdating] = useState(false);
+
+  const STATUS_OPTIONS = ['AVAILABLE', 'BORROWED', 'RESERVED', 'LOST', 'DAMAGED', 'MAINTENANCE'];
 
   const navigate = useNavigate();
 
@@ -143,6 +149,58 @@ export default function BookList(): JSX.Element {
     } catch (err: any) {
       alert(err.message || "Có lỗi xảy ra khi xóa bản sao");
     }
+  };
+
+  useEffect(() => {
+    if (selectedCopy) setSelectedStatus(selectedCopy.trang_thai);
+    else setSelectedStatus('');
+  }, [selectedCopy]);
+
+  const handleStatusSelect = (newStatus: string) => {
+    if (!selectedCopy) return;
+    if (newStatus === selectedCopy.trang_thai) return; // no change
+    setPendingStatus(newStatus);
+    setConfirmOpen(true);
+  };
+
+  const confirmUpdateStatus = async () => {
+    if (!selectedCopy || !pendingStatus) return;
+    setStatusUpdating(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/api/copy/${selectedCopy.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ trang_thai: pendingStatus }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data.message || 'Cập nhật trạng thái thất bại');
+        return;
+      }
+
+      // Update local state
+      setSelectedStatus(pendingStatus);
+      setSelectedCopy(prev => prev ? { ...prev, trang_thai: pendingStatus } : prev);
+      setCopies(prev => prev.map(c => c.id === selectedCopy.id ? { ...c, trang_thai: pendingStatus } : c));
+
+      alert(`Đã cập nhật trạng thái bản sao ${selectedCopy.ma_vach} thành ${pendingStatus}`);
+    } catch (err) {
+      console.error('Error updating copy status:', err);
+      alert('Lỗi khi cập nhật trạng thái');
+    } finally {
+      setStatusUpdating(false);
+      setConfirmOpen(false);
+      setPendingStatus(null);
+    }
+  };
+
+  const cancelUpdateStatus = () => {
+    setConfirmOpen(false);
+    setPendingStatus(null);
   };
 
   // Open detail view for a book (fetch full book and its copies)
@@ -454,10 +512,29 @@ export default function BookList(): JSX.Element {
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <h2 className="text-xl font-bold mb-3">Chi tiết bản sao #{selectedCopy.id}</h2>
+                    <div className="flex items-start justify-between">
+                      <h2 className="text-xl font-bold mb-3">Chi tiết bản sao #{selectedCopy.id}</h2>
+                      <div className="text-right">
+                        <div className="text-sm text-gray-600 mb-1">Cập nhật trạng thái:</div>
+                        <div className="flex items-center justify-end gap-2">
+                          <select
+                            value={selectedStatus}
+                            onChange={(e) => handleStatusSelect(e.target.value)}
+                            disabled={statusUpdating}
+                            className="border rounded px-2 py-1 text-sm"
+                          >
+                            <option value="" disabled>Chọn trạng thái</option>
+                            {STATUS_OPTIONS.map((s) => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 gap-2">
                       <div><strong>Mã vạch:</strong> {selectedCopy.ma_vach}</div>
-                      <div><strong>Trạng thái:</strong> {selectedCopy.trang_thai}</div>
+                      <div><strong>Trạng thái:</strong> <span className="font-medium">{selectedStatus || selectedCopy.trang_thai}</span></div>
                       <div><strong>Ngày mua:</strong> {formatDate(selectedCopy.ngay_mua)}</div>
                       <div><strong>Giá trị:</strong> {selectedCopy.gia_tri?.toLocaleString() ?? 'N/A'}</div>
                       <div><strong>Kệ sách:</strong> {selectedCopy.ke_sach || 'Chưa cập nhật'}</div>
@@ -479,6 +556,26 @@ export default function BookList(): JSX.Element {
                         Đóng
                       </button>
                     </div>
+
+                    {confirmOpen && (
+                      <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: 8, maxWidth: 480, width: '90%' }}>
+                          <h3 className="text-lg font-semibold mb-2">Xác nhận cập nhật trạng thái</h3>
+                          <p className="text-sm text-gray-700 mb-4">Bạn có muốn cập nhật trạng thái bản sao <strong>#{selectedCopy.ma_vach}</strong> thành <strong>{pendingStatus}</strong> không?</p>
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={cancelUpdateStatus}
+                              className="px-4 py-2 bg-gray-100 rounded text-gray-700"
+                            >Hủy</button>
+                            <button
+                              onClick={confirmUpdateStatus}
+                              disabled={statusUpdating}
+                              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded"
+                            >{statusUpdating ? 'Đang cập nhật...' : 'Đồng ý'}</button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                   </div>
                 </div>

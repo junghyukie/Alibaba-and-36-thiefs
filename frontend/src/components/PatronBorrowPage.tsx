@@ -34,11 +34,14 @@ function UserDetailPage({ userId }: { userId: number }) {
     "OK" | "HONG" | "MAT" | ""
   >("");
   const [selectedBorrow, setSelectedBorrow] = useState<Borrow | null>(null);
+  const [openBorrowDialog, setOpenBorrowDialog] = useState(false);
+  const [barcode, setBarcode] = useState("");
+  const [loadingBorrow, setLoadingBorrow] = useState(false);
 
   const authFetch = async (url: string, options: RequestInit = {}) => {
     const token = localStorage.getItem("token");
 
-    const res = await fetch(`${API_URL}/api${url}`, {
+    const res = await fetch(`${API_URL}${url}`, {
       ...options,
       headers: {
         "Content-Type": "application/json",
@@ -73,8 +76,8 @@ function UserDetailPage({ userId }: { userId: number }) {
     const fetchData = async () => {
       try {
         const [borrowRes, fineRes] = await Promise.all([
-          authFetch(`/borrow/user/${userId}`),
-          authFetch(`/fine/user/${userId}/`),
+          authFetch(`/api/borrow/user/${userId}`),
+          authFetch(`/api/fine/user/${userId}/`),
         ]);
 
         setBorrowings(borrowRes);
@@ -88,13 +91,53 @@ function UserDetailPage({ userId }: { userId: number }) {
     fetchData();
   }, [userId]);
 
+  const handleBorrow = async () => {
+    if (!barcode.trim()) {
+      alert("Vui lòng nhập mã vạch");
+      return;
+    }
+
+    try {
+      setLoadingBorrow(true);
+
+      const now = new Date();
+      const ngayMuon = now.toISOString().split("T")[0];
+
+      const ngayHetHan = new Date();
+      ngayHetHan.setMonth(ngayHetHan.getMonth() + 1);
+      const ngayHetHanStr = ngayHetHan.toISOString().split("T")[0];
+
+      const formData = {
+        doc_gia_id: userId,
+        ma_vach: barcode,
+        ngay_muon: ngayMuon,
+        ngay_het_han: ngayHetHanStr,
+      };
+
+      await authFetch(`/staff/service/borrow`, {
+        method: "POST",
+        body: JSON.stringify(formData)
+      });
+
+      // reload danh sách mượn
+      const borrowRes = await authFetch(`/api/borrow/user/${userId}`);
+      setBorrowings(borrowRes);
+
+      setBarcode("");
+      setOpenBorrowDialog(false);
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setLoadingBorrow(false);
+    }
+  };
 
   const handleReturn = async () => {
     if (!selectedBorrow) return;
     
     try {
       await authFetch(
-        `/borrow/${selectedBorrow.id}/return`,
+        `/api/borrow/${selectedBorrow.id}/return`,
         {
           method: "PUT",
           body: JSON.stringify({
@@ -108,7 +151,7 @@ function UserDetailPage({ userId }: { userId: number }) {
       );
     
       const fineRes = await authFetch(
-        `/fine/user/${userId}/`
+        `/api/fine/user/${userId}/`
       );
       setFines(fineRes);
     
@@ -123,7 +166,7 @@ function UserDetailPage({ userId }: { userId: number }) {
     if (!confirm("Xác nhận thu tiền phạt?")) return;
 
     try {
-      await authFetch(`/fine/${fineId}/pay`, {
+      await authFetch(`/api/fine/${fineId}/pay`, {
         method: "PUT",
       });
 
@@ -140,9 +183,15 @@ function UserDetailPage({ userId }: { userId: number }) {
     }
   };
 
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'Chưa trả';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN');
+  };
+
   return (
     <div id="webcrumbs">
-        <Header/>
+      <Header/>
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
@@ -154,8 +203,18 @@ function UserDetailPage({ userId }: { userId: number }) {
             </h2>
           </div>
 
+
+
           <div className="p-6">
             <div className="rounded-lg border border-gray-200 overflow-hidden">
+              <div className="p-4 bg-gray-50 border-b">
+                <Button
+                  className="bg-blue-600 text-white hover:bg-blue-700 border-none"
+                  onClick={() => setOpenBorrowDialog(true)}
+                >
+                  Thêm mượn
+                </Button>
+              </div>
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 hover:bg-gray-50">
@@ -175,8 +234,8 @@ function UserDetailPage({ userId }: { userId: number }) {
                         className="hover:bg-blue-50 transition-colors"
                       >
                         <TableCell className="font-medium">{b.ban_sao_id}</TableCell>
-                        <TableCell>{b.ngay_muon}</TableCell>
-                        <TableCell>{b.ngay_het_han}</TableCell>
+                        <TableCell>{formatDate(b.ngay_muon)}</TableCell>
+                        <TableCell>{formatDate(b.ngay_het_han)}</TableCell>
                         <TableCell>
                           <Badge
                             variant={b.tinh_trang === "CHUA_TRA" ? "destructive" : "secondary"}
@@ -332,6 +391,43 @@ function UserDetailPage({ userId }: { userId: number }) {
               onClick={handleReturn}
             >
               Xác nhận trả
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openBorrowDialog} onOpenChange={setOpenBorrowDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>📖 Thêm mượn sách</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <Label htmlFor="barcode">Mã vạch sách</Label>
+            <input
+              id="barcode"
+              autoFocus
+              value={barcode}
+              onChange={(e) => setBarcode(e.target.value)}
+              className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Quét hoặc nhập mã vạch"
+            />
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setOpenBorrowDialog(false)}
+            >
+              Hủy
+            </Button>
+
+            <Button
+              disabled={loadingBorrow}
+              className="bg-green-600 text-white hover:bg-green-700"
+              onClick={handleBorrow}
+            >
+              {loadingBorrow ? "Đang xử lý..." : "Xác nhận mượn"}
             </Button>
           </DialogFooter>
         </DialogContent>

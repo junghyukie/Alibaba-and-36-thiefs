@@ -92,30 +92,42 @@ export const theInforService = async(id_acc : number) : Promise<any> => {
   }
 }
 
-//Top 3 sách đang được mượn
-export const topBookService = async() : Promise<TopBookResponse> => {
+//Top 10 sách được mượn nhiều nhất
+export const topBookService = async(period?: string) : Promise<TopBookResponse> => {
   try{
-    const results = await topBookModel();
+    const results = await topBookModel(period);
     return {success : true , data : results };
   }catch (err) {
-    console.error("Lỗi SQL theInforService:", err);
+    console.error("Lỗi SQL topBookService:", err);
     return {success : false , data : null };
   }
 }
 
 
-export const extendBookService = async(id_acc : number , id_sach : number)
-: Promise<{success : boolean , message : string}> =>{
-  try{
-      const check = await checkBook(id_acc,id_sach);
-      if(check.success === false){
-        return {success : false , message : "Không thể gia hạn sách đã hết hạn!" }
-      }
-        const result = await extendBookModel(id_acc,id_sach);
-        return {success : result.success , message : result.message};
-  }catch (err) {
+export const extendBookService = async (id_acc: number, id_sach: number): Promise<{ success: boolean, message: string }> => {
+  try {
+    // 1. Log dữ liệu đầu vào
+    console.log(">>> Kiểm tra đầu vào Service:", { id_acc, id_sach });
+
+    const check = await checkBook(id_acc, id_sach);
+    
+    // 2. Log kết quả của hàm checkBook để xem tại sao nó luôn trả về false
+    console.log(">>> Kết quả checkBook:", check);
+
+    if (check.success === false) {
+      return { success: false, message: "Không thể gia hạn sách đã hết hạn!" };
+    }
+
+    const result = await extendBookModel(id_acc, id_sach);
+    
+    // 3. Log kết quả sau khi gọi model gia hạn
+    console.log(">>> Kết quả extendBookModel:", result);
+
+    return { success: result.success, message: result.message };
+
+  } catch (err) {
     console.error("Lỗi SQL extendBookService:", err);
-    return {success : false , message : "Lỗi Server" };
+    return { success: false, message: "Lỗi Server" };
   }
 }
 
