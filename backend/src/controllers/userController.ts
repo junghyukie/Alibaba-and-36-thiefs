@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../types/auth"
+import { FineService } from "../services/fineService";
 import { borrowBookService, deleteBookFromCartService, extendBookService, inforBookinCartService, insertBookService, logService, notificationUserService, theInforService } from "../services/userService";
 //import { promises } from "nodemailer/lib/xoauth2";
 export const insertBookController = async (req: AuthRequest, res: Response): Promise<any> => {
@@ -145,6 +146,17 @@ export const extendBookController = async(req: AuthRequest, res: Response): Prom
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Lỗi server" }); 
+    }
+};
+
+export const getMyFines = async(req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+      const id_acc = req.user?.id_acc;
+      if (!id_acc) return res.status(401).json({ message: "Xin hãy đăng nhập" });
+      const fines = await FineService.getFinesByUserId(id_acc);
+      return res.json(fines);
+    } catch (err: any) {
+      return res.status(500).json({ message: err.message });
     }
 };
 

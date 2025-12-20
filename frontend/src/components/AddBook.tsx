@@ -97,15 +97,15 @@ const AddBookForm: React.FC = () => {
     }
   };
 
-  const formFields = [
-    { label: 'Tên sách', name: 'tieu_de', required: true },
-    { label: 'Tên tác giả', name: 'ten_tg', required: true },
-    { label: 'Tên NXB', name: 'nxb', required: true },
-    { label: 'ISBN', name: 'isbn' },
-    { label: 'Tóm tắt', name: 'tom_tat', textarea: true },
-    { label: 'Năm xuất bản', name: 'nam_xb', type: 'number' },
-    { label: 'Ngôn ngữ', name: 'ngon_ngu' },
-  ];
+  //const formFields = [
+  //  { label: 'Tên sách', name: 'tieu_de', required: true },
+  //  { label: 'Tên tác giả', name: 'ten_tg', required: true },
+  //  { label: 'Tên NXB', name: 'nxb', required: true },
+  //  { label: 'ISBN', name: 'isbn' },
+  //  { label: 'Tóm tắt', name: 'tom_tat', textarea: true },
+  //  { label: 'Năm xuất bản', name: 'nam_xb', type: 'number' },
+  //  { label: 'Ngôn ngữ', name: 'ngon_ngu' },
+  //];
 
   return (
     <>

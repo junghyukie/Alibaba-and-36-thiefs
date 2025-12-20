@@ -18,9 +18,9 @@ export const getBorrowById = async (id: number) : Promise<Borrow | null> => {
   return result.rows[0] || null;
 }
 
-export const getBorrowByUserId = async (userId: number) : Promise<Borrow[]> => {
+export const getActiveBorrowByUserId = async (userId: number) : Promise<Borrow[]> => {
   const result = await pool.query(
-    ` SELECT * FROM phieu_muon WHERE doc_gia_id = $1; `,
+    ` SELECT * FROM phieu_muon WHERE doc_gia_id = $1 AND tinh_trang = 'CHUA_TRA'; `,
     [userId]
   );
   return result.rows;

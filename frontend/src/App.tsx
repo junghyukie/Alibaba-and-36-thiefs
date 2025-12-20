@@ -23,18 +23,20 @@ import ExtendCard from "./components/ExtendCard";
 // import CopyListTest from "./components/test";
 import BookList from "./components/BookList";
 // import DeleteBook from "./components/test";
-import DashBoard from "./components/Dashboard";
+import Dashboard from "./components/Dashboard";
 //import type UpdateReturnDate from "./Components/test";
 // import NotificationListStaff from "./components/NotificationStaff";
 // import NotificationListUser from "./components/NotificationUser";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import PatronBorrowPage from "./components/PatronBorrowPage";
+import FineHistoryUser from "./components/FineHistoryUser";
 
 function App() {
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DashBoard />} />
+        <Route path="/" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/personal-info-insert" element={<PersonalInfoInsert />} />
         <Route path="/update" element={<UpdateReturnDate />} />
@@ -54,7 +56,10 @@ function App() {
         {/* <Route path="/top-book" element={<TopBook />} /> */}
         <Route path="/patronlist" element={<PatronList />} />
         <Route path="/booklist" element={<BookList />} />
-        {/* <Route path="/notice-user" element={<NotificationListUser />} /> */}
+        <Route path="/patron/:userId/borrow" element={<PatronBorrowPage />} />
+        <Route path="/user/fines" element={<FineHistoryUser />} />
+
+        <Route path="/notice-user" element={<NotificationListUser />} />
       </Routes>
     </BrowserRouter>
   );
