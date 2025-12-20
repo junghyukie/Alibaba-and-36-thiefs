@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Home, Bell, BookOpen, LogOut, User } from "lucide-react";
 import { jwtDecode } from 'jwt-decode';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 interface DecodedToken {
   id_acc: number;
   vai_tro: string;
@@ -86,8 +88,8 @@ const Header = () => {
 
     try {
       const endpoint = isStaff 
-        ? 'http://localhost:3001/staff/service/notifications'
-        : 'http://localhost:3001/user/service/notifications';
+        ? `${API_URL}/staff/service/notifications`
+        : `${API_URL}/user/service/notifications`;
 
       const res = await fetch(endpoint, {
         headers: {

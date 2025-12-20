@@ -4,6 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 interface TopBook {
   tieu_de: string;
   tac_gia: string;
@@ -22,8 +24,8 @@ const TopBooks: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const url = period === 'all' 
-        ? 'http://localhost:3001/user/service/top-book'
-        : `http://localhost:3001/user/service/top-book?period=${period}`;
+        ? `${API_URL}/user/service/top-book`
+        : `${API_URL}/user/service/top-book?period=${period}`;
 
       const res = await fetch(url, {
         headers: token ? {
