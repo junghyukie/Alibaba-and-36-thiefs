@@ -3,6 +3,7 @@ import { AuthRequest } from "../types/auth";
 import { activeAccService, addBookService, addTheService, createBorrowService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, notificationStaffService, upgradeTheService } from "../services/staffService";
 import { copiesInfor, copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
 import { theExistingModel } from "../models/CardModel";
+import { markAllNotificationsReadStaff } from "../models/notificationModel";
 
 // Controller lấy danh sách đọc giả quá hạn
 export const lateController = async (
@@ -153,6 +154,8 @@ export const notificationStaffController = async(req: AuthRequest, res: Response
         if (!id_acc) return res.status(401).json({ message: "Xin hãy đăng nhập" });
 
         const result = await notificationStaffService();
+        
+        const mark = await markAllNotificationsReadStaff();
         if (result.success === false) {
             //console.log("Lỗi controller extendBook");
             return res.status(400).json(result);

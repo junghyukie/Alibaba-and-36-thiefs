@@ -27,26 +27,37 @@ export class ReservationService {
     /**
      * Gán bản sao cho người đầu tiên trong queue
      */
-    static async assignBook(sach_id: number, ban_sao_id: number) {
-        const firstUser = await moveNextUser(sach_id, ban_sao_id);
-        if (!firstUser) return null;
+/**
+ * Gán bản sao cho người đầu tiên trong queue
+ */
+static async assignBook(sach_id: number, ban_sao_id: number) {
+    const firstUser = await moveNextUser(sach_id, ban_sao_id);
+    if (!firstUser) return null;
 
-        const resSach = await pool.query(
-            `SELECT tieu_de FROM sach WHERE id = $1`,
-            [sach_id]
-        );
+    // Lấy tên sách + id bản sao được đặt
+    const res = await pool.query(
+        `
+        SELECT s.tieu_de, b.id AS ban_sao_id
+        FROM ban_sao b
+        JOIN sach s ON s.id = b.sach_id
+        WHERE b.id = $1
+        `,
+        [ban_sao_id]
+    );
 
-        const tenSach = resSach.rows[0]?.tieu_de || "sách";
+    const tenSach = res.rows[0]?.tieu_de || "sách";
+    const banSaoId = res.rows[0]?.id || ban_sao_id;
 
-        // Tạo notification
-        await createNotification(
-            firstUser.tai_khoan_id,
-            "DEN_LUOT_DAT_CHO",
-            `Đến lượt bạn mượn sách ${tenSach}. Thời gian giữ 15 phút.`
-        );
+    // Tạo notification
+    await createNotification(
+        firstUser.tai_khoan_id,
+        "DEN_LUOT_DAT_CHO",
+        `Đến lượt bạn mượn sách "${tenSach}" (ID bản sao: ${banSaoId}). Thời gian giữ 15 phút.`
+    );
 
-        return firstUser;
-    }
+    return firstUser;
+}
+
 
     /**
      * Xử lý user quá hạn

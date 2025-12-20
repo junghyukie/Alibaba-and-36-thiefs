@@ -190,7 +190,7 @@ ON CONFLICT DO NOTHING;
 
 
 export const notificationForUser = async(id_acc : number) : Promise<notification[]> =>{
-    const sql = `SELECT tb.noi_dung, tb.ngay_tao
+    const sql = `SELECT tb.noi_dung, tb.ngay_tao, tb.da_doc
                 FROM thong_bao tb
                 WHERE tb.doi_tuong_xem = 'USER'
                 AND tai_khoan_id = $1
@@ -202,7 +202,7 @@ export const notificationForUser = async(id_acc : number) : Promise<notification
 
 
 export const notificationForStaff = async() : Promise<notification[]> =>{
-        const sql = `SELECT tb.noi_dung, tb.ngay_tao
+        const sql = `SELECT tb.noi_dung, tb.ngay_tao, tb.da_doc
                 FROM thong_bao tb
                 WHERE tb.doi_tuong_xem = 'STAFF'
                 ORDER BY tb.ngay_tao DESC;`
@@ -212,6 +212,25 @@ export const notificationForStaff = async() : Promise<notification[]> =>{
 }
 
 
+export const markAllNotificationsRead = async (id_acc: number) => {
+    const sql = `
+        UPDATE thong_bao
+        SET da_doc = TRUE
+        WHERE tai_khoan_id = $1
+        AND da_doc = FALSE;
+    `;
+    await pool.query(sql, [id_acc]);
+};
+
+export const markAllNotificationsReadStaff = async () => {
+    const sql = `
+        UPDATE thong_bao
+        SET da_doc = TRUE
+        WHERE doi_tuong_xem = 'STAFF'
+          AND da_doc = FALSE;
+    `;
+    await pool.query(sql, []);
+};
 
 
 

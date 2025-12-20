@@ -11,6 +11,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
     const result = await loginService(email, password);
+    console.log(req.body);
     res.status(result.status).json(result);
   } catch (error) {
     console.error("Login error:", error);

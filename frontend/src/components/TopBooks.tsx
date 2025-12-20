@@ -24,8 +24,8 @@ const TopBooks: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const url = period === 'all' 
-        ? `${API_URL}/user/service/top-book`
-        : `${API_URL}/user/service/top-book?period=${period}`;
+        ? `${API_URL}/api/book/top-book`
+        : `${API_URL}/api/book/top-book?period=${period}`;
 
       const res = await fetch(url, {
         headers: token ? {
