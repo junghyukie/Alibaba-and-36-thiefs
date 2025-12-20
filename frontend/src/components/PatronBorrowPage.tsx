@@ -37,6 +37,7 @@ function UserDetailPage({ userId }: { userId: number }) {
   const [openBorrowDialog, setOpenBorrowDialog] = useState(false);
   const [barcode, setBarcode] = useState("");
   const [loadingBorrow, setLoadingBorrow] = useState(false);
+  const [copyBarcodes, setCopyBarcodes] = useState<Record<number, string>>({});
 
   const authFetch = async (url: string, options: RequestInit = {}) => {
     const token = localStorage.getItem("token");
@@ -70,6 +71,19 @@ function UserDetailPage({ userId }: { userId: number }) {
     return res.json();
   };
 
+  const fetchBarcode = async (copyId: number) => {
+    try {
+      const data = await authFetch(`/api/copy/${copyId}`);
+
+      setCopyBarcodes(prev => ({
+        ...prev,
+        [copyId]: data.ma_vach
+      }));
+    } catch (err) {
+      console.error(`Lỗi lấy mã vạch bản sao ${copyId}:`, err);
+    }
+  };
+
   useEffect(() => {
     if (!userId) return;
 
@@ -90,6 +104,14 @@ function UserDetailPage({ userId }: { userId: number }) {
 
     fetchData();
   }, [userId]);
+
+  useEffect(() => {
+    borrowings.forEach(b => {
+      if (b.ban_sao_id && !copyBarcodes[b.ban_sao_id]) {
+        fetchBarcode(b.ban_sao_id);
+      }
+    });
+  }, [borrowings]);
 
   const handleBorrow = async () => {
     if (!barcode.trim()) {
@@ -218,7 +240,7 @@ function UserDetailPage({ userId }: { userId: number }) {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 hover:bg-gray-50">
-                    <TableHead className="font-bold text-gray-700">Mã bản sao</TableHead>
+                    <TableHead className="font-bold text-gray-700">Mã vạch</TableHead>
                     <TableHead className="font-bold text-gray-700">Ngày mượn</TableHead>
                     <TableHead className="font-bold text-gray-700">Hạn trả</TableHead>
                     <TableHead className="font-bold text-gray-700">Trạng thái</TableHead>
@@ -233,7 +255,13 @@ function UserDetailPage({ userId }: { userId: number }) {
                         key={b.id}
                         className="hover:bg-blue-50 transition-colors"
                       >
-                        <TableCell className="font-medium">{b.ban_sao_id}</TableCell>
+                        <TableCell>
+                          {copyBarcodes[b.ban_sao_id] ? (
+                            <span className="font-mono">{copyBarcodes[b.ban_sao_id]}</span>
+                          ) : (
+                            <span className="text-gray-400 italic">Đang tải...</span>
+                          )}
+                        </TableCell>
                         <TableCell>{formatDate(b.ngay_muon)}</TableCell>
                         <TableCell>{formatDate(b.ngay_het_han)}</TableCell>
                         <TableCell>
