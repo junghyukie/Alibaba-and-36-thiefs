@@ -19,7 +19,7 @@ import BorrowHistoryUser from "./components/BorrowHistoryUser";
 import UpdateReturnDate from "./components/UpdateReturnDate";
 import PasswordChange from "./components/PasswordChange";
 import ExtendCard from "./components/ExtendCard";
-// import TopBook from "./components/test";
+import TopBooks from "./components/TopBooks";
 // import CopyListTest from "./components/test";
 import BookList from "./components/BookList";
 // import DeleteBook from "./components/test";
@@ -53,7 +53,7 @@ function App() {
         <Route path="/addbook" element={<AddBookForm />} />
         {/* <Route path="/notice-staff" element={<NotificationListStaff />} /> */}
         {/* <Route path="/copies" element={<CopyListTest />} /> */}
-        {/* <Route path="/top-book" element={<TopBook />} /> */}
+        <Route path="/top-books" element={<TopBooks />} />
         <Route path="/patronlist" element={<PatronList />} />
         <Route path="/booklist" element={<BookList />} />
         <Route path="/patron/:userId/borrow" element={<PatronBorrowPage />} />

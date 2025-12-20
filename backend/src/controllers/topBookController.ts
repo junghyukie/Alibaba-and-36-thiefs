@@ -7,7 +7,8 @@ export const topBookController = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const result: TopBookResponse = await topBookService();
+    const period = req.query.period as string | undefined;
+    const result: TopBookResponse = await topBookService(period);
 
     if (!result.success) {
       console.log("Lỗi controller");
