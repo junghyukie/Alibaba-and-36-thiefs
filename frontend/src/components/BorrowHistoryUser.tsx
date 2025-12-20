@@ -69,7 +69,7 @@ const BorrowHistoryUser: React.FC = () => {
     record.tieu_de.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getStatusBadge = (ngay_het_han: string, ngay_tra: string | null) => {
+  const getStatusBadge = (ngay_het_han: string | null, ngay_tra: string | null) => {
     if (ngay_tra) {
       return (
         <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
@@ -77,7 +77,15 @@ const BorrowHistoryUser: React.FC = () => {
         </span>
       );
     }
-    
+
+    if (!ngay_het_han) {
+      return (
+        <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
+          Không xác định
+        </span>
+      );
+    }
+      
     const today = new Date();
     const dueDate = new Date(ngay_het_han);
     
