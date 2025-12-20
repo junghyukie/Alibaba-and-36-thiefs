@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../types/auth"
 import { FineService } from "../services/fineService";
-import { borrowBookService, deleteBookFromCartService, extendBookService, inforBookinCartService, insertBookService, logService, notificationUserService, theInforService } from "../services/userService";
+import { borrowBookService, deleteBookFromCartService, extendBookService, inforBookinCartService, insertBookService, logService, notificationUserService, theInforService, notificationUserMarkRead} from "../services/userService";
 //import { promises } from "nodemailer/lib/xoauth2";
 export const insertBookController = async (req: AuthRequest, res: Response): Promise<any> => {
     try {
@@ -175,6 +175,21 @@ export const notificationUserController = async(req: AuthRequest, res: Response)
         } else {
             return res.status(200).json(result);
         }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Lỗi server" }); 
+    }
+};
+
+export const notificationUserMarkReadController = async(req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+        const id_acc = req.user?.id_acc;
+        if (!id_acc) return res.status(401).json({ message: "Xin hãy đăng nhập" });
+
+        const { ids, markAll } = req.body;
+        const result = await notificationUserMarkRead(id_acc, ids, !!markAll);
+        if (!result.success) return res.status(500).json({ success: false });
+        return res.status(200).json({ success: true, updated: result.updated });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Lỗi server" }); 

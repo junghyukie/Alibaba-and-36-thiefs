@@ -190,7 +190,7 @@ ON CONFLICT DO NOTHING;
 
 
 export const notificationForUser = async(id_acc : number) : Promise<notification[]> =>{
-    const sql = `SELECT tb.noi_dung, tb.ngay_tao
+    const sql = `SELECT tb.id, tb.noi_dung, tb.ngay_tao, COALESCE(tb.da_doc, false) AS da_doc
                 FROM thong_bao tb
                 WHERE tb.doi_tuong_xem = 'USER'
                 AND tai_khoan_id = $1
@@ -202,13 +202,47 @@ export const notificationForUser = async(id_acc : number) : Promise<notification
 
 
 export const notificationForStaff = async() : Promise<notification[]> =>{
-        const sql = `SELECT tb.noi_dung, tb.ngay_tao
+        const sql = `SELECT tb.id, tb.noi_dung, tb.ngay_tao, COALESCE(tb.da_doc, false) AS da_doc
                 FROM thong_bao tb
                 WHERE tb.doi_tuong_xem = 'STAFF'
                 ORDER BY tb.ngay_tao DESC;`
     
     const results = await pool.query(sql,[]);
     return results.rows as notification[];
+}
+
+export const markNotificationsReadForUser = async (id_acc: number, ids?: number[] , markAll: boolean = false) : Promise<number> => {
+  if (markAll) {
+    const res = await pool.query(
+      `UPDATE thong_bao SET da_doc = true WHERE tai_khoan_id = $1 AND doi_tuong_xem = 'USER' RETURNING id`,
+      [id_acc]
+    );
+    return res.rowCount || 0;
+  }
+
+  if (!ids || ids.length === 0) return 0;
+  const res = await pool.query(
+    `UPDATE thong_bao SET da_doc = true WHERE id = ANY($1::int[]) AND tai_khoan_id = $2 RETURNING id`,
+    [ids, id_acc]
+  );
+  return res.rowCount || 0;
+}
+
+export const markNotificationsReadForStaff = async (ids?: number[] , markAll: boolean = false) : Promise<number> => {
+  if (markAll) {
+    const res = await pool.query(
+      `UPDATE thong_bao SET da_doc = true WHERE doi_tuong_xem = 'STAFF' RETURNING id`,
+      []
+    );
+    return res.rowCount || 0;
+  }
+
+  if (!ids || ids.length === 0) return 0;
+  const res = await pool.query(
+    `UPDATE thong_bao SET da_doc = true WHERE id = ANY($1::int[]) AND doi_tuong_xem = 'STAFF' RETURNING id`,
+    [ids]
+  );
+  return res.rowCount || 0;
 }
 
 

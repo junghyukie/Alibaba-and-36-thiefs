@@ -11,6 +11,7 @@ import { topBookModel } from "../models/topBookModel";
 import { checkBook, extendBookModel } from "../models/extendBookModel";
 import { notificationResultService } from "../types/notification";
 import { notificationForUser } from "../models/notificationModel";
+import { markNotificationsReadForUser } from "../models/notificationModel";
 
 
 export const insertBookService = async (id_acc: number, data: insertBook): Promise<any> => {
@@ -139,6 +140,16 @@ export const notificationUserService = async(id_acc : number)
     }catch (err) {
     console.error("Lỗi SQL notification:", err);
     return {success : false , message : "Lỗi Server" };
+  }
+}
+
+export const notificationUserMarkRead = async (id_acc: number, ids?: number[], markAll: boolean = false): Promise<{ success: boolean, updated: number }> => {
+  try {
+    const updated = await markNotificationsReadForUser(id_acc, ids, markAll);
+    return { success: true, updated };
+  } catch (err) {
+    console.error('Error marking notifications read for user:', err);
+    return { success: false, updated: 0 };
   }
 }
 

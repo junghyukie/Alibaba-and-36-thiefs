@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { AuthRequest } from "../types/auth";
-import { activeAccService, addBookService, addTheService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, notificationStaffService, upgradeTheService } from "../services/staffService";
+import { activeAccService, addBookService, addTheService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, notificationStaffService, upgradeTheService, notificationStaffMarkRead } from "../services/staffService";
 import { copiesInfor, copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
 import { theExistingModel } from "../models/CardModel";
 
@@ -159,6 +159,18 @@ export const notificationStaffController = async(req: AuthRequest, res: Response
         } else {
             return res.status(200).json(result);
         }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Lỗi server" }); 
+    }
+};
+
+export const notificationStaffMarkReadController = async(req: AuthRequest, res: Response): Promise<Response> => {
+    try {
+        const { ids, markAll } = req.body;
+        const result = await notificationStaffMarkRead(ids, !!markAll);
+        if (!result.success) return res.status(500).json({ success: false });
+        return res.status(200).json({ success: true, updated: result.updated });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Lỗi server" }); 

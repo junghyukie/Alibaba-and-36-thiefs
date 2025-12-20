@@ -15,6 +15,7 @@ import { logServiceResult } from "../types/userService";
 import { listCopies, totalRecordCopies } from "../models/copiesInforModel";
 import { notificationForStaff } from "../models/notificationModel";
 import { notificationResultService } from "../types/notification";
+import { markNotificationsReadForStaff } from "../models/notificationModel";
 
 // Đọc giả quá hạn
 export const lateService = async (): Promise<LateServiceResult> => {
@@ -209,5 +210,15 @@ export const notificationStaffService = async()
     }catch (err) {
     console.error("Lỗi SQL notification:", err);
     return {success : false , message : "Lỗi Server" };
+  }
+}
+
+export const notificationStaffMarkRead = async (ids?: number[], markAll: boolean = false): Promise<{ success: boolean, updated: number }> => {
+  try {
+    const updated = await markNotificationsReadForStaff(ids, markAll);
+    return { success: true, updated };
+  } catch (err) {
+    console.error('Error marking notifications read for staff:', err);
+    return { success: false, updated: 0 };
   }
 }

@@ -8,6 +8,7 @@ import { borrowBookController,
          theInforController,
          extendBookController,
          notificationUserController,
+         notificationUserMarkReadController,
          getMyFines 
 } from "../controllers/userController";
 import { reserveController } from "../controllers/reserveBookController";
@@ -30,4 +31,5 @@ router.get("/top-book", topBookController);
 router.get("/fines", getMyFines);
 
 router.get("/notifications",notificationUserController)
+router.post("/notifications/mark-read", notificationUserMarkReadController);
 export default router;
