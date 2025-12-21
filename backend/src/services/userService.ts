@@ -16,7 +16,7 @@ import { notificationForUser } from "../models/notificationModel";
 export const insertBookService = async (id_acc: number, data: insertBook): Promise<any> => {
   try {
     const cartCount = await checkCart(id_acc);
-    if (cartCount >= 3) return { success: false, message: "Giỏ hàng đã đầy" };
+    if (cartCount >= 10) return { success: false, message: "Giỏ hàng đã đầy" };
 
     const existing = await checkBook_Cart(id_acc, data);
     if (existing > 0) return { success: false, message: "Sách đã tồn tại trong giỏ" };
