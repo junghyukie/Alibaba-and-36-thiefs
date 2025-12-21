@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";import { Badge } from '@/components/ui/badge';import { Home, Bell, BookOpen, LogOut, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Home, Bell, BookOpen, LogOut, User } from "lucide-react";
 import { jwtDecode } from 'jwt-decode';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -53,7 +54,7 @@ const Header = () => {
   const handleHome = () => {
     navigate('/');
   };
-
+/*
   const markAllNotificationsRead = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -99,7 +100,7 @@ const Header = () => {
       alert('Lỗi khi đánh dấu thông báo đã đọc');
     }
   };
-
+*/
   const handleAccount = () => {
     navigate('/accinfo');
     setIsDropdownOpen(false);
