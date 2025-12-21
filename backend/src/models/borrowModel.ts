@@ -1,5 +1,6 @@
 import pool from "../config/db";
 import { Borrow } from "../types/borrow";
+import { borrowForm } from "../types/staffService";
 
 export const getBorrowByNotReturnedCopy = async (ban_sao_id: number) : Promise<Borrow | null> => {
   const result = await pool.query(
@@ -37,6 +38,34 @@ export const returnUpdate = async (
       WHERE id = $3
       RETURNING * `,
     [ngay_tra, tinh_trang, id]
+  );
+  return result.rows[0] || null;
+}
+
+export const insertBorrow = async (
+  nhan_vien_id: number, 
+  ban_sao_id: number, 
+  data: borrowForm
+) : Promise<Borrow | null> => {
+  const result = await pool.query(
+    `
+    INSERT INTO phieu_muon (
+      doc_gia_id,
+      nhan_vien_id,
+      ban_sao_id,
+      ngay_muon,
+      ngay_het_han
+    )
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;
+    `,
+    [
+      data.doc_gia_id,
+      nhan_vien_id,
+      ban_sao_id,
+      data.ngay_muon,
+      data.ngay_het_han
+    ]
   );
   return result.rows[0] || null;
 }

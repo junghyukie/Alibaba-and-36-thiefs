@@ -9,10 +9,12 @@ const pool = new Pool({
     database: process.env.PG_DATABASE,
     password: process.env.PG_PASSWORD,
     port: Number(process.env.PG_PORT),
-    // Chỉ bật SSL khi NODE_ENV là production
-    ssl: process.env.NODE_ENV === 'production' ? {
+    // Bật SSL cho Render PostgreSQL
+    ssl: process.env.PG_HOST?.includes('render.com') ? {
         rejectUnauthorized: false,
-    } : false
+    } : (process.env.NODE_ENV === 'production' ? {
+        rejectUnauthorized: false,
+    } : false)
 });
 // console.log("DB_PASSWORD =", process.env.DB_PASSWORD);
 

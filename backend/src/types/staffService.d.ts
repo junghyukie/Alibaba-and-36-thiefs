@@ -58,3 +58,10 @@ export interface copiesInforService {
   totalPages?: number;
   totalRecords?: number;
 }
+
+export interface borrowForm {
+  doc_gia_id: number;
+  ma_vach: string;
+  ngay_muon: string;
+  ngay_het_han: string;
+}

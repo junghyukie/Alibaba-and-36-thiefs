@@ -93,13 +93,13 @@ export const theInforService = async(id_acc : number) : Promise<any> => {
   }
 }
 
-//Top 3 sách đang được mượn
-export const topBookService = async() : Promise<TopBookResponse> => {
+//Top 10 sách được mượn nhiều nhất
+export const topBookService = async(period?: string) : Promise<TopBookResponse> => {
   try{
-    const results = await topBookModel();
+    const results = await topBookModel(period);
     return {success : true , data : results };
   }catch (err) {
-    console.error("Lỗi SQL theInforService:", err);
+    console.error("Lỗi SQL topBookService:", err);
     return {success : false , data : null };
   }
 }

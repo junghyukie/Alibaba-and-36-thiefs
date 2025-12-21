@@ -4,6 +4,8 @@ import Header from './Header';
 import { IonIcon } from '@ionic/react';  // nếu bạn cài @ionic/react
 import { lockClosed } from 'ionicons/icons';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const IoniconsScripts = () => (
   <>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -17,15 +19,58 @@ const PasswordChange: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const handleSave = () => {
-    if (!form.current) { alert('Vui lòng nhập mật khẩu hiện tại'); return; }
-    if (!form.password) { alert('Vui lòng nhập mật khẩu mới'); return; }
-    if (form.password !== form.confirm) { alert('Mật khẩu mới không khớp'); return; }
-    // TODO: call API to change password---
-    alert('Mật khẩu đã được thay đổi thành công');
-    navigate('/accinfo');
-  };
+const handleSave = async () => {
+  setError(null);
+  setSuccess(null);
+
+  if (!form.current) {
+    setError('Vui lòng nhập mật khẩu hiện tại');
+    return;
+  }
+  if (!form.password) {
+    setError('Vui lòng nhập mật khẩu mới');
+    return;
+  }
+  if (form.password !== form.confirm) {
+    setError('Mật khẩu mới không khớp');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/user/service/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        mat_khau_cu: form.current,
+        mat_khau_moi: form.password,
+        xac_thuc_mat_khau: form.confirm,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      setError(data.message); // 👈 lỗi từ backend
+      return;
+    }
+
+    setSuccess(data.message || "Đổi mật khẩu thành công");
+
+    setTimeout(() => {
+      navigate('/accinfo');
+    }, 1500);
+
+  } catch (err) {
+    console.error(err);
+    setError("Không thể kết nối server");
+  }
+};
 
   return (
     <>
@@ -58,6 +103,31 @@ const PasswordChange: React.FC = () => {
           </div>
 
           <div className="scroll-area">
+            {error && (
+              <div style={{
+                background: '#fee2e2',
+                color: '#991b1b',
+                padding: '10px 14px',
+                borderRadius: '10px',
+                marginBottom: '12px',
+                fontWeight: 500
+              }}>
+                {error}
+              </div>
+            )}
+
+            {success && (
+              <div style={{
+                background: '#dcfce7',
+                color: '#166534',
+                padding: '10px 14px',
+                borderRadius: '10px',
+                marginBottom: '12px',
+                fontWeight: 500
+              }}>
+                {success}
+              </div>
+            )}
             <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
               <div className="input-box">
                 <span className="icon"><IonIcon icon={lockClosed} /></span>

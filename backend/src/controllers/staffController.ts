@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { AuthRequest } from "../types/auth";
-import { activeAccService, addBookService, addTheService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, notificationStaffService, upgradeTheService, notificationStaffMarkRead } from "../services/staffService";
+import { activeAccService, addBookService, addTheService, createBorrowService, extendTheService, lateService, listAccountService, listCopiesService, lockAccService, logServiceforStaff, notificationStaffService, upgradeTheService, notificationStaffMarkRead } from "../services/staffService";
 import { copiesInfor, copiesInforService, LateServiceResult, ListAccountResult } from "../types/staffService";
 import { theExistingModel } from "../models/CardModel";
 
@@ -175,4 +175,24 @@ export const notificationStaffMarkReadController = async(req: AuthRequest, res: 
         console.error(err);
         return res.status(500).json({ message: "Lỗi server" }); 
     }
+};
+
+export const staffBorrowController = async(req: AuthRequest, res: Response): Promise<Response> => {
+  try {
+    const nhanVienId = req.user?.id_acc;
+    if (!nhanVienId) return res.status(401).json({ message: "Xin hãy đăng nhập" });
+
+    const result = await createBorrowService(nhanVienId, req.body);
+    if (result.success === false){
+      return res.status(400).json(result);
+    }
+    else {
+      return res.status(200).json(result);
+    }
+  } catch (err: any) {
+    return res.status(400).json({
+      success: false,
+      message: err.message
+    });
+  }
 };
