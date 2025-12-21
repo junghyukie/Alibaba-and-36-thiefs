@@ -172,14 +172,19 @@ import { LoginResult, RegisterData } from "../types/auth";
 import jwt from "jsonwebtoken";
 
 export const loginService = async (email: string, password: string): Promise<LoginResult> => {
+  console.log(email);
+  console.log(password);
   if (!email || !password) {
     return { status: 400, message: "Thiếu thông tin" };
   }
 
+   
   const accData = await Account(email);
+   console.log(accData.length);
   if (accData.length === 0) {
     return { status: 400, message: "Sai tài khoản hoặc mật khẩu" };
   }
+
 
   const acc = accData[0];
 

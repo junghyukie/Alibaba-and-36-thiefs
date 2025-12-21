@@ -48,12 +48,8 @@ const TopBooks: React.FC = () => {
       const baseEndpoint = `${API_URL}/api/auth/top-book`;
       
       const url = period === 'all' 
-        ? baseEndpoint
-        : `${baseEndpoint}?period=${period}`;
-
-      console.log('Fetching from URL:', url);
-      console.log('User role:', userRole);
-      console.log('Token exists:', !!token);
+        ? `${API_URL}/api/book/top-book`
+        : `${API_URL}/api/book/top-book?period=${period}`;
 
       const res = await fetch(url, {
         headers: {

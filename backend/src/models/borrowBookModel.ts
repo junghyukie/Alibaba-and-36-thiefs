@@ -37,7 +37,8 @@ export const checkSoLuongDaMuon = async (id_acc : number) : Promise<any> => {
     const sql =
     `SELECT * 
     FROM phieu_muon
-    Where doc_gia_id = $1;
+    Where doc_gia_id = $1
+    AND tinh_trang = 'CHUA_TRA';
     `
     const result = await pool.query(sql, [id_acc]);
     return result.rowCount;

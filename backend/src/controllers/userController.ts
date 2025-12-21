@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../types/auth"
 import { FineService } from "../services/fineService";
-import { borrowBookService, deleteBookFromCartService, extendBookService, inforBookinCartService, insertBookService, logService, notificationUserService, theInforService, notificationUserMarkRead} from "../services/userService";
+import { borrowBookService, deleteBookFromCartService, extendBookService, inforBookinCartService, insertBookService, logService, notificationUserMarkRead, notificationUserService, theInforService } from "../services/userService";
+import { markAllNotificationsRead } from "../models/notificationModel";
 //import { promises } from "nodemailer/lib/xoauth2";
 export const insertBookController = async (req: AuthRequest, res: Response): Promise<any> => {
     try {
@@ -169,12 +170,14 @@ export const notificationUserController = async(req: AuthRequest, res: Response)
         if (!id_acc) return res.status(401).json({ message: "Xin hãy đăng nhập" });
 
         const result = await notificationUserService(id_acc);
+        const mark = await markAllNotificationsRead(id_acc);
         if (result.success === false) {
             //console.log("Lỗi controller extendBook");
             return res.status(400).json(result);
         } else {
             return res.status(200).json(result);
         }
+        
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Lỗi server" }); 

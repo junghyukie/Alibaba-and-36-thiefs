@@ -124,20 +124,23 @@ export const createNotification = async (
 
 //bổ sung : nếu ko ai lấy sách chuyển từ reserved sang available
 //nếu ko ai đặt chỗ chuyển từ maintenance sang available
-export const convertReservedtoAvailable = async() : Promise<any> =>{
+export const convertReservedtoAvailable = async() : Promise<number> =>{
     const sql = 
     `
-    UPDATE ban_sao
-    SET trang_thai = 'AVAILABLE'
-    WHERE trang_thai = 'RESERVED'
-    AND sach_id not in (
-        SELECT dc.sach_id FROM dat_cho dc
-    
-    )
-    RETURNING *;
+  UPDATE ban_sao b
+SET trang_thai = 'AVAILABLE'
+WHERE b.trang_thai = 'RESERVED'
+AND NOT EXISTS (
+    SELECT 1
+    FROM dat_cho dc
+    WHERE dc.ban_sao_id = b.id
+      AND dc.trang_thai = 'DEN_LUOT'
+)
+RETURNING *;
+
     `
     const results = await pool.query(sql);
-    return results.rowCount;
+    return results.rowCount ?? 0;
 }
 
 export const convertMaintenancetoAvailable = async(): Promise<number> => {

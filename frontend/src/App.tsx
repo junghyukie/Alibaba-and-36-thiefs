@@ -25,7 +25,7 @@ import BookList from "./components/BookList";
 // import DeleteBook from "./components/test";
 import Dashboard from "./components/Dashboard";
 //import type UpdateReturnDate from "./Components/test";
-// import NotificationListStaff from "./components/NotificationStaff";
+import NotificationListStaff from "./components/NotificationStaff";
 // import NotificationListUser from "./components/NotificationUser";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import PatronBorrowPage from "./components/PatronBorrowPage";
@@ -51,7 +51,7 @@ function App() {
         <Route path="/history-user" element={<BorrowHistoryUser />} />
         <Route path="/librarycard" element={<LibraryCard />} />
         <Route path="/addbook" element={<AddBookForm />} />
-        {/* <Route path="/notice-staff" element={<NotificationListStaff />} /> */}
+        <Route path="/notice-staff" element={<NotificationListStaff />} />
         {/* <Route path="/copies" element={<CopyListTest />} /> */}
         <Route path="/top-books" element={<TopBooks />} />
         <Route path="/patronlist" element={<PatronList />} />

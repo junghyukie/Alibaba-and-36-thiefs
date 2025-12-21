@@ -12,7 +12,7 @@ import { borrowBookController,
          getMyFines 
 } from "../controllers/userController";
 import { reserveController } from "../controllers/reserveBookController";
-import { topBookController } from "../controllers/topBookController";
+// import { topBookController } from "../controllers/topBookController";
 import { changePassWordController } from "../controllers/authController";
 const router = Router();
 router.use(verifyToken);
@@ -27,7 +27,7 @@ router.post("/extend-book", extendBookController);
 
 router.delete("/delete-book/:id_sach", deleteBookFromCartController);
 router.get("/the-infor", theInforController);
-router.get("/top-book", topBookController);
+
 router.get("/fines", getMyFines);
 
 router.get("/notifications",notificationUserController)
