@@ -42,10 +42,10 @@ const TopBooks: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem('token');
+      //const token = localStorage.getItem('token');
       
       // Sử dụng endpoint công khai (không cần phân quyền)
-      const baseEndpoint = `${API_URL}/api/auth/top-book`;
+      //const baseEndpoint = `${API_URL}/api/auth/top-book`;
       
       const url = period === 'all' 
         ? `${API_URL}/api/book/top-book`
