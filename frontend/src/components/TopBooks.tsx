@@ -3,6 +3,7 @@ import Header from './Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { jwtDecode } from 'jwt-decode';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,51 +13,79 @@ interface TopBook {
   so_luot_dang_muon: number;
 }
 
+interface DecodedToken {
+  id_acc: number;
+  vai_tro: string;
+}
+
 const TopBooks: React.FC = () => {
   const [topBooks, setTopBooks] = useState<TopBook[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPeriod, setCurrentPeriod] = useState<string>('all');
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode<DecodedToken>(token);
+        setUserRole(decodedToken.vai_tro);
+      } catch (error) {
+        console.error("Lỗi giải mã token:", error);
+        setUserRole(null);
+      }
+    }
+  }, []);
 
   const fetchTopBooks = async (period: string = 'all') => {
     setLoading(true);
     setError(null);
     try {
       const token = localStorage.getItem('token');
+      
+      // Sử dụng endpoint công khai (không cần phân quyền)
+      const baseEndpoint = `${API_URL}/api/auth/top-book`;
+      
       const url = period === 'all' 
-        ? `${API_URL}/user/service/top-book`
-        : `${API_URL}/user/service/top-book?period=${period}`;
+        ? baseEndpoint
+        : `${baseEndpoint}?period=${period}`;
+
+      console.log('Fetching from URL:', url);
+      console.log('User role:', userRole);
+      console.log('Token exists:', !!token);
 
       const res = await fetch(url, {
-        headers: token ? {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        } : {
+        headers: {
           'Content-Type': 'application/json',
         },
       });
 
+      console.log('Response status:', res.status);
       const data = await res.json();
-      
-      console.log('Top books response:', data);
+      console.log('Response data:', data);
       
       if (data.success && data.data) {
         setTopBooks(data.data);
         setCurrentPeriod(period);
       } else {
-        setError(data.message || 'Không thể tải danh sách sách');
+        const errorMsg = data.message || 'Không thể tải danh sách sách';
+        console.error('Error from API:', errorMsg);
+        setError(errorMsg);
       }
     } catch (err) {
       console.error('Error fetching top books:', err);
-      setError('Lỗi kết nối đến server');
+      setError('Lỗi kết nối đến server: ' + (err instanceof Error ? err.message : 'Unknown error'));
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchTopBooks('all');
-  }, []);
+    if (userRole !== null) {
+      fetchTopBooks('all');
+    }
+  }, [userRole]);
 
   const getPeriodTitle = () => {
     switch (currentPeriod) {

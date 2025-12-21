@@ -177,11 +177,12 @@ const Header = () => {
                 <Button onClick={() => navigate('/booklist')} className="bg-blue-600 text-white hover:bg-blue-700 border-none">
                   Quản lý sách
                 </Button>
-                <Button onClick={() => navigate('/top-books')} className="bg-purple-600 text-white hover:bg-purple-700 border-none">
-                  📊 Leaderboard
-                </Button>
               </>
             )}
+            {/* Leaderboard button - hiện cho tất cả mọi người */}
+            <Button onClick={() => navigate('/top-books')} className="bg-purple-600 text-white hover:bg-purple-700 border-none">
+              📊 Leaderboard
+            </Button>
           </div>
 
           {/* Logo */}

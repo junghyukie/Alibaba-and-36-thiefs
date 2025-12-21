@@ -8,6 +8,7 @@ import {
 } from "../controllers/authController";
 import { updateUserController } from "../controllers/authController";
 import { verifyToken } from "../middleware/authMiddleware";
+import { topBookController } from "../controllers/topBookController";
 const router = Router();
 
 // Đăng nhập
@@ -25,5 +26,9 @@ router.post("/reset-password", resetPassword);
 // Lấy thông tin người dùng
 router.get("/user-info", verifyToken, getUserInfoController);
 
-router.post("/update-user", verifyToken, updateUserController); 
+router.post("/update-user", verifyToken, updateUserController);
+
+// Top books - Public endpoint (không cần đăng nhập)
+router.get("/top-book", topBookController);
+
 export default router;
