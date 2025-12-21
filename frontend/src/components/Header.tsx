@@ -19,12 +19,6 @@ const Header = () => {
   const [notifications, setNotifications] = useState<Array<{noi_dung: string; ngay_tao: string}>>([]);
   const [notificationCount, setNotificationCount] = useState(0);
 
-  // Notifications
-  const [notifications, setNotifications] = useState<{ id: number; noi_dung: string; ngay_tao: string; da_doc?: boolean }[]>([]);
-  const [unreadCount, setUnreadCount] = useState<number>(0);
-  const [notifLoading, setNotifLoading] = useState(false);
-  const [isNotifOpen, setIsNotifOpen] = useState(false);
-
   // State để lưu vai trò đã được giải mã
   const [userRole, setUserRole] = useState<string | null>(null);
 
@@ -58,28 +52,6 @@ const Header = () => {
 
   const handleHome = () => {
     navigate('/');
-  };
-
-  // Notifications API
-  const fetchNotifications = async () => {
-    setNotifLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/service/notifications`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setNotifications(data.data || []);
-        const unread = (data.data || []).filter((n: any) => !n.da_doc).length;
-        setUnreadCount(unread);
-      }
-    } catch (err) {
-      console.error('Error fetching notifications:', err);
-    } finally {
-      setNotifLoading(false);
-    }
   };
 
   const markAllNotificationsRead = async () => {
