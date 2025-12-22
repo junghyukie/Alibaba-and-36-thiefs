@@ -3,6 +3,9 @@ import { BookService } from "../services/bookService";
 import { AppError } from "../utils/appError";
 
 export class BookController {
+  static getBookById(arg0: string, getBookById: any) {
+      throw new Error("Method not implemented.");
+  }
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const { search, ngon_ngu, the_loai, page = "1", limit = "10" } = req.query;

@@ -3,7 +3,6 @@ import Header from './Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { jwtDecode } from 'jwt-decode';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,30 +12,11 @@ interface TopBook {
   so_luot_dang_muon: number;
 }
 
-interface DecodedToken {
-  id_acc: number;
-  vai_tro: string;
-}
-
 const TopBooks: React.FC = () => {
   const [topBooks, setTopBooks] = useState<TopBook[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPeriod, setCurrentPeriod] = useState<string>('all');
-  const [userRole, setUserRole] = useState<string | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decodedToken = jwtDecode<DecodedToken>(token);
-        setUserRole(decodedToken.vai_tro);
-      } catch (error) {
-        console.error("Lỗi giải mã token:", error);
-        setUserRole(null);
-      }
-    }
-  }, []);
 
   const fetchTopBooks = async (period: string = 'all') => {
     setLoading(true);
@@ -78,10 +58,8 @@ const TopBooks: React.FC = () => {
   };
 
   useEffect(() => {
-    if (userRole !== null) {
-      fetchTopBooks('all');
-    }
-  }, [userRole]);
+    fetchTopBooks('all');
+  }, []);
 
   const getPeriodTitle = () => {
     switch (currentPeriod) {
