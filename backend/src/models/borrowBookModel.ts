@@ -57,3 +57,15 @@ export const checkBorrowedBook = async (id_acc: number, data: borrowBook): Promi
   const result = await pool.query(sql, [id_acc, data.id_sach]);
   return result.rowCount;
 };
+
+
+//Số lượng mượn tối đa
+export const MaxBorrowedBook = async (id_acc: number): Promise<number> => {
+  const sql = `
+    SELECT gioi_han_muon
+    FROM tai_khoan
+    WHERE id = $1;
+  `;
+  const result = await pool.query(sql, [id_acc]);
+  return result.rows[0];
+};

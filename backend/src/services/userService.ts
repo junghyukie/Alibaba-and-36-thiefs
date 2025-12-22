@@ -1,7 +1,7 @@
 
 import { insertBook, borrowBook, logServiceResult } from "../types/userService";
 import { checkBook_Cart, checkCart, inforBookinCart, insertBookModel, deleteBookFromCartModel } from "../models/insertBookintoCartModel";
-import { borrowBookModel, checkBorrowedBook, checkSoLuongDaMuon, insertPhieuMuonModel, updateBanSao } from "../models/borrowBookModel";
+import { borrowBookModel, checkBorrowedBook, checkSoLuongDaMuon, insertPhieuMuonModel, MaxBorrowedBook, updateBanSao } from "../models/borrowBookModel";
 import { LogModel } from "../models/logModel";
 import { theInforResult } from "../types/the";
 import { inforTheModel } from "../models/CardModel";
@@ -17,7 +17,7 @@ import { markNotificationsReadForUser } from "../models/notificationModel";
 export const insertBookService = async (id_acc: number, data: insertBook): Promise<any> => {
   try {
     const cartCount = await checkCart(id_acc);
-    if (cartCount >= 3) return { success: false, message: "Giỏ hàng đã đầy" };
+    if (cartCount >= 10) return { success: false, message: "Giỏ hàng đã đầy" };
 
     const existing = await checkBook_Cart(id_acc, data);
     if (existing > 0) return { success: false, message: "Sách đã tồn tại trong giỏ" };
@@ -54,7 +54,8 @@ export const borrowBookService = async (id_acc: number, data: borrowBook): Promi
     const checkBorrowed = await checkBorrowedBook(id_acc,data);
     if(checkBorrowed > 0) return { success: false, message: "Đã mượn sách này" };
     const alreadyBorrowed = await checkSoLuongDaMuon(id_acc);
-    if (alreadyBorrowed >= 3) return { success: false, message: "Đã hết lượt mượn sách" };
+    const maxBook = await MaxBorrowedBook(id_acc);
+    if (alreadyBorrowed >= maxBook) return { success: false, message: "Đã hết lượt mượn sách" };
     console.log("qua check 1");
     const banSao = await borrowBookModel(data);
     if (!banSao) return { success: false, message: "Không còn bản sao khả dụng" };
