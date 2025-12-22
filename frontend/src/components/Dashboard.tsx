@@ -4,21 +4,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Define cart item type
-type CartItem = {
-  id: number;
-  title?: string;
-  author?: string;
-  tieu_de?: string;
-  tac_gia?: string;
-  so_luong?: number;
-  [key: string]: any; // Allow other backend fields
-};
-
-// Helper to get the display title from a cart item (handle both Vietnamese and English field names)
-const getItemTitle = (item: CartItem) => item.title || item.tieu_de || 'Unknown';
-const getItemAuthor = (item: CartItem) => item.author || item.tac_gia || 'Unknown';
-
 // 1. Import tất cả component cần thiết từ shadcn/ui và lucide-react
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,6 +15,7 @@ import type { Book } from "@/types/book";
 import CategorySelector from "./CategorySelector";
 import type { Category } from "@/types/category";
 import { SearchBar } from "./SearchBar";
+import type { CartItem } from "@/types/userService";
 
 export default function Component() {
   const navigate = useNavigate();
@@ -93,58 +79,39 @@ export default function Component() {
   const [selectedBook, setSelectedBook] = useState<Book|null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    try {
-      const raw = localStorage.getItem('cartItems');
-      if (raw) return JSON.parse(raw) as CartItem[];
-    } catch (e) {
-      // ignore parse errors
-    }
-    return [];
-  });
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [selectedCartIds, setSelectedCartIds] = useState<number[]>([]);
 
-  // Selected items in the cart for bulk actions (borrow)
-  // Store IDs as number for consistent comparison with item IDs
-  const [selectedCartIds, setSelectedCartIds] = useState<(number)[]>([]);
-
-  // Persist selectedCartIds to localStorage (optional but recommended for UX)
-  useEffect(() => {
-    try {
-      localStorage.setItem('selectedCartIds', JSON.stringify(selectedCartIds));
-    } catch (e) {
-      // ignore
-    }
-  }, [selectedCartIds]);
-
-  // On mount, restore selectedCartIds if it exists
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('selectedCartIds');
-      if (saved) {
-        setSelectedCartIds(JSON.parse(saved));
+  const toggleCart = async () => {
+    if (!isCartOpen) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Vui lòng đăng nhập!");
+        navigate("/login");
+        return;
       }
-    } catch (e) {
-      // ignore
-    }
-  }, []);
 
-  // Persist cart to localStorage so other pages/components can read it
-  useEffect(() => {
-    try {
-      localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    } catch (e) {
-      // ignore
-    }
-  }, [cartItems]);
+      try {
+        const res = await fetch(`${API_URL}/user/service/cart-items`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-  // Function to add book to cart
-  // const addToCart = (book: any) => {
-  //   // Check if book already exists in cart
-  //   const exists = cartItems.find(item => item.id === book.id);
-  //   if (!exists) {
-  //     setCartItems([...cartItems, book]);
-  //   }
-  // };
+        const data: CartItem[] = await res.json();
+        if (!res.ok) throw new Error("Fetch cart failed");
+
+        setCartItems(data);
+        localStorage.setItem("cartItems", JSON.stringify(data));
+      } catch (err) {
+        alert("Không thể tải giỏ hàng");
+      }
+    }
+
+    setIsCartOpen(!isCartOpen);
+  };
 
   // Function to add book to cart
   const addToCart = async (book: any) => {
@@ -182,17 +149,14 @@ export default function Component() {
 
       alert("✅ " + (data.message || "Đã thêm vào giỏ hàng!"));
 
-            // Thêm vào giỏ hàng local (frontend)
-      const exists = cartItems.find(item => item.id === book.id);
+      // Thêm vào giỏ hàng local (frontend)
+      const exists = cartItems.find(item => item.id_sach === book.id);
       if (!exists) {
         // Normalize the book data to ensure title/author fields exist
         const normalizedBook: CartItem = {
-          id: book.id,
-          title: book.title || book.tieu_de,
-          author: book.author || book.tac_gia,
-          tieu_de: book.tieu_de,
-          tac_gia: book.tac_gia,
-          ...book, // Include all other fields from the book object
+          id_sach: book.id,
+          title: book.title,
+          author: book.author
         };
         setCartItems([...cartItems, normalizedBook]);
       }
@@ -202,119 +166,17 @@ export default function Component() {
     }
   };
 
-  const [hasFetchedCart, setHasFetchedCart] = useState(false);
+  const removeFromCart = async (id_sach: number) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-  const toggleCart = async () => {
-    if (!isCartOpen) {
-      // Nếu chưa fetch lần nào, lấy dữ liệu từ server
-      if (!hasFetchedCart) {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          alert("Vui lòng đăng nhập để xem giỏ hàng!");
-          navigate("/login");
-          return;
-        }
+    await fetch(`${API_URL}/user/service/delete-book/${id_sach}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-        try {
-          const res = await fetch(`${API_URL}/user/service/cart-items`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
-            },
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-            alert("❌ Lỗi khi lấy giỏ hàng: " + (data.message || ""));
-            return;
-          }
-
-          // Lưu vào state và localStorage
-          setCartItems(data || []);
-          localStorage.setItem("cartItems", JSON.stringify(data || []));
-          setHasFetchedCart(true);
-
-        } catch (error) {
-          console.error("Lỗi khi fetch cart:", error);
-          alert("Có lỗi xảy ra khi lấy giỏ hàng!");
-        }
-      } else {
-        // Nếu đã fetch rồi, lấy từ localStorage
-        const savedCart = JSON.parse(localStorage.getItem("cartItems") || "[]");
-        setCartItems(savedCart);
-      }
-    }
-
-    setIsCartOpen(!isCartOpen);
-  };
-
-    // Function to remove from cart by specific ID - async with backend integration
-  const removeFromCart = async (bookId: number | string | undefined) => {
-    // Defensive: ensure we have an ID to delete
-    if (bookId === undefined || bookId === null) {
-      console.error('removeFromCart called with undefined id');
-      alert('Không thể xóa: ID sách không hợp lệ');
-      return;
-    }
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.error('No token found. User must be logged in to remove from cart.');
-      alert('Vui lòng đăng nhập để xóa sách khỏi giỏ hàng!');
-      return;
-    }
-
-    try {
-      // Coerce ID to string for URL
-      const idStr = String(bookId);
-      // Construct the DELETE endpoint URL
-      const url = `${API_URL}/user/service/delete-book/${encodeURIComponent(idStr)}`;
-
-      console.log(`📤 Deleting book from cart: ${url}`);
-
-      // Make the DELETE request
-      const response = await fetch(url, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      // Check if the response is successful
-      if (!response.ok) {
-        // Try to parse error body if present
-        let errMsg = `Failed to delete book (status: ${response.status})`;
-        try {
-          const errBody = await response.json();
-          if (errBody && errBody.message) errMsg = errBody.message;
-        } catch (e) {
-          // ignore parse error
-        }
-        throw new Error(errMsg);
-      }
-
-      // Only update local state if the API call was successful
-      const newItems = cartItems.filter((item) => item.id !== bookId && String(item.id) !== idStr && (item as any).id_sach !== bookId);
-      setCartItems(newItems);
-
-      // Also remove from selected IDs if it was selected
-      setSelectedCartIds((prev) => prev.filter((id) => id !== bookId && String(id) !== idStr));
-
-      // Update localStorage with the new cart items
-      try {
-        localStorage.setItem('cartItems', JSON.stringify(newItems));
-      } catch (e) {
-        console.error('Failed to update localStorage:', e);
-      }
-
-      console.log(`✅ Successfully removed book ${idStr} from cart`);
-    } catch (error) {
-      console.error('❌ Error removing book from cart:', error);
-      alert(`Có lỗi xảy ra khi xóa sách: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+    setCartItems((prev) => prev.filter((i) => i.id_sach !== id_sach));
+    setSelectedCartIds((prev) => prev.filter((id) => id !== id_sach));
   };
 
   // Function to open book dialog from cart
@@ -323,9 +185,7 @@ export default function Component() {
     setIsDialogOpen(true);
   };
 
-const handleBorrow = async (book: any) => {
-  if (!book) return;
-
+const handleBorrow = async (book_id: number) => {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Vui lòng đăng nhập trước khi mượn sách!");
@@ -340,7 +200,7 @@ const handleBorrow = async (book: any) => {
   const ngayHetHanStr = ngayHetHan.toISOString().split("T")[0];
 
   const formData = {
-    id_sach: book.id,
+    id_sach: book_id,
     so_luong: 1,
     ngay_muon: ngayMuon,
     ngay_het_han: ngayHetHanStr,
@@ -364,7 +224,7 @@ const handleBorrow = async (book: any) => {
       const errorMsg = data.message || "Lỗi không xác định";
       
       // Check if the error is "Không còn bản sao khả dụng"
-      if (errorMsg.includes("Không còn bản sao khả dụng") || errorMsg.includes("không còn") || errorMsg.includes("hết")) {
+      if (errorMsg.includes("Không còn bản sao khả dụng")) {
         console.log("📚 Sách không khả dụng, mở dialog đặt sách");
         // Trigger the reservation dialog by setting state
         // We need to pass this event back to the parent - use a callback or state
@@ -373,15 +233,15 @@ const handleBorrow = async (book: any) => {
           `${errorMsg}\n\nBạn có muốn đặt sách để được thông báo khi có bản sao sẵn sàng không?`
         );
         if (reserveNow) {
-          await reserveBook(book);
+          await reserveBook(book_id);
         }
       } else {
         alert("❌ Lỗi: " + errorMsg);
       }
       return;
     }
-
-    alert("✅ " + (data.message || "Mượn sách thành công!"));
+    else
+      alert("✅ " + (data.message || "Mượn sách thành công!"));
   } catch (err: any) {
     console.error("❌ Lỗi khi gửi dữ liệu:", err);
     alert("Có lỗi xảy ra khi mượn sách!");
@@ -389,7 +249,7 @@ const handleBorrow = async (book: any) => {
 };
 
 // Helper function to reserve a book
-const reserveBook = async (book: any) => {
+const reserveBook = async (book_id: number) => {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Vui lòng đăng nhập!");
@@ -397,7 +257,7 @@ const reserveBook = async (book: any) => {
   }
 
   const formData = {
-    sach_id: book.id,
+    sach_id: book_id,
   };
 
   try {
@@ -427,33 +287,20 @@ const reserveBook = async (book: any) => {
 };
 
 // Borrow all selected books from cart
-const borrowSelected = async () => {
-  if (selectedCartIds.length === 0) {
-    alert('Vui lòng chọn sách để mượn');
-    return;
-  }
-
-  const selected = cartItems.filter((it) => selectedCartIds.includes(it.id));
-  for (const b of selected) {
-    try {
-      // await each call sequentially to keep server load reasonable
-      // handleBorrow already performs token/checks and alerts
-      // eslint-disable-next-line no-await-in-loop
-      await handleBorrow(b);
-    } catch (err) {
-      console.error('Lỗi khi mượn sách', b, err);
+  const borrowSelected = async () => {
+    if (selectedCartIds.length === 0) {
+      alert("Vui lòng chọn sách");
+      return;
     }
-  }
 
-  // Remove borrowed items from cart
-  const remaining = cartItems.filter((it) => !selectedCartIds.includes(it.id));
-  setCartItems(remaining);
-  try { localStorage.setItem('cartItems', JSON.stringify(remaining)); } catch (e) {}
-  setSelectedCartIds([]);
-  setIsCartOpen(false);
-  alert('Hoàn tất mượn sách đã chọn');
-};
+    for (const id_sach of selectedCartIds) {
+      await handleBorrow(id_sach); // number
+      await removeFromCart(id_sach);
+    }
 
+    setSelectedCartIds([]);
+    setIsCartOpen(false);
+  };
 
   return (
     <div 
@@ -574,7 +421,7 @@ const borrowSelected = async () => {
             <div className="space-y-4">
               {cartItems.map((item) => (
                 <div
-                  key={item.id}
+                  key={item.id_sach}
                   className="border rounded-xl p-4 hover:bg-gray-50 cursor-pointer transition-all group relative"
                   onClick={() => {
                     openBookFromCart(item);
@@ -599,28 +446,23 @@ const borrowSelected = async () => {
                   <label className="absolute top-3 right-10" onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"
-                      checked={selectedCartIds.includes(item.id)}
+                      checked={selectedCartIds.includes(item.id_sach)}
                       onChange={(e) => {
                         const checked = e.target.checked;
-                        console.log('Checkbox toggled for item ID:', item.id, 'Checked:', checked, 'Current selectedCartIds:', selectedCartIds);
-                        // Ensure we're using the correct ID and not accidentally affecting other items
-                        setSelectedCartIds((prev) => {
-                          if (checked) {
-                            // Only add if not already present
-                            return prev.includes(item.id) ? prev : [...prev, item.id];
-                          } else {
-                            // Only remove the specific item by ID
-                            return prev.filter((id) => id !== item.id);
-                          }
-                        });
+                      
+                        setSelectedCartIds((prev) =>
+                          checked
+                            ? prev.includes(item.id_sach)
+                              ? prev
+                              : [...prev, item.id_sach]
+                            : prev.filter((id) => id !== item.id_sach)
+                        );
                       }}
-                      aria-label={`Select ${item.title}`}
-                      style={{ cursor: 'pointer' }}
                     />
                   </label>
 
-                  <h4 className="font-semibold text-lg pr-8">{getItemTitle(item)}</h4>
-                  <p className="text-gray-600">{getItemAuthor(item)}</p>
+                  <h4 className="font-semibold text-lg pr-8">{item.title}</h4>
+                  <p className="text-gray-600">{item.author}</p>
                 </div>
               ))}
 

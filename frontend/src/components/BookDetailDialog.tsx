@@ -218,7 +218,7 @@ export default function BookDetailDialog({ book, open, onOpenChange, onAddToCart
         </Button>
         <Button className="px-6 bg-blue-600 hover:bg-blue-700 text-white"
                 onClick={() => {
-                onhandleBorrow(book);
+                onhandleBorrow(book.id);
              // Optional: close dialog after adding
           }}
           >

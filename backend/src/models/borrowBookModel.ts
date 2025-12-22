@@ -52,7 +52,7 @@ export const checkBorrowedBook = async (id_acc: number, data: borrowBook): Promi
     FROM phieu_muon pm
     JOIN ban_sao bs ON bs.id = pm.ban_sao_id
     JOIN sach s on s.id = bs.sach_id
-    WHERE doc_gia_id = $1 AND s.id = $2;
+    WHERE doc_gia_id = $1 AND s.id = $2 AND pm.tinh_trang = 'CHUA_TRA';
   `;
   const result = await pool.query(sql, [id_acc, data.id_sach]);
   return result.rowCount;
