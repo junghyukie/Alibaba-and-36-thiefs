@@ -93,7 +93,7 @@ static async assignBook(sach_id: number, ban_sao_id: number) {
 
     static async convert() {
         const result = await convertReservedtoAvailable();
-        const result2 = await convertMaintenancetoAvailable();
+       // const result2 = await convertMaintenancetoAvailable();
     }
 
     /**

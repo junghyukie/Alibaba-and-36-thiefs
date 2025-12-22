@@ -32,7 +32,7 @@ const processQueueCron = async () => {
             
             // 4.Kiểm tra có bản sao TRONG_KHO không
             const resBanSao = await pool.query(
-                `SELECT id FROM ban_sao WHERE sach_id = $1 AND trang_thai = 'MAINTENANCE'`,
+                `SELECT id FROM ban_sao WHERE sach_id = $1 AND trang_thai = 'AVAILABLE'`,
                 [sach_id]
             );
 
